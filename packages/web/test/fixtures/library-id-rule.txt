@@ -1,0 +1,5 @@
+// Library ID validation used by the server.
+export function assertLibraryId(id: string): string {
+  if (!/^[A-Za-z0-9._-]{1,128}$/.test(id) || /^\.+$/.test(id)) throw new ApiError(400, 'bad request', { code: 'bad-request' })
+  return id
+}

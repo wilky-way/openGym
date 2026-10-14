@@ -1,0 +1,1804 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "openGym ProgrammeDefinition",
+  "description": "Structural validity; use programmeConformance for Complete and Ready. Unknown extension fields are retained.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 10000,
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 10000,
+      "minLength": 1
+    },
+    "unit": {
+      "enum": [
+        "kg",
+        "lb"
+      ]
+    },
+    "end": {
+      "anyOf": [
+        {
+          "enum": [
+            "next",
+            "repeat",
+            "stop"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "goal": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "level": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "daysPerWeek": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lengthWeeks": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "equipment": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 10000,
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "licence": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string",
+            "maxLength": 10000
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "endPlan": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "deload",
+                "test",
+                "repeat",
+                "next",
+                "stop"
+              ]
+            },
+            "instructions": {
+              "type": "string",
+              "maxLength": 10000,
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "instructions"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "instructions": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "needsReview": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "rulesSupported": {
+      "type": "boolean"
+    },
+    "weeks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/week"
+      },
+      "minItems": 1,
+      "maxItems": 64
+    },
+    "progressionRules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/progressionRule"
+      },
+      "minItems": 0,
+      "maxItems": 100
+    },
+    "tmSeeds": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/tmSeed"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "unit",
+    "weeks"
+  ],
+  "$defs": {
+    "slot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "open": {
+          "type": "boolean"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "slotId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "main",
+                "supplement",
+                "accessory",
+                "gpp"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "reps": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "const": "max"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "repsMin": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "const": "max"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pyramid": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "const": "max"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "mode": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "sec": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "rir": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "rpe": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "pct": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "setTargets": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "rir": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                  },
+                  "rpe": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                  },
+                  "pct": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "setRepsMin": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "const": "max"
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pyramidWeight": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 10000
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "tm": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "percentages": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "reference": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "percentages"
+          ]
+        },
+        "progression": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "linear",
+                    "double",
+                    "reps-sum",
+                    "percentage",
+                    "authored",
+                    "manual",
+                    "none"
+                  ]
+                },
+                "instructions": {
+                  "type": "string",
+                  "maxLength": 10000,
+                  "minLength": 1
+                },
+                "parameters": {
+                  "type": "object"
+                },
+                "provenance": {
+                  "type": "string",
+                  "maxLength": 10000
+                },
+                "rules": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 100,
+                  "uniqueItems": true
+                },
+                "onStall": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+                }
+              },
+              "required": [
+                "kind",
+                "instructions"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "loadGuidance": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generatedRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                "minItems": 1,
+                "maxItems": 100
+              },
+              "pct": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "minItems": 1,
+                "maxItems": 100
+              },
+              "rir": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "rpe": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 10
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "drop_pct": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "until_rpe": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 10
+              },
+              "total_reps": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "from": {
+                "const": "top_set"
+              },
+              "open_count": {
+                "const": true
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "maxItems": 100
+        },
+        "authoredInstructions": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "noteKind": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "restSec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sets"
+      ]
+    },
+    "session": {
+      "type": "object",
+      "properties": {
+        "sessionTemplateId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "routineSnapshot": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ex": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/slot"
+              },
+              "maxItems": 100
+            }
+          },
+          "required": [
+            "ex"
+          ]
+        }
+      },
+      "required": [
+        "routineSnapshot"
+      ]
+    },
+    "day": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 10000,
+          "minLength": 1
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/session"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      },
+      "required": [
+        "key",
+        "sessions"
+      ]
+    },
+    "week": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "train",
+                "deload",
+                "test",
+                "inserted"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "weekId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rir": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "deload": {
+          "type": "object",
+          "properties": {
+            "authored": {
+              "type": "boolean"
+            },
+            "setsFactor": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "loadFactor": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "from": {
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": []
+        },
+        "days": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/day"
+          },
+          "minItems": 1,
+          "maxItems": 14
+        }
+      },
+      "required": [
+        "index",
+        "days"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "rir": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "rpe": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "progression": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "linear",
+            "double",
+            "reps-sum",
+            "percentage",
+            "authored",
+            "manual",
+            "none"
+          ]
+        },
+        "instructions": {
+          "type": "string",
+          "maxLength": 10000,
+          "minLength": 1
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "provenance": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "minItems": 0,
+          "maxItems": 100,
+          "uniqueItems": true
+        },
+        "onStall": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        }
+      },
+      "required": [
+        "kind",
+        "instructions"
+      ]
+    },
+    "rounding": {
+      "type": "object",
+      "properties": {
+        "increment": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 100
+        },
+        "mode": {
+          "enum": [
+            "nearest",
+            "down",
+            "up"
+          ]
+        },
+        "usePlates": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "increment",
+        "mode",
+        "usePlates"
+      ],
+      "additionalProperties": false
+    },
+    "progressionSlotRef": {
+      "type": "object",
+      "properties": {
+        "week": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "day": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "session": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "slot": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        }
+      },
+      "required": [
+        "week",
+        "day",
+        "session",
+        "slot"
+      ],
+      "additionalProperties": false
+    },
+    "rule-percentage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "percentage"
+        },
+        "ref": {
+          "type": "object",
+          "properties": {
+            "lift": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "basis": {
+              "enum": [
+                "tm",
+                "1rm"
+              ]
+            }
+          },
+          "required": [
+            "lift",
+            "basis"
+          ],
+          "additionalProperties": false
+        },
+        "weeks": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[1-9][0-9]*$"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "pct": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1.5
+                },
+                "reps": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    {
+                      "const": "amrap"
+                    }
+                  ]
+                },
+                "repsMin": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                }
+              },
+              "required": [
+                "pct",
+                "reps"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "rounding": {
+          "$ref": "#/$defs/rounding"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "ref",
+        "weeks",
+        "rounding"
+      ],
+      "additionalProperties": false
+    },
+    "rule-rpe-load": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "rpe-load"
+        },
+        "lift": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "weeks": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^(\\*|[1-9][0-9]*)$"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "reps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "rir": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 10
+                    }
+                  },
+                  "required": [
+                    "reps",
+                    "rir"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "reps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "rpe": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 10
+                    }
+                  },
+                  "required": [
+                    "reps",
+                    "rpe"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "e1rm": {
+          "type": "object",
+          "properties": {
+            "window": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "sessions": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 20
+                    }
+                  },
+                  "required": [
+                    "sessions"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "days": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 180
+                    }
+                  },
+                  "required": [
+                    "days"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "pick": {
+              "enum": [
+                "best",
+                "latest",
+                "median"
+              ]
+            },
+            "formula": {
+              "enum": [
+                "profile",
+                "weighted",
+                "epley",
+                "brzycki",
+                "lombardi",
+                "oconner",
+                "mayhew",
+                "wathan",
+                "lander"
+              ]
+            },
+            "useLoggedEffort": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "window",
+            "pick",
+            "formula",
+            "useLoggedEffort"
+          ],
+          "additionalProperties": false
+        },
+        "rounding": {
+          "$ref": "#/$defs/rounding"
+        },
+        "whenNoData": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "athlete-picks"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "percent-of-tm"
+                },
+                "pct": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1.5
+                }
+              },
+              "required": [
+                "kind",
+                "pct"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "lift",
+        "weeks",
+        "e1rm",
+        "rounding",
+        "whenNoData"
+      ],
+      "additionalProperties": false
+    },
+    "rule-double": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "double"
+        },
+        "repsLow": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "repsHigh": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "condition": {
+          "enum": [
+            "all-sets",
+            "first-set",
+            "total-reps"
+          ]
+        },
+        "totalThreshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "increment": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 100
+        },
+        "unit": {
+          "enum": [
+            "kg",
+            "lb"
+          ]
+        },
+        "afterIncrease": {
+          "const": "reset-to-low"
+        },
+        "rounding": {
+          "$ref": "#/$defs/rounding"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "repsLow",
+        "repsHigh",
+        "condition",
+        "increment",
+        "unit",
+        "afterIncrease",
+        "rounding"
+      ],
+      "additionalProperties": false
+    },
+    "rule-linear": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "linear"
+        },
+        "increment": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 100
+        },
+        "unit": {
+          "enum": [
+            "kg",
+            "lb"
+          ]
+        },
+        "every": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "sessions": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "sessions"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "weeks": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "weeks"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "success": {
+          "enum": [
+            "all-sets-all-reps",
+            "last-set-reps"
+          ]
+        },
+        "rounding": {
+          "$ref": "#/$defs/rounding"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "increment",
+        "unit",
+        "every",
+        "success",
+        "rounding"
+      ],
+      "additionalProperties": false
+    },
+    "rule-amrap-tm": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "amrap-tm"
+        },
+        "lift": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "slot": {
+              "$ref": "#/$defs/progressionSlotRef"
+            },
+            "set": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 99
+            }
+          },
+          "required": [
+            "slot",
+            "set"
+          ],
+          "additionalProperties": false
+        },
+        "bands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "minRepsOver": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 30
+              },
+              "tmDelta": {
+                "type": "number",
+                "minimum": -50,
+                "maximum": 50
+              }
+            },
+            "required": [
+              "minRepsOver",
+              "tmDelta"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "unit": {
+          "enum": [
+            "kg",
+            "lb"
+          ]
+        },
+        "at": {
+          "enum": [
+            "end-of-week",
+            "end-of-cycle-lap"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "lift",
+        "source",
+        "bands",
+        "unit",
+        "at"
+      ],
+      "additionalProperties": false
+    },
+    "rule-stall": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "stall"
+        },
+        "after": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "action": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "repeat"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "reset"
+                },
+                "pct": {
+                  "type": "number",
+                  "minimum": 0.5,
+                  "exclusiveMaximum": 1
+                }
+              },
+              "required": [
+                "kind",
+                "pct"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "deload"
+                },
+                "setsFactor": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "loadFactor": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "weeks": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 64
+                }
+              },
+              "required": [
+                "kind",
+                "setsFactor",
+                "loadFactor",
+                "weeks"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "appliesTo": {
+          "enum": [
+            "load",
+            "tm"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "after",
+        "action",
+        "appliesTo"
+      ],
+      "additionalProperties": false
+    },
+    "rule-scheduled-deload": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "scheduled-deload"
+        },
+        "weeks": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "setsFactor": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "loadFactor": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "effort": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "rir": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                }
+              },
+              "required": [
+                "rir"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "rpe": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 10
+                }
+              },
+              "required": [
+                "rpe"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "progressionDuring": {
+          "const": "off"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "weeks",
+        "setsFactor",
+        "loadFactor",
+        "progressionDuring"
+      ],
+      "additionalProperties": false
+    },
+    "rule-volume-ramp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "kind": {
+          "const": "volume-ramp"
+        },
+        "scope": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "muscles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "minItems": 1,
+                  "maxItems": 18,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "muscles"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "slots": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/progressionSlotRef"
+                  },
+                  "minItems": 1,
+                  "maxItems": 100
+                }
+              },
+              "required": [
+                "slots"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "startSets": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "addPerWeek": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "maxSets": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "weeks": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "distribute": {
+          "enum": [
+            "round-robin-by-slot-order",
+            "proportional"
+          ]
+        },
+        "holdIfMissedReps": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "scope",
+        "startSets",
+        "addPerWeek",
+        "maxSets",
+        "weeks",
+        "distribute",
+        "holdIfMissedReps"
+      ],
+      "additionalProperties": false
+    },
+    "progressionRule": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/rule-percentage"
+        },
+        {
+          "$ref": "#/$defs/rule-rpe-load"
+        },
+        {
+          "$ref": "#/$defs/rule-double"
+        },
+        {
+          "$ref": "#/$defs/rule-linear"
+        },
+        {
+          "$ref": "#/$defs/rule-amrap-tm"
+        },
+        {
+          "$ref": "#/$defs/rule-stall"
+        },
+        {
+          "$ref": "#/$defs/rule-scheduled-deload"
+        },
+        {
+          "$ref": "#/$defs/rule-volume-ramp"
+        }
+      ]
+    },
+    "tmSeed": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1.7976931348623157e+308
+            },
+            "unit": {
+              "enum": [
+                "kg",
+                "lb"
+              ]
+            }
+          },
+          "required": [
+            "value",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "fromE1rm": {
+              "type": "object",
+              "properties": {
+                "pct": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1.5
+                }
+              },
+              "required": [
+                "pct"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "fromE1rm"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "x-opengym-semantic-constraints": [
+    "Unique week indexes and day keys within each week.",
+    "Resolved catalogue/custom exercise ID or open=true with no ID.",
+    "Explicit reps, pyramid or timed duration; numeric strings must be positive integers.",
+    "Per-set arrays match pyramid length or set count; percentage arrays match pyramid length.",
+    "Rep range minimum does not exceed maximum; loads are finite and nonnegative.",
+    "At most 10000 expanded sets; metadata depth at most 20; importNeedsPrescription must be false."
+  ]
+}

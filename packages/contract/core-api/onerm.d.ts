@@ -1,0 +1,30 @@
+import type { ExerciseIndex } from './exercises';
+export declare const REP_CAP = 12;
+export declare const WEIGHTED_REP_CAP = 15;
+export declare const FORMULAS: {
+    epley: (w: any, r: any) => number;
+    brzycki: (w: any, r: any) => number;
+    lombardi: (w: any, r: any) => number;
+    oconner: (w: any, r: any) => number;
+    mayhew: (w: any, r: any) => number;
+    wathan: (w: any, r: any) => number;
+    lander: (w: any, r: any) => number;
+};
+export declare const DEFAULT_FORMULA = "epley";
+export declare const FORMULA_NAMES: {
+    epley: string;
+    brzycki: string;
+    lombardi: string;
+    oconner: string;
+    mayhew: string;
+    wathan: string;
+    lander: string;
+};
+export declare const formulaOf: (S: any) => any;
+export declare function weightedEstimate(w: any, effectiveReps: any): number;
+export declare function estimate1RM(w: any, r: any, formula?: string, rir?: null): number | null;
+export declare function bestSetOf(entry: any, formula?: string, index?: ExerciseIndex): { est: number; w: number; r: number } | null;
+export declare function e1rmSeries(S: any, exId: any, formula?: any, as?: any, index?: ExerciseIndex): any[];
+export declare function best1RM(S: any, exId: any, formula?: any, as?: any, index?: ExerciseIndex): { est: number; w: number; r: number; d: string; t: number } | null;
+export declare function is1RMRecord(S: any, exId: any, entry: any, formula?: any, index?: ExerciseIndex): any;
+export declare function calculate1RMAccuracy(reps: any, rir?: null, formula?: string): number;

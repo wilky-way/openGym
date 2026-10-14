@@ -1,0 +1,22 @@
+{
+  "name": "@opengym/contract",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    ".": "./src/index.ts",
+    "./domain/*": "./domain/*.ts",
+    "./http/*": "./http/*.ts",
+    "./platform/*": "./platform/*.ts",
+    "./core-api/*": "./core-api/*.d.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "bun --bun vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "zod": "3.25.76"
+  }
+}

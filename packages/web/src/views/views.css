@@ -1,0 +1,23 @@
+.hdr{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:8px 0 18px}
+.hdr>div{min-width:0}
+.hdr>.btn{flex:none}
+.hdr h1{font-size:34px;line-height:1.06;font-weight:700;letter-spacing:-.028em;overflow-wrap:break-word}
+@media (max-width:420px){.hdr h1{font-size:30px}}
+.hdr.lib-hdr{flex-wrap:wrap;align-items:center;row-gap:0}
+.hdr.lib-hdr>.sub.lib-count{flex:1 0 100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:360px){.hdr.lib-hdr>.sub.lib-count{white-space:normal;overflow:visible;text-overflow:clip}}
+.lrow{
+  display:flex;align-items:center;gap:12px;width:100%;text-align: start;
+  padding:11px 14px;min-height:46px;position:relative;color:var(--label);
+  background:none;
+}
+.lrow-v{color:var(--label-2);font-size:17px;letter-spacing:-.012em;flex:0 1 auto;max-width:55%;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align: end}
+.lrow.lrow-stack-value{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;
+}
+.lrow.lrow-stack-value .lrow-m{grid-column:1;grid-row:1}
+.lrow.lrow-stack-value .lrow-v{grid-column:1;grid-row:2;width:100%;max-width:none;text-align:start}
+.lrow.lrow-stack-value .lrow-c{grid-column:2;grid-row:1 / span 2;align-self:center}
+
+.list.ex-grid,#app .list.ex-grid,#modal-root .list.ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}

@@ -1,0 +1,5 @@
+.session-preview .session-preview-exercise { align-items: flex-start; }
+.session-preview .session-preview-sets { margin: 8px 0; padding-inline-start: 22px; color: var(--label); font-size: 14px; line-height: 1.65; }
+.session-preview .ss-label { margin: 14px 16px 4px; }
+.session-preview .progression-prescription { margin: 8px 0; }
+.session-preview > .btn { margin-top: 16px; }

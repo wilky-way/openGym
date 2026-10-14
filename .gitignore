@@ -1,0 +1,14 @@
+node_modules/
+packages/*/dist/
+dist/
+data/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+junit.xml
+.DS_Store
+.gate/
+.artifacts/
+*.bun-build

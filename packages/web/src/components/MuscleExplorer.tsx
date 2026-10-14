@@ -1,0 +1,116 @@
+import type { Exercise } from '@opengym/core/exercises'
+import { useMemo, useState } from 'react'
+import { useStore } from '../store/useStore'
+import { BODYPARTS, allExercises, equipmentOf, searchExercises } from '@opengym/core/exercises'
+import { activeProfile, exAvailable } from '@opengym/core/equipment'
+import { bestWeightFor } from '@opengym/core/history'
+import { fmtNum, exCount } from '@opengym/core/format'
+import { MUSCLES, MUSCLE_NAME, musclesOf } from '@opengym/core/muscles'
+import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n'
+import BodyMap from './BodyMap'
+import Icon from './Icon'
+import ExerciseViewToggle from './ExerciseViewToggle'
+import { Button } from './ui'
+import { tappable } from '../lib/use-sheet-keyboard'
+import { useAutoMore } from '../lib/use-auto-more'
+import { isFav, sortFavouritesFirst } from '@opengym/core/favourites'
+
+// One explorer for the Library and every catalogue picker. Supplying `onPick` turns
+// a result into a selection; without it the explorer behaves like the normal Library.
+export interface MuscleExplorerProps {
+  onPick?: (exercise: Exercise) => void
+  onDetail?: (exercise: Exercise) => void
+  onPlan?: (exercise: Exercise) => void
+}
+export default function MuscleExplorer({ onPick, onDetail, onPlan }: MuscleExplorerProps = {}) {
+  const S = useStore(s => s.S)
+  const index = useStore(s => s.index)
+  const [selected, setSelected] = useState<string | undefined>(undefined)
+  const [q, setQ] = useState('')
+  const [bp, setBp] = useState('')
+  const [eq, setEq] = useState('')
+  const [shown, setShown] = useState(40)
+  const [showAll, setShowAll] = useState(false)   // ignore the active equipment profile for this session
+  const moreRef = useAutoMore(() => setShown(s => s + 40))
+  // Same rule as the Library and the picker: the active equipment profile narrows the catalogue
+  // (and the per-muscle counts) unless the user asks for everything.
+  const profile = activeProfile(S)
+  const catalog = useMemo<Exercise[]>(() => {
+    const all: Exercise[] = allExercises(S)
+    return (profile && !showAll) ? all.filter(e => exAvailable(S, e)) : all
+  }, [S.customEx, S.equipFilterOn, S.activeEquipId, S.equipProfiles, showAll])
+  const muscleNames: Record<string, string> = MUSCLE_NAME
+  const counts = useMemo(() => Object.fromEntries(MUSCLES.map(m => [m,
+    catalog.filter(e => musclesOf(e)[m]).length
+  ])), [catalog])
+  const pick = (muscle: string) => { setSelected(muscle === selected ? undefined : muscle); setEq(''); setShown(40) }
+  const targeted = selected ? catalog.filter(e => musclesOf(e)[selected]) : []
+  const base: Exercise[] = searchExercises(targeted.filter(e => !bp || e.bp === bp), q)
+  const eqOpts = equipmentOf(base)
+  const eqOn = eqOpts.includes(eq) ? eq : ''
+  // Favourites float to the top of whatever the filters left (issue #6), the rest keeps its order.
+  const exercises: Exercise[] = sortFavouritesFirst(eqOn ? base.filter(e => e.eq === eqOn) : base, S)
+  const choose = (ex: Exercise) => onPick ? onPick(ex) : onDetail!(ex)
+  // The live count and the × of the Library's search (#338): the count while a search or a
+  // filter narrows the muscle's list, the × while there is text.
+  const narrowed = !!(q.trim() || bp || eqOn)
+
+  return <>
+    {profile && <div className="small dim row" style={{ margin: '-4px 2px 10px', gap: 6, alignItems: 'center' }}>
+      <Icon name="kettlebell" style={{ fontSize: 13 }} />
+      {showAll ? t('Showing all equipment') : t('Showing what you have in "{0}"', profile.name)}
+      <button className="chip nocap" style={{ marginInlineStart: 'auto', padding: '3px 10px', fontSize: 12 }} onClick={() => { setShowAll(v => !v); setEq(''); setShown(40) }}>
+        {showAll ? t('Filter by "{0}"', profile.name) : t('Show all equipment')}
+      </button>
+    </div>}
+    <div className="card">
+      <BodyMap className="tappable" body={S.body} selected={selected} onMuscle={pick} />
+      <div className="chips" style={{ marginTop: 10 }}>
+        {MUSCLES.map(m => <button key={m} className={'chip' + (selected === m ? ' on' : '')}
+          aria-pressed={selected === m} onClick={() => pick(m)}>
+          {t(muscleNames[m]!)} <span className="dim">{counts[m]}</span>
+        </button>)}
+      </div>
+    </div>
+
+    {!selected && onPick && <div className="empty"><div className="ico"><Icon name="figureStrength" /></div>{t('Choose a muscle to see exercises that train it.')}</div>}
+
+    {selected && <>
+      <div className="row between" style={{ margin: '2px 0 10px' }}>
+        <h4 className="sec" style={{ margin: 0 }}>{t('Exercises for {0}', t(muscleNames[selected]!))}</h4>
+        <Button size="sm" variant="ghost" onClick={() => pick(selected)}>{t('Clear selection')}</Button>
+      </div>
+      <div className="search-row" style={{ marginBottom: 10 }}><div className={'search' + (narrowed ? ' has-count' : '') + (q ? ' has-clear' : '')}><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+        <input className="input" placeholder={t('Search…')} value={q} onChange={e => { setQ(e.target.value); setShown(40) }} />
+        {narrowed && <span className="search-count" role="status" aria-label={exCount(exercises.length)}>{fmtNum(exercises.length)}</span>}
+        {q && <button className="clear" onClick={() => { setQ(''); setShown(40) }} aria-label={t('Clear')}><Icon name="xmark" /></button>}
+      </div><ExerciseViewToggle /></div>
+      {/* Changing body part keeps the equipment filter (issue #71, same rule as Library): the
+          eqOn fallback above drops it only for this view if the new body part has nothing under
+          it, without forgetting the choice. "All" clears it, since it spans every body part. */}
+      <div className="chips" style={{ marginBottom: eqOpts.length > 1 ? 8 : 12 }}>
+        <button className={'chip nocap' + (!bp ? ' on' : '')} onClick={() => { setBp(''); setEq(''); setShown(40) }}>{t('All')}</button>
+        {BODYPARTS.map(b => <button key={b} className={'chip' + (bp === b ? ' on' : '')} onClick={() => { setBp(b); setShown(40) }}>{t(b)}</button>)}
+      </div>
+      {eqOpts.length > 1 && <div className="chips" style={{ marginBottom: 12 }}>
+        <button className={'chip nocap' + (!eqOn ? ' on' : '')} onClick={() => { setEq(''); setShown(40) }}>{t('Any equipment')}</button>
+        {eqOpts.map(x => <button key={x} className={'chip' + (eqOn === x ? ' on' : '')} onClick={() => { setEq(x); setShown(40) }}>{t(x)}</button>)}
+      </div>}
+      <div className={'list' + (S.exerciseView === 'cards' ? ' ex-grid' : '')}>
+        {exercises.slice(0, shown).map(e => {
+          const best = bestWeightFor(S, e.id, undefined, index)
+          const primary = musclesOf(e)[selected] === 1
+          return <div key={e.id} className="item" {...tappable(() => choose(e))}>
+            <div className="grow"><div className={`tt ${exerciseNameClass(e)}`}>{isFav(S, e.id) && <Icon name="starFill" className="fav-star" />}{exerciseNameFor(e)}</div><div className="ss">{t(primary ? 'Primary target' : 'Also trains')} · <span className="capitalize">{t(muscleNames[e.tg || ''] || e.tg || e.bp)} · {t(e.eq)}</span></div></div>
+            {onPick ? <Icon name="plus" className="chev" /> : <>
+              {best > 0 && <span className="tag acc">{fmtNum(best)}</span>}
+              <Button size="sm" variant="tinted" icon="plus" onClick={ev => { ev.stopPropagation(); onPlan!(e) }}>{t('Plan')}</Button>
+            </>}
+          </div>
+        })}
+        {exercises.length === 0 && <div className="empty"><div className="ico"><Icon name="magnifier" /></div>{t('No match')}</div>}
+      </div>
+      {exercises.length > shown && <><div style={{ height: 10 }} /><Button ref={moreRef} onClick={() => setShown(s => s + 40)}>{t('Show more')}</Button></>}
+    </>}
+  </>
+}

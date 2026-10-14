@@ -1,0 +1,3 @@
+.lrow-m{flex:1;min-width:auto;display:flex;flex-direction:column;gap:1px}
+.lrow:has(.timef){flex-wrap:wrap}
+.lrow>.timef{margin-inline-start:auto}

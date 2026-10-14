@@ -1,0 +1,8 @@
+[
+  {"method":"GET","path":"/api/health","status":200,"body":"{\"ok\":true,\"users\":1,\"writable\":true}"},
+  {"method":"GET","path":"/api/config","status":200,"body":"{\"invite_only\":true,\"allow_guest\":false,\"default_lang\":\"en-US\"}"},
+  {"method":"GET","path":"/api/missing","status":404,"body":"{\"error\":\"not found\"}"},
+  {"method":"POST","path":"/api/login/password","status":404,"body":"{\"error\":\"not found\"}"},
+  {"method":"GET","path":"/api/coach/config","status":404,"body":"{\"error\":\"not found\"}"},
+  {"method":"PUT","path":"/api/media/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":404,"body":"{\"error\":\"not found\"}"}
+]

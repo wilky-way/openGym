@@ -1,0 +1,98 @@
+// Missed-workout nudge — one playful notification on the evening of a planned day that went by
+// without a workout. Opt-in, under the workout-day reminder (S.reminder.nudge, S.reminder.tone).
+//
+// The self-hosted app sends it as a web push from the server (api/nudge.js, a hand copy of the
+
+import type { Legacy } from './legacy-shape'
+import { isoOf } from '@opengym/core/format'
+import { effectiveRoutineIds } from './history'
+import { queueLiveOn } from '@opengym/core/queue'
+import { excusedOn } from './day-notes'
+
+export const NUDGE_TONES = ['friendly', 'guilt', 'drill']
+export const NUDGE_MAX_MISSES = 3
+export const NUDGE_LOOKBACK_DAYS = 14
+const EVENING = 20 * 60, LATEST = 21 * 60 + 30, AFTER_REMINDER = 120
+
+export const NUDGE_COPY: Record<string, { title: string; lines: string[] }> = {
+  friendly: {
+    title: 'Everything okay?',
+    lines: [
+      '{0} is still waiting. What’s up?',
+      'No {0} today? Even a short session tomorrow counts.',
+      'Rough day? {0} will keep. Tomorrow is a fresh start.',
+      'Hey, {0} didn’t happen today. All good?',
+    ],
+  },
+  guilt: {
+    title: 'I miss you',
+    lines: [
+      '{0} waited by the door all evening. For you.',
+      'The barbell asked about you today. I didn’t know what to say.',
+      'Was it something I said? {0} misses you.',
+      'I saved you a spot on the bench. It’s still empty.',
+    ],
+  },
+  drill: {
+    title: 'Attention, recruit!',
+    lines: [
+      'Your gains are packing their bags. {0} tomorrow, no excuses!',
+      '{0} doesn’t do itself, recruit. Move it!',
+      'Excuses don’t lift weights. Report for {0} tomorrow!',
+      'Your muscles filed a missing-person report. Show up for {0}!',
+    ],
+  },
+}
+
+export const toneOf = (r: Legacy) => (NUDGE_TONES.includes(r?.tone) ? r.tone : 'friendly')
+
+const hhmmToMin = (v: Legacy) => {
+  const m = /^(\d{2}):(\d{2})$/.exec(v || '')
+  return m ? Number(m[1]) * 60 + Number(m[2]) : NaN
+}
+
+/** Minutes after midnight the nudge is owed from, or null when that would be after 21:30. */
+export function nudgeMinute(reminderTime: Legacy) {
+  const r = hhmmToMin(reminderTime)
+  const at = Math.max(EVENING, Number.isNaN(r) ? 0 : r + AFTER_REMINDER)
+  return at > LATEST ? null : at
+}
+export const NUDGE_LATEST_MINUTE = LATEST
+
+const dayBefore = (iso: Legacy) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() - 1); return isoOf(d) }
+const logged = (S: Legacy, iso: Legacy) => (S.workouts || []).some((w: Legacy) => w?.d === iso)
+const norm = (S: Legacy) => ({
+  ...S,
+  routines: Array.isArray(S?.routines) ? S.routines.filter(Boolean) : [],
+  workouts: Array.isArray(S?.workouts) ? S.workouts.filter(Boolean) : [],
+  week: S?.week || {}, dayPlan: S?.dayPlan || {},
+})
+
+function missed(S: Legacy, iso: Legacy) {
+  if (logged(S, iso) || excusedOn(S, iso)) return []
+  const ids = effectiveRoutineIds(S, iso, iso)
+  if (!ids.length) return []
+  if (queueLiveOn(S, iso, iso) && logged(S, dayBefore(iso))) return []
+  return ids
+}
+
+/**
+ * The routine ids to nudge about on `iso`, or null: not a missed day, or already 3 missed days in
+ * a row since the last workout (back-off). Workouts dated after `iso` are not looked at, so the
+ * phone can ask about future dates and get the back-off of a break that simply goes on.
+ */
+export function nudgeFor(state: Legacy, iso: Legacy) {
+  const S = norm(state)
+  const ids = missed(S, iso)
+  if (!ids.length) return null
+  const last = S.workouts.reduce((m: Legacy, w: Legacy) => (typeof w.d === 'string' && w.d < iso && w.d > m ? w.d : m), '')
+  let misses = 0
+  let d = dayBefore(iso)
+  for (let i = 0; i < NUDGE_LOOKBACK_DAYS && d > last; i++, d = dayBefore(d)) {
+    if (missed(S, d).length && ++misses >= NUDGE_MAX_MISSES) return null
+  }
+  return ids
+}
+
+/** The day's line index: by date, so a day keeps its line and consecutive days rotate. */
+export const lineIndex = (iso: Legacy, n: Legacy) => Math.floor(Date.parse(iso + 'T00:00:00Z') / 86400000) % n

@@ -1,0 +1,34 @@
+{
+  "name": "opengym",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "packageManager": "bun@1.4.1",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "bun run --cwd packages/web build && bun run build:server",
+    "build:web": "bun run --cwd packages/web build",
+    "build:server": "bun build --compile --minify --sourcemap=none --no-compile-autoload-dotenv --no-compile-autoload-bunfig packages/server/src/cli/serve.ts --outfile dist/opengym-server",
+    "start:server": "bun packages/server/src/cli/serve.ts",
+    "test:core": "bun run --cwd packages/core test",
+    "test:web": "bun run --cwd packages/web test",
+    "test:mcp": "bun run --cwd packages/mcp test",
+    "test:server": "bun run --cwd packages/server test",
+    "backup:create": "bun packages/server/src/cli/backup.ts create",
+    "backup:verify": "bun packages/server/src/cli/backup.ts verify",
+    "audit:dependencies": "bun audit"
+  },
+  "devDependencies": {
+    "@babel/parser": "8.0.7",
+    "@types/bun": "1.4.3",
+    "fast-check": "4.10.2",
+    "json-schema-to-typescript": "15.0.4",
+    "saxes": "6.0.0",
+    "typescript": "7.0.2",
+    "vite": "8.1.5",
+    "vitest": "4.1.11",
+    "happy-dom": "21.0.1"
+  }
+}

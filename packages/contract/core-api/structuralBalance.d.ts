@@ -1,0 +1,21 @@
+import type { ExerciseIndex } from './exercises';
+export declare function bodyweightKgOf(S: any): number | null;
+export declare const loadForReps: (oneRmKg: any, reps: any) => any;
+export declare function loadAtReps(loadKg: any, setReps: any, reps: any): any;
+export declare function resolveCurrent(S: any, exerciseIds: any, bodyweightKg: any, reps?: null, index?: ExerciseIndex): {
+    [x: string]: any;
+    w: number;
+    r: number;
+    d: any;
+    t: any;
+    exId: any;
+} | null;
+export declare function resolveCurrentReps(S: any, exerciseIds: any, index?: ExerciseIndex): any;
+export declare function targetFor(role: any, S: any): any;
+export declare function overrideKey(template: any, role: any): string;
+export declare function overrideIdOf(value: any): any;
+export declare function withOverride(overrides: any, key: any, exId: any, now?: number): any;
+export declare function exerciseIdsFor(S: any, template: any, role: any): any;
+export declare function ratioFor(role: any, current: any, ctx: any): number | null;
+export declare function classify(actualPct: any, targetPct: any): "balanced" | "borderline" | "no-data" | "weak";
+export declare function computeBalance(S: any, template: any, index?: ExerciseIndex): any;

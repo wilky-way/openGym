@@ -1,0 +1,544 @@
+// openGym control set.
+//
+// Every input in the app is built here rather than styled on top of a native
+// widget. Native controls are the single loudest "unfinished" tell: a checkbox
+// renders blue on iOS and grey on Android, a range slider paints its own white
+// track that no theme reaches, and a <select> opens a system list that ignores
+// dark mode entirely. Rebuilding them means one visual language and one focus
+// treatment across every platform.
+//
+// Shared rules:
+//   · every control is driven by (value, onChange) — no internal source of truth
+//   · hit targets are ≥44px even when the painted control is smaller
+//   · :active gives a scale/tint response so touch feels acknowledged
+//   · focus-visible draws a ring; pointer interaction never does
+
+import type { Ref, ButtonHTMLAttributes, CSSProperties, InputHTMLAttributes, KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode, TextareaHTMLAttributes } from 'react'
+import { useRef, useState, useEffect, useLayoutEffect, useCallback, forwardRef } from 'react'
+import Icon from './Icon'
+import { ux } from '../platform/ux'
+import { sheetKeyboardInsets } from '../lib/use-sheet-keyboard'
+import { t } from '@opengym/core/i18n-core'
+
+type Styled = CSSProperties & { [key: `--${string}`]: string | number }
+type Change<T> = (value: T) => void
+type NumericProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> & {
+  value?: number | string | null; decimal?: boolean; fit?: boolean
+} & ({ nullable: boolean; onChange: Change<number | null> } | { nullable?: false; onChange: Change<number> })
+type Option<V extends string | number> = { value: V; label?: ReactNode; icon?: string; subtitle?: ReactNode }
+type Search<V extends string | number> = (((option: Option<V>, query: string) => boolean) | { match?: (option: Option<V>, query: string) => boolean }) & {
+  placeholder?: string; label?: string; emptyLabel?: ReactNode
+}
+type RowProps = { icon?: string; iconTint?: string; title?: ReactNode; subtitle?: ReactNode; value?: ReactNode; accessory?: string; onClick?: () => void; danger?: boolean; children?: ReactNode; className?: string }
+export interface UIStore { getState(): { openSheet(render: (close: () => void) => ReactNode): unknown } }
+
+/* ============================ text ============================ */
+
+// Width of a numeric string in `ch`, for a field sized to its own digits (NumberField's
+// `fit`): with tabular numerals every digit is exactly one ch, a decimal point roughly half.
+export const numWidthCh = (s: string) => Math.max(1, [...s].reduce((n, c) => n + (c === '.' ? 0.5 : 1), 0))
+
+// Numeric input accepting "," as decimal separator — iOS decimal keypads in many
+// locales only offer a comma, and type="number" reports "" for it (value snaps to
+// 0). Keeps a local string draft while focused so partial input like "33," survives.
+// `nullable` is for fields where "nothing entered" and 0 mean different things (RIR: a
+// logged 0 is a set taken to failure). Those clear back to null instead of snapping to 0.
+// `fit` sizes the field to the digits on screen instead of filling its cell — for the big
+// weight read-out, where the unit sits right beside the number.
+export function NumberField({ value, onChange, decimal = true, nullable, fit = false, className = '', ...rest }: NumericProps) {
+  const [draft, setDraft] = useState<string | null>(null)
+  const committed = useRef<number | null>(null)
+  // Focus selects the number so typing replaces it. In WebKit (Safari, the iOS app) the release
+  // of the tap that focused the field then moves the caret to the finger and drops that
+  // selection: 65 typed over 62.5 read 6265.5. The first mouseup after focus keeps its default
+  // off; a later tap on the focused field still places the caret to edit one digit.
+  const justFocused = useRef(false)
+  // null and undefined are the same "empty" here — a nullable field's key is dropped once cleared.
+  if (draft !== null && (committed.current ?? null) !== (value ?? null)) { setDraft(null); committed.current = null }
+  const commit = (raw: string) => {
+    let s = raw.replace(/,/g, '.').replace(/[^0-9.]/g, '')
+    const i = s.indexOf('.')
+    if (i !== -1) s = s.slice(0, i + 1) + s.slice(i + 1).replace(/\./g, '')
+    // A whole-number field keeps what was typed after a separator on screen until blur and
+    // counts only the part before it: cutting the separator off at each keystroke read 8.5 as 85.
+    const whole = !decimal && i !== -1 ? s.slice(0, i) : s
+    const n = whole === '' || whole === '.' ? (nullable ? null : 0) : Math.max(0, parseFloat(whole))
+    committed.current = n
+    setDraft(s)
+    if (nullable) onChange(n)
+    else onChange(n ?? 0)
+  }
+  const shown = draft ?? (value ?? '')
+  return (
+    <input
+      type="text"
+      inputMode={decimal ? 'decimal' : 'numeric'}
+      className={'num ' + className}
+      value={shown}
+      // `fit` hugs the digits on screen — a big read-out with its unit sitting right beside
+      // it — where the default fills whatever cell the field is in.
+      style={fit ? { width: numWidthCh(String(shown)) + 'ch' } : undefined}
+      onFocus={e => { justFocused.current = true; e.target.select() }}
+      onMouseUp={e => { if (justFocused.current) { justFocused.current = false; e.preventDefault() } }}
+      onChange={e => commit(e.target.value)}
+      onBlur={() => { setDraft(null); committed.current = null; justFocused.current = false }}
+      {...rest}
+    />
+  )
+}
+
+// forwardRef so callers can focus it or read its value imperatively
+export const TextField = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function TextField({ className = '', ...rest }, ref) {
+  return <input ref={ref} className={'field ' + className} {...rest} />
+})
+
+export function TextArea({ className = '', ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea className={'field area ' + className} {...rest} />
+}
+
+export const SearchField = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { onClear?: () => void }>(function SearchField({ value, onChange, onClear, ...rest }, ref) {
+  return (
+    <div className="searchf">
+      <Icon name="magnifier" className="lead" />
+      <input ref={ref} className="field" value={value} onChange={onChange} {...rest} />
+      {!!value && (
+        <button className="clear" onClick={onClear} aria-label={t('Clear')}>
+          <Icon name="xmark" />
+        </button>
+      )}
+    </div>
+  )
+})
+
+/* ============================ switch ============================ */
+
+export function Switch({ checked, onChange, disabled, ...accessibility }: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> & { checked?: boolean; onChange: Change<boolean> }) {
+  return (
+    <button
+      {...accessibility}
+      role="switch"
+      aria-checked={!!checked}
+      disabled={disabled}
+      className={'sw' + (checked ? ' on' : '')}
+      onClick={() => onChange(!checked)}
+    >
+      <span className="knob" />
+    </button>
+  )
+}
+
+/* ============================ segmented ============================ */
+
+// options: [{ value, label, icon? }]  — the selected pill slides between cells.
+export function Segmented<V extends string | number>({ options, value, onChange, className = '', allowEmpty = false }: { options: Option<V>[]; value?: V | null; onChange: Change<V>; className?: string; allowEmpty?: boolean }) {
+  const index = options.findIndex(o => o.value === value)
+  const i = Math.max(0, index)
+  return (
+    <div className={'seg ' + className} style={{ '--n': options.length, '--i': i } as Styled}>
+      {(!allowEmpty || index >= 0) && <span className="seg-sel" aria-hidden="true" />}
+      {options.map(o => (
+        <button
+          key={o.value}
+          className={o.value === value ? 'on' : ''}
+          aria-pressed={o.value === value}
+          onClick={() => onChange(o.value)}
+        >
+          {o.icon && <Icon name={o.icon} />}
+          {o.label && <span>{o.label}</span>}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/* ============================ stepper ============================ */
+
+// `min` and `max` hold for the buttons at once, but for typing only once the field is left:
+// clamped on every keystroke, a field emptied to type a new number snapped to the minimum, and
+// the digits typed next landed after it (a 48 retyped as 75 saved 175).
+export function Stepper({ value, step = 1, min = 0, max = Infinity, onChange, decimal = true, className = '', label, unit, invalid = false, disabled = false, onStep, ariaLabel, holdKey, captureHold }: { value: number; step?: number; min?: number; max?: number; onChange: Change<number>; decimal?: boolean; className?: string; label?: ReactNode; unit?: ReactNode; invalid?: boolean; disabled?: boolean; onStep?: (value: number, step: number, direction: number) => number; ariaLabel?: string; holdKey?: unknown; captureHold?: (change: Change<number>) => { set: (value: number) => unknown; valid: () => boolean; cancel?: () => void } }) {
+  const clamp = (v: number) => Math.min(max, Math.max(min, v))
+  const set = (v: number) => onChange(clamp(Math.round((v || 0) * 100) / 100))
+  // Repeats read the latest numeric value while retaining the press-start setter and target.
+  // Optional owner/row guards cancel a hold before it can edit a replacement row.
+  const live = useRef({ value, step, set })
+  live.current = { value, step, set }
+  const hold = useRef<{ delay: number | null; tick: number | null; count: number; repeated: boolean; target: { set: (value: number) => unknown; valid: () => boolean; cancel?: () => void; onStep: typeof onStep; step: number } | null }>({ target: null, delay: null, tick: null, count: 0, repeated: false })
+  const bump = (dir: number, target = hold.current.target) => {
+    if (target && !target.valid()) { cancelHold(); return }
+    const { value } = live.current
+    const stepNow = target?.step ?? live.current.step, stepper = target ? target.onStep : onStep
+    const change = target?.set ?? live.current.set
+    const applied: unknown = change(stepper ? stepper(value, stepNow, dir) : (+value || 0) + dir * stepNow)
+    if (applied === false) {
+      // A guarded producer already reported refusal; stop without a second toast.
+      stopHold(); hold.current.repeated = true; hold.current.target = null
+    }
+  }
+  const stopHold = () => {
+    const h = hold.current
+    ux().window!.clearTimeout(h.delay ?? undefined); ux().window!.clearInterval(h.tick ?? undefined)
+    h.delay = h.tick = null
+  }
+  const cancelHold = () => {
+    hold.current.repeated = true
+    stopHold()
+    hold.current.target?.cancel?.()
+    hold.current.target = null
+  }
+  const startHold = (dir: number) => {
+    stopHold()
+    const h = hold.current
+    h.repeated = false; h.count = 0
+    // Existing callers keep their live callback behavior; guarded callers opt into press binding.
+    h.target = captureHold ? { ...captureHold(set), onStep, step } : null
+    h.delay = ux().window!.setTimeout(() => {
+      const run = () => {
+        h.repeated = true; h.count++
+        bump(dir)
+        // modest acceleration after a bit of holding so a long hold covers ground
+        if (h.count === 15 && h.tick != null) { ux().window!.clearInterval(h.tick ?? undefined); h.tick = ux().window!.setInterval(run, 40) }
+      }
+      h.tick = ux().window!.setInterval(run, 80)
+    }, 400)
+  }
+  // The click that follows pointerup must not add a step once the hold repeated.
+  const click = (dir: number) => {
+    if (hold.current.repeated) { hold.current.repeated = false; hold.current.target = null; return }
+    bump(dir)
+    hold.current.target = null
+  }
+  useEffect(() => stopHold, [])
+  useLayoutEffect(() => {
+    const h = hold.current
+    if (h.target) cancelHold()
+  }, [holdKey, disabled])
+  const abandonHold = () => {
+    stopHold()
+    if (hold.current.target) hold.current.repeated = true
+    hold.current.target = null
+  }
+  const holdProps = (dir: number) => ({
+    onPointerDown: (e: ReactPointerEvent<HTMLButtonElement>) => { if (e.button === 0 || e.button == null) startHold(dir) },
+    onPointerUp: stopHold, onPointerCancel: abandonHold, onPointerLeave: abandonHold, onBlur: abandonHold,
+    onClick: () => click(dir),
+  })
+  const inner = (
+    <div className={'stp ' + className}>
+      <button {...holdProps(-1)} aria-label={ariaLabel ? `Decrease ${ariaLabel}` : t('Decrease')} disabled={disabled}><Icon name="minus" /></button>
+      <span className="val" onBlur={() => { const v = +value || 0; if (clamp(v) !== v) onChange(clamp(v)) }}>
+        <NumberField value={value} decimal={decimal} onChange={onChange} disabled={disabled} aria-invalid={invalid ? 'true' : undefined} />
+        {unit && <i>{unit}</i>}
+      </span>
+      <button {...holdProps(1)} aria-label={ariaLabel ? `Increase ${ariaLabel}` : t('Increase')} disabled={disabled}><Icon name="plus" /></button>
+    </div>
+  )
+  if (!label) return inner
+  return <div className="stp-w"><span className="stp-l">{label}</span>{inner}</div>
+}
+
+/* ============================ slider ============================ */
+
+// Pointer-driven so the fill, track and thumb are all ours — no ::-webkit-*
+// pseudo-elements, which is the only way the control looks identical on every
+// platform and can pick up the accent colour.
+export const SLIDER_GRAB_PX = 22
+export function Slider({ value, min = 0, max = 100, step = 1, onChange, className = '', disabled = false }: { value: number; min?: number; max?: number; step?: number; onChange: Change<number>; className?: string; disabled?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [drag, setDrag] = useState(false)
+  // Grabbing the knob drags it relative to where the finger landed; a finger
+  // is ~22px wide, so a touch that far off still means "the knob", not "jump".
+  const offset = useRef(0)
+  const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100))
+
+  const posToValue = useCallback((clientX: number) => {
+    const el = ref.current
+    if (!el) return value
+    const r = el.getBoundingClientRect()
+    // The fraction is read from the physical left edge, then mirrored in RTL where the
+    // minimum sits at the inline-start (right) end of the track.
+    let f = Math.min(1, Math.max(0, (clientX - r.left) / r.width))
+    if (ux().document!.documentElement.dir === 'rtl') f = 1 - f
+    const raw = min + f * (max - min)
+    const snapped = Math.round(raw / step) * step
+    // step can be fractional (0.1) — round away binary noise
+    return Math.min(max, Math.max(min, Math.round(snapped * 1000) / 1000))
+  }, [min, max, step, value])
+
+  useEffect(() => {
+    if (!drag) return
+    const move = (e: PointerEvent & { touches?: TouchList }) => {
+      e.preventDefault()
+      onChange(posToValue((e.touches ? e.touches[0]!.clientX : e.clientX) - offset.current))
+    }
+    const up = () => setDrag(false)
+    ux().window!.addEventListener('pointermove', move)
+    ux().window!.addEventListener('pointerup', up)
+    ux().window!.addEventListener('pointercancel', up)
+    return () => {
+      ux().window!.removeEventListener('pointermove', move)
+      ux().window!.removeEventListener('pointerup', up)
+      ux().window!.removeEventListener('pointercancel', up)
+    }
+  }, [drag, onChange, posToValue])
+
+  const key = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return
+    // The arrow pointing at the inline-end (max) end still increases; in RTL that is Left.
+    const inc = ux().document!.documentElement.dir === 'rtl' ? 'ArrowLeft' : 'ArrowRight'
+    const dec = ux().document!.documentElement.dir === 'rtl' ? 'ArrowRight' : 'ArrowLeft'
+    const d = e.key === inc || e.key === 'ArrowUp' ? step
+      : e.key === dec || e.key === 'ArrowDown' ? -step : 0
+    if (!d) return
+    e.preventDefault()
+    onChange(Math.min(max, Math.max(min, Math.round((value + d) * 1000) / 1000)))
+  }
+
+  return (
+    <div
+      ref={ref}
+      className={'sld' + (drag ? ' dragging' : '') + ' ' + className}
+      role="slider"
+      tabIndex={disabled ? -1 : 0}
+      aria-valuenow={value} aria-valuemin={min} aria-valuemax={max}
+      aria-disabled={disabled}
+      data-nodrag                                  /* keeps the sheet from swipe-dismissing */
+      onKeyDown={key}
+      onPointerDown={e => {
+        if (disabled) return
+        e.currentTarget.setPointerCapture?.(e.pointerId)
+        const r = e.currentTarget.getBoundingClientRect()
+        // The knob is measured from inline-start: left in LTR, right in RTL.
+        const knobX = ux().document!.documentElement.dir === 'rtl'
+          ? r.right - (pct / 100) * r.width
+          : r.left + (pct / 100) * r.width
+        const d = e.clientX - knobX
+        offset.current = Math.abs(d) <= SLIDER_GRAB_PX ? d : 0
+        setDrag(true)
+        if (!offset.current) onChange(posToValue(e.clientX))
+      }}
+    >
+      <span className="sld-track"><span className="sld-fill" style={{ width: pct + '%' }} /></span>
+      <span className="sld-knob" style={{ insetInlineStart: pct + '%' }} />
+    </div>
+  )
+}
+
+/* ============================ checkbox ============================ */
+
+export function Check({ checked, onChange, className = '', size, label }: { checked?: boolean; onChange: Change<boolean>; className?: string; size?: number | string; label?: string }) {
+  return (
+    <button
+      role="checkbox"
+      aria-checked={!!checked}
+      aria-label={label}
+      className={'chk' + (checked ? ' on' : '') + ' ' + className}
+      style={size ? { width: size, height: size } : undefined}
+      onClick={() => onChange(!checked)}
+    >
+      <Icon name="check" />
+    </button>
+  )
+}
+
+/* ============================ grouped list ============================ */
+
+// The inset-grouped list is the app's main structural primitive: a titled
+// section holding rows separated by hairlines that stop short of the leading
+// edge, so the icon column reads as a continuous rail.
+export function Section({ title, footer, children, className = '' }: { title?: ReactNode; footer?: ReactNode; children?: ReactNode; className?: string }) {
+  return (
+    <section className={'sect ' + className}>
+      {title && <h2 className="sect-t">{title}</h2>}
+      <div className="sect-b">{children}</div>
+      {footer && <p className="sect-f">{footer}</p>}
+    </section>
+  )
+}
+
+export function Row({ icon, iconTint, title, subtitle, value, accessory = 'none', onClick, danger, children, className = '' }: RowProps) {
+  const Tag = onClick ? 'button' : 'div'
+  return (
+    <Tag className={'lrow' + (onClick ? ' tap' : '') + (danger ? ' danger' : '') + ' ' + className} onClick={onClick}>
+      {icon && <span className="lrow-i" style={iconTint ? { '--tint': iconTint } as Styled : undefined}><Icon name={icon} /></span>}
+      <span className="lrow-m">
+        <span className="lrow-t">{title}</span>
+        {subtitle && <span className="lrow-s">{subtitle}</span>}
+      </span>
+      {children}
+      {value != null && <span className="lrow-v">{value}</span>}
+      {accessory === 'chevron' && <Icon name="chevronRight" className="lrow-c" />}
+      {accessory === 'check' && <Icon name="check" className="lrow-k" />}
+    </Tag>
+  )
+}
+
+/* ============================ picker ============================ */
+
+// Replaces <select>. A native select opens a system list that ignores the app's
+// theme entirely — on dark mode it flashes a white sheet — and can't show more
+// than a bare label per option. This opens our own sheet with a checkmark on the
+// current value, which is also how iOS itself handles a long option list.
+export function SelectRow<V extends string | number>({ icon, iconTint, title, value, options, onChange, sheetTitle, stackedValue = false, search }: { icon?: string; iconTint?: string; title?: ReactNode; value?: V | null; options: Option<V>[]; onChange: Change<V>; sheetTitle?: ReactNode; stackedValue?: boolean; search?: Search<V> }) {
+  const cur = options.find(o => o.value === value)
+  const open = () => {
+    const { openSheet } = require_ui()
+    const h = openSheet(close => <SelectSheet title={sheetTitle || title} value={value} options={options}
+      onChange={onChange} search={search} close={close} />)
+    return h
+  }
+  return (
+    <Row icon={icon} iconTint={iconTint} title={title} value={cur ? cur.label : value} accessory="chevron" onClick={open}
+      className={stackedValue ? 'lrow-stack-value' : ''} />
+  )
+}
+
+function SelectSheet<V extends string | number>({ title, value, options, onChange, search, close }: { title?: ReactNode; value?: V | null; options: Option<V>[]; onChange: Change<V>; search?: Search<V>; close: () => void }) {
+  const [query, setQuery] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+  const firstVisibleRef = useRef<HTMLButtonElement>(null)
+  const syncPickerViewport = useCallback(() => {
+    const input = inputRef.current
+    const sheet = input?.closest<HTMLElement>('.sheet')
+    const viewport = ux().window!.visualViewport
+    if (!sheet || !viewport) return
+
+    const { bottomInset, visualHeight } = sheetKeyboardInsets(ux().window!)
+    sheet.style.setProperty('--picker-keyboard-bottom', `${bottomInset}px`)
+    sheet.style.setProperty('--picker-visual-height', `${visualHeight}px`)
+  }, [])
+  const matcher = typeof search === 'function' ? search : search?.match
+  const visible = matcher ? options.filter(o => matcher(o, query)) : options
+
+  useEffect(() => {
+    if (!search) return
+    const viewport = ux().window!.visualViewport
+    if (!viewport) return
+    const sync = () => syncPickerViewport()
+    sync()
+    viewport.addEventListener('resize', sync)
+    viewport.addEventListener('scroll', sync)
+    return () => {
+      viewport.removeEventListener('resize', sync)
+      viewport.removeEventListener('scroll', sync)
+        const sheet = inputRef.current?.closest<HTMLElement>('.sheet')
+      sheet?.style.removeProperty('--picker-keyboard-bottom')
+      sheet?.style.removeProperty('--picker-visual-height')
+    }
+  }, [search, syncPickerViewport])
+
+  // Filtering can leave the first result underneath the mobile keyboard. Keep the
+  // correction local to the sheet instead of letting focus/scrollIntoView move the page.
+  useEffect(() => {
+    if (!query.trim() || !visible.length) return
+    const input = inputRef.current
+    if (!input || ux().document!.activeElement !== input) return
+    const schedule = (callback: () => void) => typeof ux().window!.requestAnimationFrame === 'function'
+      ? ux().window!.requestAnimationFrame(callback)
+      : ux().window!.setTimeout(callback, 0)
+    const cancel = (frame: number) => typeof ux().window!.cancelAnimationFrame === 'function'
+      ? ux().window!.cancelAnimationFrame(frame)
+      : ux().window!.clearTimeout(frame)
+    const frame = schedule(() => {
+      if (ux().document!.activeElement !== input) return
+      const option = firstVisibleRef.current
+      const sheet = option?.closest<HTMLElement>('.sheet')
+      if (!option || !sheet) return
+      const viewport = ux().window!.visualViewport
+      const visualBottom = viewport ? (viewport.offsetTop || 0) + viewport.height : ux().window!.innerHeight
+      const sheetBottom = sheet.getBoundingClientRect().bottom || visualBottom
+      const hiddenBy = option.getBoundingClientRect().bottom - Math.min(visualBottom, sheetBottom) + 8
+      if (hiddenBy <= 0) return
+      const maxScroll = Math.max(0, sheet.scrollHeight - sheet.clientHeight)
+      const nextScroll = Math.min(maxScroll, Math.max(0, sheet.scrollTop + hiddenBy))
+      if (nextScroll !== sheet.scrollTop) sheet.scrollTop = nextScroll
+    })
+    return () => cancel(frame)
+  }, [query, visible.length])
+
+  return (
+    <>
+      <h3>{title}</h3>
+      {search && <div className="picker-search">
+        <SearchField value={query} onChange={e => setQuery(e.currentTarget.value)} onInput={e => setQuery(e.currentTarget.value)}
+          onClear={() => setQuery('')} onFocus={syncPickerViewport} ref={inputRef} placeholder={search.placeholder} aria-label={search.label || search.placeholder} />
+      </div>}
+      <div className="sect-b">
+        {visible.map((o, index) => (
+          <button key={o.value} ref={index === 0 ? firstVisibleRef : undefined} className="lrow tap" onClick={() => { close(); onChange(o.value) }}>
+            <span className="lrow-m"><span className="lrow-t">{o.label}</span>
+              {o.subtitle && <span className="lrow-s">{o.subtitle}</span>}</span>
+            {o.value === value && <Icon name="check" className="lrow-k" />}
+          </button>
+        ))}
+        {!visible.length && search && <div className="empty">
+          <div className="ico"><Icon name="magnifier" /></div>{search.emptyLabel}
+        </div>}
+      </div>
+      <div style={{ height: 8 }} />
+    </>
+  )
+}
+
+/** Multi-select row for additive exercise metadata. The sheet mirrors selection locally so
+ * each tap updates its checkmark immediately while the caller persists the value. */
+export function MultiSelectRow<V extends string | number>({ icon, iconTint, title, values, options, onToggle, sheetTitle, noneLabel, doneLabel }: { icon?: string; iconTint?: string; title?: ReactNode; values: V[]; options: Option<V>[]; onToggle: Change<V>; sheetTitle?: ReactNode; noneLabel?: string; doneLabel?: ReactNode }) {
+  const selected = options.filter(o => values.includes(o.value))
+  const summary = selected.length ? selected.map(o => o.label).join(', ') : (noneLabel || '')
+  const open = () => {
+    const { openSheet } = require_ui()
+    openSheet(close => <MultiSelectSheet values={values} options={options} onToggle={onToggle}
+      title={sheetTitle || title} doneLabel={doneLabel} close={close} />)
+  }
+  return (
+    <Row icon={icon} iconTint={iconTint} title={title} value={summary} accessory="chevron" onClick={open} />
+  )
+}
+
+function MultiSelectSheet<V extends string | number>({ values, options, onToggle, title, doneLabel, close }: { values: V[]; options: Option<V>[]; onToggle: Change<V>; title?: ReactNode; doneLabel?: ReactNode; close: () => void }) {
+  const [sel, setSel] = useState(values)
+  const toggle = (value: V) => {
+    setSel(current => current.includes(value) ? current.filter(x => x !== value) : [...current, value])
+    onToggle(value)
+  }
+  return (
+    <>
+      <h3>{title}</h3>
+      <div className="sect-b">
+        {options.map(o => {
+          const on = sel.includes(o.value)
+          return (
+            <button key={o.value} className={'lrow tap' + (on ? ' on' : '')} onClick={() => toggle(o.value)}>
+              <span className="lrow-m"><span className="lrow-t">{o.label}</span>
+                {o.subtitle && <span className="lrow-s">{o.subtitle}</span>}</span>
+              {on && <Icon name="check" className="lrow-k" />}
+            </button>
+          )
+        })}
+      </div>
+      <div style={{ height: 8 }} />
+      <Button variant="primary" onClick={close}>{doneLabel || 'Done'}</Button>
+    </>
+  )
+}
+
+// Late import keeps this module free of a cycle at load time (useUI pulls in the
+// store, which pulls in helpers that import controls).
+let _ui: UIStore | null = null
+export function bindUI(store: UIStore | null) { _ui = store }
+function require_ui() {
+  if (!_ui) throw new Error('ui store not bound — call bindUI(useUI) once at boot')
+  return _ui.getState()
+}
+
+/* ============================ buttons ============================ */
+
+export function Button({ variant = 'plain', size, icon, trailingIcon, children, className = '', ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: string; size?: string; icon?: string; trailingIcon?: string; ref?: Ref<HTMLButtonElement> }) {
+  return (
+    <button className={`btn ${variant}${size ? ' ' + size : ''} ${className}`} {...rest}>
+      {icon && <Icon name={icon} />}
+      {children && <span>{children}</span>}
+      {trailingIcon && <Icon name={trailingIcon} />}
+    </button>
+  )
+}

@@ -1,0 +1,8 @@
+.progression-prescription { margin-block: 10px; padding: 12px; border: 1px solid var(--sep); border-radius: 12px; }
+.prescribed-sets { margin-block: 8px; padding-inline-start: 24px; }
+.prescription-why summary { cursor: pointer; padding-block: 8px; }
+.prescription-why ul { padding-inline-start: 20px; }
+.prescription-why dl { margin-block: 6px 12px; font-size: 12px; overflow-wrap: anywhere; }
+.prescription-why dl > div { display: flex; gap: 8px; }
+.prescription-why dt { font-weight: 600; }
+.prescription-why dd { margin: 0; }

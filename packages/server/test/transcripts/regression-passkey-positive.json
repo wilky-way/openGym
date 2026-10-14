@@ -1,0 +1,294 @@
+[
+  {
+    "method": "POST",
+    "route": "/api/register/options",
+    "status": 200,
+    "body": {
+      "cid": "$cid1",
+      "options": {
+        "challenge": "$challenge1",
+        "rp": {
+          "name": "openGym",
+          "id": "localhost"
+        },
+        "user": {
+          "id": "$handle1",
+          "name": "Synthetic athlete",
+          "displayName": "Synthetic athlete"
+        },
+        "pubKeyCredParams": [
+          {
+            "alg": -8,
+            "type": "public-key"
+          },
+          {
+            "alg": -7,
+            "type": "public-key"
+          },
+          {
+            "alg": -257,
+            "type": "public-key"
+          }
+        ],
+        "timeout": 60000,
+        "attestation": "none",
+        "excludeCredentials": [],
+        "authenticatorSelection": {
+          "residentKey": "required",
+          "userVerification": "preferred",
+          "requireResidentKey": true
+        },
+        "extensions": {
+          "credProps": true
+        },
+        "hints": []
+      }
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/register/verify",
+    "status": 200,
+    "body": {
+      "user": {
+        "id": "$uid1",
+        "name": "Synthetic athlete",
+        "admin": false
+      }
+    },
+    "cookies": [
+      "gymsid=$session; Path=/; Max-Age=7776000; HttpOnly; SameSite=Lax"
+    ]
+  },
+  {
+    "method": "POST",
+    "route": "/api/login/options",
+    "status": 200,
+    "body": {
+      "cid": "$cid2",
+      "options": {
+        "rpId": "localhost",
+        "challenge": "$challenge2",
+        "allowCredentials": [],
+        "timeout": 60000,
+        "userVerification": "preferred"
+      }
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/login/verify",
+    "status": 200,
+    "body": {
+      "user": {
+        "id": "$uid1",
+        "name": "Synthetic athlete",
+        "admin": false
+      }
+    },
+    "cookies": [
+      "gymsid=$session; Path=/; Max-Age=7776000; HttpOnly; SameSite=Lax"
+    ]
+  },
+  {
+    "method": "GET",
+    "route": "/api/account/passkeys",
+    "status": 200,
+    "body": {
+      "passkeys": [
+        {
+          "id": "7biZLzg-WR86q0kG3I-Rxw",
+          "name": null,
+          "created": "2026-10-12T21:20:00.000Z",
+          "lastUsed": "2026-10-12T21:20:00.000Z",
+          "transports": [
+            "internal",
+            "hybrid"
+          ]
+        }
+      ],
+      "password": false,
+      "lastWayIn": true
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/login/options",
+    "status": 200,
+    "body": {
+      "cid": "$cid3",
+      "options": {
+        "rpId": "localhost",
+        "challenge": "$challenge3",
+        "allowCredentials": [],
+        "timeout": 60000,
+        "userVerification": "preferred"
+      }
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/account/passkeys/options",
+    "status": 200,
+    "body": {
+      "cid": "$cid4",
+      "options": {
+        "challenge": "$challenge4",
+        "rp": {
+          "name": "openGym",
+          "id": "localhost"
+        },
+        "user": {
+          "id": "$handle1",
+          "name": "Synthetic athlete",
+          "displayName": "Synthetic athlete"
+        },
+        "pubKeyCredParams": [
+          {
+            "alg": -8,
+            "type": "public-key"
+          },
+          {
+            "alg": -7,
+            "type": "public-key"
+          },
+          {
+            "alg": -257,
+            "type": "public-key"
+          }
+        ],
+        "timeout": 60000,
+        "attestation": "none",
+        "excludeCredentials": [
+          {
+            "id": "7biZLzg-WR86q0kG3I-Rxw",
+            "transports": [
+              "internal",
+              "hybrid"
+            ],
+            "type": "public-key"
+          }
+        ],
+        "authenticatorSelection": {
+          "residentKey": "required",
+          "userVerification": "preferred",
+          "requireResidentKey": true
+        },
+        "extensions": {
+          "credProps": true
+        },
+        "hints": []
+      }
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/account/passkeys/verify",
+    "status": 200,
+    "body": {
+      "ok": true,
+      "passkeys": [
+        {
+          "id": "7biZLzg-WR86q0kG3I-Rxw",
+          "name": null,
+          "created": "2026-10-12T21:20:00.000Z",
+          "lastUsed": "2026-10-12T21:20:00.000Z",
+          "transports": [
+            "internal",
+            "hybrid"
+          ]
+        },
+        {
+          "id": "gYiDE1SF1S_Ljksm2Woakg",
+          "name": "Laptop",
+          "created": "2026-10-12T21:20:00.000Z",
+          "lastUsed": null,
+          "transports": [
+            "internal",
+            "hybrid"
+          ]
+        }
+      ],
+      "password": false,
+      "lastWayIn": false
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/account/passkeys/rename",
+    "status": 200,
+    "body": {
+      "ok": true,
+      "passkeys": [
+        {
+          "id": "7biZLzg-WR86q0kG3I-Rxw",
+          "name": null,
+          "created": "2026-10-12T21:20:00.000Z",
+          "lastUsed": "2026-10-12T21:20:00.000Z",
+          "transports": [
+            "internal",
+            "hybrid"
+          ]
+        },
+        {
+          "id": "gYiDE1SF1S_Ljksm2Woakg",
+          "name": "Security key",
+          "created": "2026-10-12T21:20:00.000Z",
+          "lastUsed": null,
+          "transports": [
+            "internal",
+            "hybrid"
+          ]
+        }
+      ],
+      "password": false,
+      "lastWayIn": false
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/login/options",
+    "status": 200,
+    "body": {
+      "cid": "$cid5",
+      "options": {
+        "rpId": "localhost",
+        "challenge": "$challenge5",
+        "allowCredentials": [],
+        "timeout": 60000,
+        "userVerification": "preferred"
+      }
+    },
+    "cookies": []
+  },
+  {
+    "method": "DELETE",
+    "route": "/api/account/passkeys?id=gYiDE1SF1S_Ljksm2Woakg",
+    "status": 200,
+    "body": {
+      "ok": true,
+      "passkeys": [
+        {
+          "id": "7biZLzg-WR86q0kG3I-Rxw",
+          "name": null,
+          "created": "2026-10-12T21:20:00.000Z",
+          "lastUsed": "2026-10-12T21:20:00.000Z",
+          "transports": [
+            "internal",
+            "hybrid"
+          ]
+        }
+      ],
+      "password": false,
+      "lastWayIn": true
+    },
+    "cookies": []
+  }
+]

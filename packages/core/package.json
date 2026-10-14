@@ -1,0 +1,15 @@
+{
+  "name": "@opengym/core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    "./*.js": "./src/*.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "bun --bun vitest run --passWithNoTests"
+  }
+}

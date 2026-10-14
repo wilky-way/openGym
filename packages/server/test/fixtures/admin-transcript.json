@@ -1,0 +1,441 @@
+[
+  {
+    "method": "GET",
+    "route": "/api/admin/users",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "users": [
+          {
+            "id": "u_adm_1",
+            "name": "Adminna",
+            "created": "2026-10-01T00:00:00.000Z",
+            "disabled": false,
+            "admin": true,
+            "invitedBy": null,
+            "workouts": 0,
+            "lastWorkout": null,
+            "lastSync": null,
+            "hasPush": true,
+            "live": null
+          },
+          {
+            "id": "u_vic_1",
+            "name": "Mallory",
+            "created": "2026-10-01T00:00:00.000Z",
+            "disabled": false,
+            "admin": false,
+            "invitedBy": "CODE1",
+            "workouts": 0,
+            "lastWorkout": null,
+            "lastSync": null,
+            "hasPush": true,
+            "live": null
+          }
+        ],
+        "invite_only": false,
+        "now": 1791840000000
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/user?id=u_vic_1",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "user": {
+          "id": "u_vic_1",
+          "name": "Mallory",
+          "created": "2026-10-01T00:00:00.000Z",
+          "disabled": false,
+          "admin": false,
+          "invitedBy": "CODE1"
+        },
+        "unit": "kg",
+        "lastSync": null,
+        "routines": [],
+        "bodyweight": [],
+        "workouts": []
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/user?id=missing",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 404,
+      "body": {
+        "error": "no such user"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/users",
+    "actor": "u_vic_1",
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "forbidden"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/user/disable",
+    "body": {
+      "id": "u_adm_1",
+      "disabled": true
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 400,
+      "body": {
+        "error": "cannot disable an admin"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/user/disable",
+    "body": {
+      "id": "u_vic_1",
+      "disabled": true
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "id": "u_vic_1",
+        "disabled": true
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/user/disable",
+    "body": {
+      "id": "u_vic_1",
+      "disabled": false
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "id": "u_vic_1",
+        "disabled": false
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/invites",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "invites": [
+          {
+            "code": "CODE1",
+            "note": "",
+            "createdBy": "u_adm_1",
+            "created": "2026-10-12T21:20:00.000Z",
+            "usedBy": "u_vic_1",
+            "usedAt": "2026-10-12T21:20:00.000Z",
+            "usedByName": "Mallory"
+          }
+        ],
+        "invite_only": false
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/invites/new",
+    "body": {
+      "note": "synthetic guest"
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "invite": {
+          "code": "<invite>",
+          "note": "synthetic guest",
+          "createdBy": "u_adm_1",
+          "created": "2026-10-12T21:20:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/invites/revoke",
+    "body": {
+      "code": "<invite>"
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "ok": true
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/invites/revoke",
+    "body": {
+      "code": "code1"
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 400,
+      "body": {
+        "error": "already used, cannot revoke"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/user/delete",
+    "body": {
+      "id": "u_adm_1"
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 400,
+      "body": {
+        "error": "you cannot delete your own account"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/user/delete",
+    "body": {
+      "id": "u_vic_1"
+    },
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "id": "u_vic_1"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/invites",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "invites": [
+          {
+            "code": "CODE1",
+            "note": "",
+            "createdBy": "u_adm_1",
+            "created": "2026-10-12T21:20:00.000Z",
+            "usedBy": "u_vic_1",
+            "usedAt": "2026-10-12T21:20:00.000Z",
+            "usedByName": null
+          }
+        ],
+        "invite_only": false
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/audit",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "events": [
+          {
+            "id": 6,
+            "ts": 1791840000000,
+            "ev": "admin.user.delete",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna",
+            "msg": "Mallory"
+          },
+          {
+            "id": 5,
+            "ts": 1791840000000,
+            "ev": "admin.invite.revoke",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna",
+            "msg": "<invite>"
+          },
+          {
+            "id": 4,
+            "ts": 1791840000000,
+            "ev": "admin.invite.create",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna",
+            "msg": "<invite>"
+          },
+          {
+            "id": 3,
+            "ts": 1791840000000,
+            "ev": "admin.user.enable",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna",
+            "tgt": "u_vic_1",
+            "tname": "Mallory"
+          },
+          {
+            "id": 2,
+            "ts": 1791840000000,
+            "ev": "admin.user.disable",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna",
+            "tgt": "u_vic_1",
+            "tname": "Mallory"
+          },
+          {
+            "id": 1,
+            "ts": 1791840000000,
+            "ev": "admin.denied",
+            "ok": false,
+            "uid": "u_vic_1",
+            "name": "Mallory"
+          }
+        ],
+        "total": 6,
+        "nextBefore": null,
+        "enabled": true,
+        "ip_mode": "off",
+        "retention": {
+          "max": 5000,
+          "days": 90
+        },
+        "now": 1791840000000
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/audit?cat=fail",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "events": [
+          {
+            "id": 1,
+            "ts": 1791840000000,
+            "ev": "admin.denied",
+            "ok": false,
+            "uid": "u_vic_1",
+            "name": "Mallory"
+          }
+        ],
+        "total": 1,
+        "nextBefore": null,
+        "enabled": true,
+        "ip_mode": "off",
+        "retention": {
+          "max": 5000,
+          "days": 90
+        },
+        "now": 1791840000000
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/audit?cat=admin&limit=2&before=5",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "events": [
+          {
+            "id": 4,
+            "ts": 1791840000000,
+            "ev": "admin.invite.create",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna",
+            "msg": "<invite>"
+          },
+          {
+            "id": 3,
+            "ts": 1791840000000,
+            "ev": "admin.user.enable",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna",
+            "tgt": "u_vic_1",
+            "tname": "Mallory"
+          }
+        ],
+        "total": 6,
+        "nextBefore": 3,
+        "enabled": true,
+        "ip_mode": "off",
+        "retention": {
+          "max": 5000,
+          "days": 90
+        },
+        "now": 1791840000000
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "route": "/api/admin/audit/clear",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "ok": true
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "route": "/api/admin/audit",
+    "actor": "u_adm_1",
+    "response": {
+      "status": 200,
+      "body": {
+        "events": [
+          {
+            "id": 7,
+            "ts": 1791840000000,
+            "ev": "admin.audit.clear",
+            "ok": true,
+            "uid": "u_adm_1",
+            "name": "Adminna"
+          }
+        ],
+        "total": 1,
+        "nextBefore": null,
+        "enabled": true,
+        "ip_mode": "off",
+        "retention": {
+          "max": 5000,
+          "days": 90
+        },
+        "now": 1791840000000
+      }
+    }
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "name": "@opengym/server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "bun ../../scripts/server-tests.ts"
+  },
+  "dependencies": {
+    "@opengym/core": "workspace:*",
+    "@opengym/contract": "workspace:*",
+    "@simplewebauthn/server": "13.3.2",
+    "hono": "^4.13.13",
+    "web-push": "3.6.7"
+  },
+  "devDependencies": {
+    "@types/web-push": "3.6.4"
+  }
+}

@@ -1,0 +1,12 @@
+import type { ExerciseIndex } from './exercises';
+import type { Workout } from '../domain/state-doc';
+export declare const legacySyncKey: (w: any) => string;
+export declare const startTimeOf: (w: any) => string;
+export declare const sameWorkout: (a: any, b: any) => boolean;
+export declare function retimeWorkout(w: any, iso: any, time: any): any;
+export declare function rebuildPrHistory(workouts: any, exerciseIds: any, moved?: Workout | null, index?: ExerciseIndex): any;
+export declare function moveWorkout(workouts: any, ref: any, iso: any, time: any, now?: number, index?: ExerciseIndex): any;
+export declare const MAX_DURATION_MIN: number;
+export declare const endsInFuture: (iso: any, time: any, minutes: any, now?: number) => boolean;
+export declare const durationMinOf: (w: any) => number;
+export declare function setWorkoutDuration(workouts: any, ref: any, minutes: any, now?: number): any[] | null;

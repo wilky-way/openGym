@@ -1,0 +1,109 @@
+import './sync-clock'
+// @vitest-environment happy-dom
+
+/* QA, v1.3.9 (t8): "Reset everything" on one device was undone by the next device that pushed a
+   change of its own — its push got the 409, the merge took the union, and the wiped profile was
+   back. The reset now carries its time (`resetAt`) and the names of what it wiped (`resetIds`); a
+   merge with a copy that has not seen it drops exactly those (lib/sync-merge.js). And the stamp
+   only moves forward: a backup restored after the reset is not wiped again by the devices that
+   saw it (review of the compatibility baseline). */
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+vi.mock('./sync-api', () => ({ api: vi.fn(), setRemoteAuth: vi.fn() }))
+vi.mock('../../src/store/useUI', () => ({ useUI: { getState: () => ({ toast: vi.fn() }) } }))
+
+import { api } from './sync-api'
+import { DEF as typed_DEF, useStore as typed_useStore } from './sync-store'
+const DEF: any = typed_DEF
+const useStore: any = typed_useStore
+import { resetIdsOf as typed_resetIdsOf } from '@opengym/core/sync-merge'
+const resetIdsOf: any = typed_resetIdsOf
+
+const clone: any = (v: any) => JSON.parse(JSON.stringify(v))
+const ids: any = (xs: any) => (xs || []).map((x: any) => x.id)
+const workout: any = (id: any, end: any) => ({ id, d: '2026-09-20', start: end - 1000, end, entries: [] })
+const puts: any = () => api.mock.calls.filter(([, o]: any) => o?.method === 'PUT').map(([, o]: any) => JSON.parse(o.body))
+const conflict: any = (state: any, rev: any) => Object.assign(new Error('conflict'), { status: 409, data: { state, rev } })
+const signedIn: any = (S: any, rev: any) => {
+  localStorage.setItem('gym_sync', JSON.stringify({ rev, ts: S._ts }))
+  useStore.setState({ S, user: { id: 'u1' }, ready: true, sync: { offline: false, pending: false, lastSynced: 0 } })
+}
+const PROFILE: any = { ...clone(DEF), _ts: 100, workouts: [workout('w1', 50), workout('w2', 60)], routines: [{ id: 'r1', name: 'A', ex: [], _ts: 10 }], bodyweight: [{ d: '2026-09-01', w: 80, t: 10 }] }
+
+beforeEach(() => { localStorage.clear(); api.mockReset() })
+afterEach(() => { localStorage.clear(); useStore.setState({ S: clone(DEF), user: null, ready: false }) })
+
+describe('Reset everything', () => {
+  it('replaces the server copy with the empty one, stamped, naming what this copy and the server held', async () => {
+    signedIn(clone(PROFILE), 3)
+    // the server also has a workout this device never pulled
+    api.mockResolvedValueOnce({ state: { ...clone(PROFILE), workouts: [...PROFILE.workouts, workout('w-elsewhere', 70)], _rev: 3 }, rev: 3 })
+    api.mockResolvedValueOnce({ ok: true, rev: 4 })
+    const before: any = Date.now()
+    await useStore.getState().resetEverything()
+    await useStore.getState().pushState()
+    const [put] = puts()
+    expect(put.baseRev).toBeUndefined()
+    expect(put.state.workouts).toEqual([])
+    expect(put.state.resetAt).toBeGreaterThanOrEqual(before)
+    expect(put.state.resetIds.workouts).toEqual(['w1', 'w2', 'w-elsewhere'])
+    expect(put.state.resetIds.routines).toEqual(['r1'])
+    expect(put.state.resetIds.bodyweight).toEqual(['2026-09-01|10'])
+  })
+
+  it('a device that has not seen it and pushes a change from before keeps the reset, not the old profile', async () => {
+    signedIn(clone(PROFILE), 3)
+    useStore.getState().update((s: any) => { s.restSec = 45 })   // a change made before the reset, unsent
+    const resetAt: any = Date.now() + 1000
+    const serverReset: any = { ...clone(DEF), _ts: resetAt, resetAt, resetIds: resetIdsOf(PROFILE), _rev: 4 }
+    api.mockRejectedValueOnce(conflict(serverReset, 4))
+    api.mockResolvedValueOnce({ ok: true, rev: 5 })
+    await useStore.getState().pushState()
+
+    const put: any = puts().at(-1)
+    expect(put.baseRev).toBe(4)
+    expect(put.state.workouts).toEqual([])
+    expect(put.state.routines).toEqual([])
+    expect(put.state.bodyweight).toEqual([])
+    expect(put.state.resetAt).toBe(resetAt)
+    expect(useStore.getState().S.workouts).toEqual([])
+  })
+
+  it('what that device logged after the reset is kept, whatever its clock says', async () => {
+    const resetAt: any = Date.now() + 3600e3   // this device's clock is an hour behind the resetting one
+    signedIn(clone(PROFILE), 3)
+    useStore.getState().update((s: any) => { s.workouts.push(workout('after', Date.now())) })
+    const serverReset: any = { ...clone(DEF), _ts: resetAt, resetAt, resetIds: resetIdsOf(PROFILE), _rev: 4 }
+    api.mockRejectedValueOnce(conflict(serverReset, 4))
+    api.mockResolvedValueOnce({ ok: true, rev: 5 })
+    await useStore.getState().pushState()
+    expect(ids(puts().at(-1).state.workouts)).toEqual(['after'])
+  })
+})
+
+describe('a backup restored after a reset', () => {
+  it('the replace keeps the reset stamp, so it is not taken for a copy from before the reset', async () => {
+    const T1: any = Date.now() - 3600e3
+    signedIn({ ...clone(DEF), _ts: T1, resetAt: T1, resetIds: resetIdsOf(PROFILE) }, 4)
+    const backup: any = { ...clone(PROFILE), _ts: 50 }   // an old backup: no stamp
+    api.mockResolvedValueOnce({ ok: true, rev: 5 })
+    useStore.getState().importBackup(backup)
+    await useStore.getState().pushState()
+    const put: any = puts().at(-1)
+    expect(ids(put.state.workouts)).toEqual(['w1', 'w2'])
+    expect(put.state.resetAt).toBe(T1)
+  })
+
+  it('a device that saw the reset keeps the restored backup when it merges its own change in', async () => {
+    const T1: any = Date.now() - 3600e3
+    const resetIds: any = resetIdsOf(PROFILE)
+    signedIn({ ...clone(DEF), _ts: T1, resetAt: T1, resetIds }, 4)
+    useStore.getState().update((s: any) => { s.workouts.push(workout('gym-today', Date.now())) })
+    // the server after the restore on the other device: the backup's workouts, the stamp kept
+    const serverAfterImport: any = { ...clone(PROFILE), _ts: Date.now() - 1000, resetAt: T1, resetIds, _rev: 5 }
+    api.mockRejectedValueOnce(conflict(serverAfterImport, 5))
+    api.mockResolvedValueOnce({ ok: true, rev: 6 })
+    await useStore.getState().pushState()
+    expect(ids(puts().at(-1).state.workouts).sort()).toEqual(['gym-today', 'w1', 'w2'])
+  })
+})

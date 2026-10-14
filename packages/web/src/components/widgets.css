@@ -1,0 +1,26 @@
+/* Toast rules shared with the full Logbook theme. */
+:root{--sab:env(safe-area-inset-bottom,0px);--surface-2:#2c2c2e;--r-xl:22px;--med:220ms;--ease:cubic-bezier(.32,.72,0,1);}
+
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(6px);
+  bottom:calc(96px + var(--sab));z-index:200;
+  background:color-mix(in srgb,var(--surface-2) 88%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  /* 22px, not a pill radius: one line (about 41px high) still reads as a pill, and a toast that
+     wraps to four lines is a rounded box instead of a circle over the page. */
+  border-radius:var(--r-xl);padding:11px 20px;font-size:15px;font-weight:500;
+  box-shadow:0 10px 30px -6px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity var(--med),transform var(--med) var(--ease);
+  /* As wide as its text up to 88vw. Without a width, left:50% left it half the screen to wrap
+     in, so a long message stood as a narrow column. */
+  width:max-content;max-width:88vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* With an action (Undo): the message, then the button at the end, and the toast takes taps. */
+#toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:4px 6px 4px 18px;text-align:start}
+#toast.has-action .toast-msg{flex:1;min-width:0;padding:7px 0}
+#toast .toast-act{flex:none;display:inline-flex;align-items:center;gap:5px;color:var(--acc-ink, var(--acc));font-weight:700;padding:8px 12px;border-radius:14px;min-height:36px}
+#toast .toast-act:active{background:color-mix(in srgb,var(--label) 10%,transparent)}
+#toast .toast-act .icn{font-size:16px}
+body.no-tabbar #toast{bottom:calc(24px + var(--sab))}
+body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}

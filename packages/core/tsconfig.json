@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx",
+    "**/*.d.ts"
+  ],
+  "compilerOptions": {
+    "resolveJsonModule": true
+  }
+}

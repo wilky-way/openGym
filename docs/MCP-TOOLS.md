@@ -1,0 +1,3117 @@
+# MCP tool reference
+
+Generated from the shipped registry. Input objects are strict; credentials belong in local environment configuration.
+
+## list_routines
+
+List the workout routines saved in the user's openGym profile (the same list the Plan screen shows). Each routine is a named set of exercises with set/rep targets. Use this to discover the plan structure before diving into a specific routine or today's workout.
+
+```json
+{
+  "type": "object",
+  "properties": {},
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## get_routine
+
+Get the full exercise list for a single routine (the same view the routine editor shows). Returns mode (reps/time/cardio), set/rep/weight targets (a `pyramid` list of per-set rep targets, 'max' meaning as many reps as possible, when the exercise uses pyramid sets, with `pyramid_rest_sec` and `pyramid_weight` per set where planned, 0 meaning the exercise's rest or last time's weight), superset links, any per-exercise custom increment or Epley deload factor, and each exercise's own rest in seconds (absent means it inherits the global rest timer). Use routine_id from list_routines.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "routine_id": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "routine_id"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## preview_session
+
+Preview the session a routine will actually open with — the numbers the user will see after the progression policy and their training history have overridden the routine's own targets. This is NOT the same as get_routine: a routine storing "squat 3x8 @ 60kg" can open at 75kg because the policy progressed or deloaded from that routine's last logged session. The reps are the routine's own unless a policy that moves reps moved them, or the profile starts planned sessions from the last session (starts_from). Always call this (not get_routine) before telling someone what weight they are about to lift, or before judging whether an edit to a routine had any effect. Returns, per exercise, the planned target, the policy's decision and its stated reason, the opening set rows, and where each number came from. Defaults to today's scheduled routine.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "routine_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Routine to preview. Defaults to the routine scheduled for `date`."
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Date the session would be started on, YYYY-MM-DD. Affects which routine is scheduled and any one-off day override. Defaults to today."
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## get_week_plan
+
+Show the user's training plan. `days` is the authoritative answer to "what is planned when": the next seven dates from today with the routines planned for each (a date can hold several — a combined day) and how each was decided: a coach-week session ("coach"), a session the user pinned to that date ("pinned"), a one-off routine override ("override"), a "rest" override ("rest_override"), the weekday plan ("weekday") or nothing ("rest"). `coach_week` is the current coach week when one is running (a week written by an external planner through the API, never by the app): its sessions are done IN ORDER on whatever days the user trains (no weekday attached), the first undone one is today's session, a session can be pinned to a date, and `waiting` means the week starts on `starts_on`. `weekdays` is the user's own weekly plan keyed by JS getDay() (Sunday=0 … Saturday=6, the openGym state convention) — in a coach week it holds only the routines the user planned themselves, which ride along beside the coach-week session.
+
+```json
+{
+  "type": "object",
+  "properties": {},
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## list_workouts
+
+List recent finished workouts, newest first. Each item summarises the date, exercise count, sets done / planned, total volume (in the user's unit), duration and whether PRs were set. Use this before drilling into a specific date with get_workout.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "from": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Inclusive start date YYYY-MM-DD. Defaults to no lower bound (list most recent)."
+    },
+    "to": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Inclusive end date YYYY-MM-DD. Defaults to today."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200,
+      "description": "Max items to return. Defaults to 25."
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## get_workout
+
+Get the full breakdown of one workout: every exercise, its mode (reps/time/cardio), the target, and per-set labels (e.g. "5 @ 60 kg", "1:30 · 20 kg"). Identify it by workout_id (from list_workouts) or by date. Use list_workouts first if you don't know either.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "The workout date as YYYY-MM-DD. If two sessions share that date, the answer lists them instead and asks for a workout_id."
+    },
+    "workout_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The id from list_workouts. Preferred: it names one session even on a day with two."
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## get_bodyweight
+
+Get the body-weight log: chronological weigh-ins with weights, current goal, deltas vs goal (signed positive = above goal), and a latest summary. Useful for "am I trending toward my weight goal?" questions.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "from": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Inclusive start date YYYY-MM-DD."
+    },
+    "to": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Inclusive end date YYYY-MM-DD. Defaults to today."
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## estimate_1rm
+
+Estimate one-rep max using Epley, Brzycki or Lombardi formulas. If an exercise_id is given, returns the all-time best estimate for that exercise with the source set (weight × reps + date) and the trend across history. If no exercise_id is given, returns a PR table across all reps-mode exercises (sorted highest first). Refuses to guess above 12 reps — above that, formulas diverge past 10% and "work capacity" is read instead of "maximal strength".
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "exercise_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An exercise id from list_routines or get_workout entries. If omitted, returns a full PR table."
+    },
+    "formula": {
+      "type": "string",
+      "enum": [
+        "epley",
+        "brzycki",
+        "lombardi"
+      ],
+      "description": "Formula to use. Defaults to epley."
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## muscle_balance
+
+Show which muscles the user has trained in a period, ranked by "effective sets" (volume in kg is intentionally not used — 100 kg leg press vs 12 kg lateral raise say nothing about which muscle worked harder). Reports worked muscles with a 0-4 relative level (1 = some work, 4 = most worked) and the muscles trained zero times in that period — useful for "what am I neglecting?" questions.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "string",
+      "enum": [
+        "week",
+        "month",
+        "all"
+      ],
+      "description": "window: last 7 days, last 30 days, or all-time"
+    }
+  },
+  "required": [
+    "period"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## get_programme
+
+Includes effortScale and displayDefinition in the profile scale alongside the unchanged authored definition and cycle. Read the active program and its frozen definition, or a specific cycle/definition. Includes the synced revision for conditional actions.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string"
+    },
+    "programme_id": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## programme_position
+
+Read program week, next session/date, projected end and done/skipped adherence using the same projection as the UI. Pending dates are derived.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string"
+    },
+    "today": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## activate_programme
+
+Activate or adopt a saved validated program using UI guards. Requires explicit write opt-in, a paired API token for this profile and the expected revision. Never replaces an active/paused cycle or a running workout.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "expected_rev": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expected_wid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "today": {
+      "type": "string"
+    },
+    "programme_id": {
+      "type": "string"
+    },
+    "week_index": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "per_week": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7
+    },
+    "tm": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      }
+    },
+    "adopt": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "expected_rev",
+    "expected_wid",
+    "programme_id"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## shift_programme
+
+Shift the active program to tomorrow without skipping, through the same UI helper and authenticated conditional API write.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "expected_rev": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expected_wid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "today": {
+      "type": "string"
+    },
+    "cycle_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "expected_rev",
+    "expected_wid",
+    "cycle_id"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## skip_programme_session
+
+Explicitly skip one pending occurrence. Finished logs win; resolved sessions are refused. Requires write opt-in, profile authentication and the expected revision.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "expected_rev": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expected_wid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "today": {
+      "type": "string"
+    },
+    "cycle_id": {
+      "type": "string"
+    },
+    "instance_id": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "expected_rev",
+    "expected_wid",
+    "cycle_id",
+    "instance_id"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## validate_program
+
+Validate supplied JSON, a local draft, or an HTTP library definition without writing data.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "definition": {},
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "programme_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## create_program_draft
+
+Create a personal local draft from scratch, a clone, or canonical/library JSON. No state writes.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "from": {
+      "type": "string",
+      "enum": [
+        "scratch",
+        "clone",
+        "import"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "lb",
+        "kg"
+      ]
+    },
+    "definition": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "programme_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    },
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "version_id": {
+      "anyOf": [
+        {
+          "$ref": "#/properties/draft_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "json",
+        "library"
+      ]
+    },
+    "content": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      ]
+    },
+    "filename": {
+      "type": "string",
+      "maxLength": 10000
+    },
+    "mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "prescriptions": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "from"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## get_program_draft
+
+Return a week summary and conformance; full JSON requires full:true.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "full": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "draft_id"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## list_program_drafts
+
+List personal draft summaries without full programme JSON.
+
+```json
+{
+  "type": "object",
+  "properties": {},
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## delete_program_draft
+
+Delete a draft only at the caller’s expected revision.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## patch_program_draft
+
+Atomically apply typed operations addressed by stable identities.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "ops": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setProgressionRules"
+              },
+              "rules": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "maxItems": 100
+              }
+            },
+            "required": [
+              "op",
+              "rules"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "attachRule"
+              },
+              "at": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "week": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 64
+                      },
+                      "day": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 10000
+                      },
+                      "session": {
+                        "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                      },
+                      "slot": {
+                        "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                      }
+                    },
+                    "required": [
+                      "week",
+                      "day",
+                      "session",
+                      "slot"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  }
+                ]
+              },
+              "ruleId": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+              }
+            },
+            "required": [
+              "op",
+              "at",
+              "ruleId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "detachRule"
+              },
+              "at": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at"
+              },
+              "ruleId": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/ruleId"
+              }
+            },
+            "required": [
+              "op",
+              "at",
+              "ruleId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setMetadata"
+              },
+              "patch": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "goal": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  },
+                  "level": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  },
+                  "daysPerWeek": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 7
+                  },
+                  "equipment": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                    },
+                    "maxItems": 100
+                  },
+                  "licence": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  },
+                  "end": {
+                    "type": "string",
+                    "enum": [
+                      "next",
+                      "repeat",
+                      "stop"
+                    ]
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "lb",
+                      "kg"
+                    ]
+                  },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "private": {
+                        "type": "boolean"
+                      },
+                      "ref": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "url": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "repo": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "sha": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "path": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "workbook": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "op",
+              "patch"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "addWeek"
+              },
+              "week": {
+                "type": "object",
+                "properties": {
+                  "index": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 64
+                  },
+                  "days": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                        },
+                        "sessions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "sessionTemplateId": {
+                                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                              },
+                              "routineSnapshot": {
+                                "type": "object",
+                                "properties": {
+                                  "ex": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "slotId": {
+                                          "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                                        },
+                                        "id": {
+                                          "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                                        },
+                                        "open": {
+                                          "type": "boolean"
+                                        },
+                                        "category": {
+                                          "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                                        },
+                                        "sets": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 100
+                                        },
+                                        "reps": {
+                                          "anyOf": [
+                                            {
+                                              "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                                            },
+                                            {
+                                              "type": "string",
+                                              "const": "max"
+                                            }
+                                          ]
+                                        },
+                                        "mode": {
+                                          "type": "string",
+                                          "const": "time"
+                                        },
+                                        "sec": {
+                                          "type": "number",
+                                          "exclusiveMinimum": 0
+                                        },
+                                        "target": {
+                                          "type": "object",
+                                          "properties": {
+                                            "rir": {
+                                              "type": "number",
+                                              "minimum": 0,
+                                              "maximum": 10
+                                            },
+                                            "rpe": {
+                                              "type": "number",
+                                              "minimum": 0,
+                                              "maximum": 10
+                                            },
+                                            "pct": {
+                                              "type": "number",
+                                              "exclusiveMinimum": 0
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "setTargets": {
+                                          "type": "array",
+                                          "items": {
+                                            "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/target"
+                                          },
+                                          "maxItems": 100
+                                        }
+                                      },
+                                      "required": [
+                                        "sets"
+                                      ],
+                                      "additionalProperties": true
+                                    },
+                                    "maxItems": 100
+                                  }
+                                },
+                                "required": [
+                                  "ex"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "routineSnapshot"
+                            ],
+                            "additionalProperties": true
+                          },
+                          "maxItems": 100
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "sessions"
+                      ],
+                      "additionalProperties": true
+                    },
+                    "maxItems": 100
+                  }
+                },
+                "required": [
+                  "index",
+                  "days"
+                ],
+                "additionalProperties": true
+              },
+              "after": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              }
+            },
+            "required": [
+              "op",
+              "week"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "removeWeek"
+              },
+              "week": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              }
+            },
+            "required": [
+              "op",
+              "week"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setWeek"
+              },
+              "week": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "patch": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "train",
+                      "deload",
+                      "test",
+                      "inserted"
+                    ]
+                  },
+                  "rir": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "op",
+              "week",
+              "patch"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "addDay"
+              },
+              "week": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "day": {
+                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items"
+              }
+            },
+            "required": [
+              "op",
+              "week",
+              "day"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "removeDay"
+              },
+              "week": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "day": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+              }
+            },
+            "required": [
+              "op",
+              "week",
+              "day"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "addSession"
+              },
+              "week": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "day": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+              },
+              "session": {
+                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items"
+              }
+            },
+            "required": [
+              "op",
+              "week",
+              "day",
+              "session"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "removeSession"
+              },
+              "week": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "day": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+              },
+              "session": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+              }
+            },
+            "required": [
+              "op",
+              "week",
+              "day",
+              "session"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "addSlot"
+              },
+              "at": {
+                "type": "object",
+                "properties": {
+                  "week": {
+                    "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/week"
+                  },
+                  "day": {
+                    "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                  },
+                  "session": {
+                    "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                  }
+                },
+                "required": [
+                  "week",
+                  "day",
+                  "session"
+                ],
+                "additionalProperties": false
+              },
+              "slot": {
+                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items"
+              },
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "op",
+              "at",
+              "slot"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "removeSlot"
+              },
+              "at": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+              }
+            },
+            "required": [
+              "op",
+              "at"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "moveSlot"
+              },
+              "at": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+              },
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 99
+              }
+            },
+            "required": [
+              "op",
+              "at",
+              "index"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setSlotExercise"
+              },
+              "at": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+              },
+              "exercise": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0/properties/day"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "open": {
+                        "type": "boolean",
+                        "const": true
+                      },
+                      "category": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "label": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "open",
+                      "category"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "at",
+              "exercise"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setPrescription"
+              },
+              "at": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+              },
+              "sets": {
+                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+              },
+              "reps": {
+                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/reps"
+              },
+              "repsMin": {
+                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+              },
+              "pyramid": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/reps"
+                },
+                "minItems": 1,
+                "maxItems": 10
+              },
+              "setRepsMin": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "maxItems": 100
+              },
+              "mode": {
+                "type": "string",
+                "const": "time"
+              },
+              "sec": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "op",
+              "at",
+              "sets"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setTargets"
+              },
+              "at": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+              },
+              "target": {
+                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/target"
+              },
+              "setTargets": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/target"
+                    },
+                    "maxItems": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "at"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setProgression"
+              },
+              "at": {
+                "anyOf": [
+                  {
+                    "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  }
+                ]
+              },
+              "progression": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "linear"
+                      },
+                      "instructions": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "successSessions": {
+                            "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                          },
+                          "increment": {
+                            "type": "number",
+                            "exclusiveMinimum": 0
+                          },
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "lb",
+                              "kg"
+                            ]
+                          },
+                          "failure": {
+                            "type": "object",
+                            "properties": {
+                              "afterSessions": {
+                                "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                              },
+                              "action": {
+                                "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                              }
+                            },
+                            "required": [
+                              "afterSessions",
+                              "action"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "successSessions",
+                          "increment",
+                          "unit"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "provenance": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "instructions",
+                      "parameters"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "double"
+                      },
+                      "instructions": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "repsLow": {
+                            "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                          },
+                          "repsHigh": {
+                            "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                          },
+                          "condition": {
+                            "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                          },
+                          "increment": {
+                            "type": "number",
+                            "exclusiveMinimum": 0
+                          },
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "lb",
+                              "kg"
+                            ]
+                          },
+                          "resetTo": {
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "repsLow",
+                          "repsHigh",
+                          "condition",
+                          "increment",
+                          "unit",
+                          "resetTo"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "provenance": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "instructions",
+                      "parameters"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "reps-sum"
+                      },
+                      "instructions": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "threshold": {
+                            "$ref": "#/properties/ops/items/anyOf/4/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                          },
+                          "inclusive": {
+                            "type": "boolean"
+                          },
+                          "increment": {
+                            "type": "number",
+                            "exclusiveMinimum": 0
+                          },
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "lb",
+                              "kg"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "threshold",
+                          "inclusive",
+                          "increment",
+                          "unit"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "provenance": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "instructions",
+                      "parameters"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "percentage"
+                      },
+                      "instructions": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "reference": {
+                            "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                          },
+                          "byWeek": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "array",
+                              "items": {
+                                "type": "number",
+                                "exclusiveMinimum": 0
+                              },
+                              "minItems": 1,
+                              "maxItems": 100
+                            }
+                          }
+                        },
+                        "required": [
+                          "reference",
+                          "byWeek"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "provenance": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "instructions",
+                      "parameters"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "authored"
+                      },
+                      "instructions": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "provenance": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "instructions"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "manual"
+                      },
+                      "instructions": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "provenance": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "instructions"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "none"
+                      },
+                      "instructions": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "provenance": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "instructions"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "at",
+              "progression"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setGuidance"
+              },
+              "at": {
+                "$ref": "#/properties/ops/items/anyOf/1/properties/at/anyOf/0"
+              },
+              "restSec": {
+                "type": "number",
+                "minimum": 0
+              },
+              "note": {
+                "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+              },
+              "loadGuidance": {
+                "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+              },
+              "instructions": {
+                "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+              }
+            },
+            "required": [
+              "op",
+              "at"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "setEndPlan"
+              },
+              "endPlan": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "deload",
+                      "test",
+                      "repeat",
+                      "next",
+                      "stop"
+                    ]
+                  },
+                  "instructions": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "instructions"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "op",
+              "endPlan"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "acknowledgeReview"
+              },
+              "decision": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  },
+                  "location": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "week": {
+                        "type": "number"
+                      },
+                      "day": {
+                        "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                      },
+                      "session": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "slot": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "decision": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  },
+                  "evidence": {
+                    "$ref": "#/properties/ops/items/anyOf/3/properties/patch/properties/name"
+                  }
+                },
+                "required": [
+                  "code",
+                  "location",
+                  "decision",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "op",
+              "decision"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "ops"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## set_slot
+
+Set an exercise and/or prescription at a stable slot reference.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "at": {
+      "type": "object",
+      "properties": {
+        "week": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "day": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "session": {
+          "$ref": "#/properties/at/properties/day"
+        },
+        "slot": {
+          "$ref": "#/properties/at/properties/day"
+        }
+      },
+      "required": [
+        "week",
+        "day",
+        "session",
+        "slot"
+      ],
+      "additionalProperties": false
+    },
+    "exercise": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/properties/draft_id"
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "open": {
+              "type": "boolean",
+              "const": true
+            },
+            "category": {
+              "$ref": "#/properties/draft_id"
+            },
+            "label": {
+              "$ref": "#/properties/draft_id"
+            }
+          },
+          "required": [
+            "open",
+            "category"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "prescription": {
+      "type": "object",
+      "properties": {
+        "sets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "reps": {
+          "anyOf": [
+            {
+              "$ref": "#/properties/prescription/properties/sets"
+            },
+            {
+              "type": "string",
+              "const": "max"
+            }
+          ]
+        },
+        "repsMin": {
+          "$ref": "#/properties/prescription/properties/sets"
+        },
+        "pyramid": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/prescription/properties/reps"
+          },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "setRepsMin": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/properties/prescription/properties/sets"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 100
+        },
+        "mode": {
+          "type": "string",
+          "const": "time"
+        },
+        "sec": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "sets"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "at"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## set_slot_targets
+
+Set explicit default/per-set effort targets.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "at": {
+      "type": "object",
+      "properties": {
+        "week": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "day": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "session": {
+          "$ref": "#/properties/at/properties/day"
+        },
+        "slot": {
+          "$ref": "#/properties/at/properties/day"
+        }
+      },
+      "required": [
+        "week",
+        "day",
+        "session",
+        "slot"
+      ],
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "rir": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "rpe": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "setTargets": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/target"
+          },
+          "maxItems": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "at"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## set_progression
+
+Attach an authored progression to one or more stable slots.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "at": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "week": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "day": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "session": {
+              "$ref": "#/properties/at/anyOf/0/properties/day"
+            },
+            "slot": {
+              "$ref": "#/properties/at/anyOf/0/properties/day"
+            }
+          },
+          "required": [
+            "week",
+            "day",
+            "session",
+            "slot"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/at/anyOf/0"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      ]
+    },
+    "progression": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "linear"
+            },
+            "instructions": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "successSessions": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                "increment": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "lb",
+                    "kg"
+                  ]
+                },
+                "failure": {
+                  "type": "object",
+                  "properties": {
+                    "afterSessions": {
+                      "$ref": "#/properties/progression/anyOf/0/properties/parameters/properties/successSessions"
+                    },
+                    "action": {
+                      "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+                    }
+                  },
+                  "required": [
+                    "afterSessions",
+                    "action"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "successSessions",
+                "increment",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            "provenance": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            }
+          },
+          "required": [
+            "kind",
+            "instructions",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "double"
+            },
+            "instructions": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            },
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "repsLow": {
+                  "$ref": "#/properties/progression/anyOf/0/properties/parameters/properties/successSessions"
+                },
+                "repsHigh": {
+                  "$ref": "#/properties/progression/anyOf/0/properties/parameters/properties/successSessions"
+                },
+                "condition": {
+                  "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+                },
+                "increment": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "lb",
+                    "kg"
+                  ]
+                },
+                "resetTo": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "repsLow",
+                "repsHigh",
+                "condition",
+                "increment",
+                "unit",
+                "resetTo"
+              ],
+              "additionalProperties": false
+            },
+            "provenance": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            }
+          },
+          "required": [
+            "kind",
+            "instructions",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "reps-sum"
+            },
+            "instructions": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            },
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "threshold": {
+                  "$ref": "#/properties/progression/anyOf/0/properties/parameters/properties/successSessions"
+                },
+                "inclusive": {
+                  "type": "boolean"
+                },
+                "increment": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "lb",
+                    "kg"
+                  ]
+                }
+              },
+              "required": [
+                "threshold",
+                "inclusive",
+                "increment",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            "provenance": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            }
+          },
+          "required": [
+            "kind",
+            "instructions",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "percentage"
+            },
+            "instructions": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            },
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "reference": {
+                  "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+                },
+                "byWeek": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "minItems": 1,
+                    "maxItems": 100
+                  }
+                }
+              },
+              "required": [
+                "reference",
+                "byWeek"
+              ],
+              "additionalProperties": false
+            },
+            "provenance": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            }
+          },
+          "required": [
+            "kind",
+            "instructions",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "authored"
+            },
+            "instructions": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            },
+            "provenance": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            }
+          },
+          "required": [
+            "kind",
+            "instructions"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "manual"
+            },
+            "instructions": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            },
+            "provenance": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            }
+          },
+          "required": [
+            "kind",
+            "instructions"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "none"
+            },
+            "instructions": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            },
+            "provenance": {
+              "$ref": "#/properties/progression/anyOf/0/properties/instructions"
+            }
+          },
+          "required": [
+            "kind",
+            "instructions"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "at",
+    "progression"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## set_progression_rule
+
+Upsert one closed engine rule and optionally attach it to stable slots. Stall rules attach through onStall. Atomic, revision checked, validated; no state writes.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "at": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "week": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "day": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "session": {
+              "$ref": "#/properties/at/anyOf/0/properties/day"
+            },
+            "slot": {
+              "$ref": "#/properties/at/anyOf/0/properties/day"
+            }
+          },
+          "required": [
+            "week",
+            "day",
+            "session",
+            "slot"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/at/anyOf/0"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      ]
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "rule"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## set_program_metadata
+
+Edit metadata while retaining personal draft privacy.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "patch": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "goal": {
+          "$ref": "#/properties/patch/properties/name"
+        },
+        "level": {
+          "$ref": "#/properties/patch/properties/name"
+        },
+        "daysPerWeek": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+        },
+        "equipment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/patch/properties/name"
+          },
+          "maxItems": 100
+        },
+        "licence": {
+          "$ref": "#/properties/patch/properties/name"
+        },
+        "end": {
+          "type": "string",
+          "enum": [
+            "next",
+            "repeat",
+            "stop"
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "lb",
+            "kg"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "$ref": "#/properties/patch/properties/name"
+            },
+            "private": {
+              "type": "boolean"
+            },
+            "ref": {
+              "$ref": "#/properties/patch/properties/name"
+            },
+            "url": {
+              "$ref": "#/properties/patch/properties/name"
+            },
+            "repo": {
+              "$ref": "#/properties/patch/properties/name"
+            },
+            "sha": {
+              "$ref": "#/properties/patch/properties/name"
+            },
+            "path": {
+              "$ref": "#/properties/patch/properties/name"
+            },
+            "workbook": {
+              "$ref": "#/properties/patch/properties/name"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "patch"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## repeat_week
+
+Expand explicit concrete copies with required target/rule retention choices.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "fromWeek": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 64
+    },
+    "copies": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 63
+    },
+    "keep": {
+      "type": "object",
+      "properties": {
+        "targets": {
+          "type": "boolean"
+        },
+        "rules": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "targets",
+        "rules"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "fromWeek",
+    "copies",
+    "keep"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## generate_deload
+
+Preview an authored deload; apply only with confirm:true. Factors and effort have no defaults.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "afterWeek": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 64
+    },
+    "policy": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "explicit"
+            },
+            "week": {
+              "type": "object",
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 64
+                },
+                "days": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 10000
+                      },
+                      "sessions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "sessionTemplateId": {
+                              "$ref": "#/properties/policy/anyOf/0/properties/week/properties/days/items/properties/key"
+                            },
+                            "routineSnapshot": {
+                              "type": "object",
+                              "properties": {
+                                "ex": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "slotId": {
+                                        "$ref": "#/properties/policy/anyOf/0/properties/week/properties/days/items/properties/key"
+                                      },
+                                      "id": {
+                                        "$ref": "#/properties/policy/anyOf/0/properties/week/properties/days/items/properties/key"
+                                      },
+                                      "open": {
+                                        "type": "boolean"
+                                      },
+                                      "category": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "maxLength": 10000
+                                      },
+                                      "sets": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 100
+                                      },
+                                      "reps": {
+                                        "anyOf": [
+                                          {
+                                            "$ref": "#/properties/policy/anyOf/0/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/sets"
+                                          },
+                                          {
+                                            "type": "string",
+                                            "const": "max"
+                                          }
+                                        ]
+                                      },
+                                      "mode": {
+                                        "type": "string",
+                                        "const": "time"
+                                      },
+                                      "sec": {
+                                        "type": "number",
+                                        "exclusiveMinimum": 0
+                                      },
+                                      "target": {
+                                        "type": "object",
+                                        "properties": {
+                                          "rir": {
+                                            "type": "number",
+                                            "minimum": 0,
+                                            "maximum": 10
+                                          },
+                                          "rpe": {
+                                            "type": "number",
+                                            "minimum": 0,
+                                            "maximum": 10
+                                          },
+                                          "pct": {
+                                            "type": "number",
+                                            "exclusiveMinimum": 0
+                                          }
+                                        },
+                                        "additionalProperties": false
+                                      },
+                                      "setTargets": {
+                                        "type": "array",
+                                        "items": {
+                                          "$ref": "#/properties/policy/anyOf/0/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/target"
+                                        },
+                                        "maxItems": 100
+                                      }
+                                    },
+                                    "required": [
+                                      "sets"
+                                    ],
+                                    "additionalProperties": true
+                                  },
+                                  "maxItems": 100
+                                }
+                              },
+                              "required": [
+                                "ex"
+                              ],
+                              "additionalProperties": true
+                            }
+                          },
+                          "required": [
+                            "routineSnapshot"
+                          ],
+                          "additionalProperties": true
+                        },
+                        "maxItems": 100
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "sessions"
+                    ],
+                    "additionalProperties": true
+                  },
+                  "maxItems": 100
+                }
+              },
+              "required": [
+                "index",
+                "days"
+              ],
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "kind",
+            "week"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "factor"
+            },
+            "fromWeek": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "setsFactor": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "loadFactor": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "effort": {
+              "$ref": "#/properties/policy/anyOf/0/properties/week/properties/days/items/properties/sessions/items/properties/routineSnapshot/properties/ex/items/properties/target"
+            }
+          },
+          "required": [
+            "kind",
+            "fromWeek",
+            "setsFactor",
+            "loadFactor",
+            "effort"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "confirm": {
+      "type": "boolean"
+    },
+    "full": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "afterWeek",
+    "policy"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## list_programmes
+
+List authenticated library summaries, versions, privacy and active use without full definitions. Large results are capped; continue with nextOffset.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "offset": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## diff_programs
+
+Compare draft/definition references by stable week, day, session and slot identities, including ordering and conformance changes. Full details require full:true.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "from": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "to": {
+      "$ref": "#/properties/from"
+    },
+    "full": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "from",
+    "to"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## publish_program_draft
+
+Explicitly publish a Ready personal draft to the library only. Dry run defaults true; writing requires dry_run:false, confirm:true, both authoring/write gates, draft revision and current library parent version. Existing library ids also require replace:true.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expected_rev": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "expected_parent_version_id": {
+      "anyOf": [
+        {
+          "$ref": "#/properties/draft_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "replace": {
+      "type": "boolean"
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "confirm": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "draft_id",
+    "expected_rev",
+    "expected_parent_version_id"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## validate_progression
+
+Pure progression validation for JSON or a local draft; programme_id reads the authenticated HTTP profile/library. No writes.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "definition": {},
+    "draft_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "programme_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## preview_progression
+
+Preview via HTTP, with every prescribed load and summarised Why. full:true includes all inputs and the TM timeline. A draft source uses {draft_id}; no state writes.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "source": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "definition": {
+              "type": "object",
+              "additionalProperties": {}
+            }
+          },
+          "required": [
+            "definition"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "definitionId": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._-]{1,128}$"
+            },
+            "versionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "definitionId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "draft_id": {
+              "$ref": "#/properties/source/anyOf/1/properties/versionId"
+            }
+          },
+          "required": [
+            "draft_id"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "cycle_id": {
+      "$ref": "#/properties/source/anyOf/1/properties/versionId"
+    },
+    "weeks": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 64
+      },
+      "minItems": 1,
+      "maxItems": 64
+    },
+    "as_of": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "hypothetical_logs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": {}
+      },
+      "maxItems": 1000
+    },
+    "full": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "source",
+    "weeks"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## apply_progression
+
+Dry run by default. A write needs dry_run:false, confirm:true, both authoring/write env gates, and confirmNoActiveSession:true from the human. Inventory-adjustment warnings require separate explicit confirmInventoryAdjustment:true; never retry or auto-confirm a 409/422.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "weeks": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 64
+      },
+      "minItems": 1,
+      "maxItems": 64
+    },
+    "expected_rev": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expected_wid": {
+      "anyOf": [
+        {
+          "$ref": "#/properties/cycle_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "confirm": {
+      "type": "boolean"
+    },
+    "confirmNoActiveSession": {
+      "type": "boolean",
+      "const": true
+    },
+    "confirmInventoryAdjustment": {
+      "type": "boolean"
+    },
+    "full": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "cycle_id",
+    "weeks",
+    "expected_rev",
+    "expected_wid",
+    "confirmNoActiveSession"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```

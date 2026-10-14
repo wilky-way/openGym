@@ -1,0 +1,20 @@
+{
+  "name": "@opengym/mcp",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "bun --bun vitest run --passWithNoTests",
+    "start": "bun src/index.ts"
+  },
+  "dependencies": {
+    "@opengym/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  }
+}

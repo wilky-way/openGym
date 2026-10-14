@@ -1,0 +1,1756 @@
+[
+  {
+    "request": {
+      "action": "validate",
+      "body": {
+        "definition": {
+          "id": "synthetic",
+          "name": "Synthetic authored block",
+          "unit": "lb",
+          "goal": "Strength",
+          "level": "Intermediate",
+          "daysPerWeek": 1,
+          "lengthWeeks": 2,
+          "equipment": [
+            "barbell"
+          ],
+          "licence": "CC0",
+          "source": {
+            "kind": "own",
+            "ref": "Synthetic test",
+            "private": false
+          },
+          "endPlan": {
+            "kind": "stop",
+            "instructions": "End the block and review the completed log."
+          },
+          "weeks": [
+            {
+              "index": 1,
+              "mode": "train",
+              "days": [
+                {
+                  "key": "d1",
+                  "sessions": [
+                    {
+                      "sessionTemplateId": "main",
+                      "routineSnapshot": {
+                        "ex": [
+                          {
+                            "id": "0025",
+                            "slotId": "bench",
+                            "role": "main",
+                            "sets": 2,
+                            "reps": 5,
+                            "target": {
+                              "rpe": 8
+                            },
+                            "progression": {
+                              "kind": "manual",
+                              "instructions": "Keep the prescribed reps and effort; choose loads yourself.",
+                              "rules": [
+                                "pct"
+                              ]
+                            },
+                            "tm": {
+                              "key": "bench",
+                              "percentages": [
+                                0.8,
+                                0.9
+                              ],
+                              "reference": "tm"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "mode": "train",
+              "days": [
+                {
+                  "key": "d1",
+                  "sessions": [
+                    {
+                      "sessionTemplateId": "main",
+                      "routineSnapshot": {
+                        "ex": [
+                          {
+                            "id": "0025",
+                            "slotId": "bench",
+                            "role": "main",
+                            "sets": 2,
+                            "reps": 5,
+                            "target": {
+                              "rpe": 8
+                            },
+                            "progression": {
+                              "kind": "manual",
+                              "instructions": "Keep the prescribed reps and effort; choose loads yourself.",
+                              "rules": [
+                                "pct"
+                              ]
+                            },
+                            "tm": {
+                              "key": "bench",
+                              "percentages": [
+                                0.8,
+                                0.9
+                              ],
+                              "reference": "tm"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "tmSeeds": {
+            "bench": {
+              "value": 100,
+              "unit": "lb"
+            }
+          },
+          "progressionRules": [
+            {
+              "id": "pct",
+              "kind": "percentage",
+              "ref": {
+                "lift": "bench",
+                "basis": "tm"
+              },
+              "rounding": {
+                "increment": 5,
+                "mode": "nearest",
+                "usePlates": false
+              },
+              "weeks": {
+                "1": [
+                  {
+                    "pct": 0.8,
+                    "reps": 5
+                  },
+                  {
+                    "pct": 0.9,
+                    "reps": 5
+                  }
+                ],
+                "2": [
+                  {
+                    "pct": 0.8,
+                    "reps": 5
+                  },
+                  {
+                    "pct": 0.9,
+                    "reps": 5
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "status": 200,
+    "body": {
+      "ok": true,
+      "issues": []
+    }
+  },
+  {
+    "request": {
+      "action": "preview",
+      "body": {
+        "source": {
+          "definition": {
+            "id": "synthetic",
+            "name": "Synthetic authored block",
+            "unit": "lb",
+            "goal": "Strength",
+            "level": "Intermediate",
+            "daysPerWeek": 1,
+            "lengthWeeks": 2,
+            "equipment": [
+              "barbell"
+            ],
+            "licence": "CC0",
+            "source": {
+              "kind": "own",
+              "ref": "Synthetic test",
+              "private": false
+            },
+            "endPlan": {
+              "kind": "stop",
+              "instructions": "End the block and review the completed log."
+            },
+            "weeks": [
+              {
+                "index": 1,
+                "mode": "train",
+                "days": [
+                  {
+                    "key": "d1",
+                    "sessions": [
+                      {
+                        "sessionTemplateId": "main",
+                        "routineSnapshot": {
+                          "ex": [
+                            {
+                              "id": "0025",
+                              "slotId": "bench",
+                              "role": "main",
+                              "sets": 2,
+                              "reps": 5,
+                              "target": {
+                                "rpe": 8
+                              },
+                              "progression": {
+                                "kind": "manual",
+                                "instructions": "Keep the prescribed reps and effort; choose loads yourself.",
+                                "rules": [
+                                  "pct"
+                                ]
+                              },
+                              "tm": {
+                                "key": "bench",
+                                "percentages": [
+                                  0.8,
+                                  0.9
+                                ],
+                                "reference": "tm"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "mode": "train",
+                "days": [
+                  {
+                    "key": "d1",
+                    "sessions": [
+                      {
+                        "sessionTemplateId": "main",
+                        "routineSnapshot": {
+                          "ex": [
+                            {
+                              "id": "0025",
+                              "slotId": "bench",
+                              "role": "main",
+                              "sets": 2,
+                              "reps": 5,
+                              "target": {
+                                "rpe": 8
+                              },
+                              "progression": {
+                                "kind": "manual",
+                                "instructions": "Keep the prescribed reps and effort; choose loads yourself.",
+                                "rules": [
+                                  "pct"
+                                ]
+                              },
+                              "tm": {
+                                "key": "bench",
+                                "percentages": [
+                                  0.8,
+                                  0.9
+                                ],
+                                "reference": "tm"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "tmSeeds": {
+              "bench": {
+                "value": 100,
+                "unit": "lb"
+              }
+            },
+            "progressionRules": [
+              {
+                "id": "pct",
+                "kind": "percentage",
+                "ref": {
+                  "lift": "bench",
+                  "basis": "tm"
+                },
+                "rounding": {
+                  "increment": 5,
+                  "mode": "nearest",
+                  "usePlates": false
+                },
+                "weeks": {
+                  "1": [
+                    {
+                      "pct": 0.8,
+                      "reps": 5
+                    },
+                    {
+                      "pct": 0.9,
+                      "reps": 5
+                    }
+                  ],
+                  "2": [
+                    {
+                      "pct": 0.8,
+                      "reps": 5
+                    },
+                    {
+                      "pct": 0.9,
+                      "reps": 5
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "cycleId": "c",
+        "weeks": [
+          2
+        ]
+      }
+    },
+    "status": 200,
+    "body": {
+      "tm": {
+        "bench": [
+          {
+            "at": "seed",
+            "value": 100,
+            "why": {
+              "inputs": {
+                "source": "cycle.tmSeed",
+                "tm": 100
+              },
+              "kind": "authored",
+              "ruleId": "authored",
+              "text": "Use the authored prescription."
+            }
+          }
+        ]
+      },
+      "warnings": [],
+      "weeks": [
+        {
+          "index": 2,
+          "slots": [
+            {
+              "exerciseId": "0025",
+              "ref": {
+                "day": "d1",
+                "session": "main",
+                "slot": "bench",
+                "week": 2
+              },
+              "sets": [
+                {
+                  "load": 80,
+                  "reps": 5,
+                  "target": {
+                    "pct": 0.8,
+                    "rir": 2
+                  },
+                  "unit": "lb",
+                  "why": [
+                    {
+                      "inputs": {
+                        "basis": "tm",
+                        "lift": "bench",
+                        "pct": 0.8,
+                        "reference": 100,
+                        "reps": 5,
+                        "repsMin": null
+                      },
+                      "kind": "percentage",
+                      "ruleId": "pct",
+                      "text": "Use 80% of tm 100."
+                    },
+                    {
+                      "inputs": {
+                        "inventory": false,
+                        "roundedFrom": 80,
+                        "rounding": "nearest",
+                        "roundingIncrement": 5
+                      },
+                      "kind": "percentage",
+                      "ruleId": "pct",
+                      "text": "Round 80 using increment 5 (nearest)."
+                    }
+                  ]
+                },
+                {
+                  "load": 90,
+                  "reps": 5,
+                  "target": {
+                    "pct": 0.9,
+                    "rir": 2
+                  },
+                  "unit": "lb",
+                  "why": [
+                    {
+                      "inputs": {
+                        "basis": "tm",
+                        "lift": "bench",
+                        "pct": 0.9,
+                        "reference": 100,
+                        "reps": 5,
+                        "repsMin": null
+                      },
+                      "kind": "percentage",
+                      "ruleId": "pct",
+                      "text": "Use 90% of tm 100."
+                    },
+                    {
+                      "inputs": {
+                        "inventory": false,
+                        "roundedFrom": 90,
+                        "rounding": "nearest",
+                        "roundingIncrement": 5
+                      },
+                      "kind": "percentage",
+                      "ruleId": "pct",
+                      "text": "Round 90 using increment 5 (nearest)."
+                    }
+                  ]
+                }
+              ],
+              "why": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "request": {
+      "action": "apply",
+      "body": {
+        "cycleId": "c",
+        "weeks": [
+          2
+        ],
+        "expectedRev": 4,
+        "expectedWid": "read1",
+        "confirmNoActiveSession": true,
+        "dryRun": true
+      }
+    },
+    "status": 200,
+    "body": {
+      "stateRev": 4,
+      "wid": "read1",
+      "changed": [
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "enginePrescription",
+          "before": null,
+          "after": true,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "prog",
+          "before": null,
+          "after": "off",
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "weight",
+          "before": null,
+          "after": 80,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "pyramidWeight",
+          "before": null,
+          "after": [
+            80,
+            90
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "setTargets",
+          "before": null,
+          "after": [
+            {
+              "pct": 80,
+              "rir": 2
+            },
+            {
+              "pct": 90,
+              "rir": 2
+            }
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "repsMin",
+          "before": null,
+          "after": null,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "setRepsMin",
+          "before": null,
+          "after": [
+            null,
+            null
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "prescriptionWhy",
+          "before": null,
+          "after": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "tm",
+          "before": {
+            "key": "bench",
+            "percentages": [
+              0.8,
+              0.9
+            ],
+            "reference": "tm"
+          },
+          "after": null,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "week": 1,
+            "day": "d1",
+            "session": "main",
+            "slot": "bench"
+          },
+          "field": "tm",
+          "before": null,
+          "after": {
+            "bench": 100
+          },
+          "why": []
+        }
+      ],
+      "warnings": []
+    }
+  },
+  {
+    "request": {
+      "action": "apply",
+      "body": {
+        "cycleId": "c",
+        "weeks": [
+          2
+        ],
+        "expectedRev": 4,
+        "expectedWid": "read1",
+        "confirmNoActiveSession": true
+      }
+    },
+    "status": 200,
+    "body": {
+      "stateRev": 5,
+      "wid": "<fresh-wid>",
+      "changed": [
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "enginePrescription",
+          "before": null,
+          "after": true,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "prog",
+          "before": null,
+          "after": "off",
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "weight",
+          "before": null,
+          "after": 80,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "pyramidWeight",
+          "before": null,
+          "after": [
+            80,
+            90
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "setTargets",
+          "before": null,
+          "after": [
+            {
+              "pct": 80,
+              "rir": 2
+            },
+            {
+              "pct": 90,
+              "rir": 2
+            }
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "repsMin",
+          "before": null,
+          "after": null,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "setRepsMin",
+          "before": null,
+          "after": [
+            null,
+            null
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "prescriptionWhy",
+          "before": null,
+          "after": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ],
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "day": "d1",
+            "session": "main",
+            "slot": "bench",
+            "week": 2
+          },
+          "field": "tm",
+          "before": {
+            "key": "bench",
+            "percentages": [
+              0.8,
+              0.9
+            ],
+            "reference": "tm"
+          },
+          "after": null,
+          "why": [
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.8,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 80% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 80,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 80 using increment 5 (nearest)."
+            },
+            {
+              "inputs": {
+                "basis": "tm",
+                "lift": "bench",
+                "pct": 0.9,
+                "reference": 100,
+                "reps": 5,
+                "repsMin": null
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Use 90% of tm 100."
+            },
+            {
+              "inputs": {
+                "inventory": false,
+                "roundedFrom": 90,
+                "rounding": "nearest",
+                "roundingIncrement": 5
+              },
+              "kind": "percentage",
+              "ruleId": "pct",
+              "text": "Round 90 using increment 5 (nearest)."
+            }
+          ]
+        },
+        {
+          "ref": {
+            "week": 1,
+            "day": "d1",
+            "session": "main",
+            "slot": "bench"
+          },
+          "field": "tm",
+          "before": null,
+          "after": {
+            "bench": 100
+          },
+          "why": []
+        }
+      ],
+      "warnings": []
+    }
+  }
+]
