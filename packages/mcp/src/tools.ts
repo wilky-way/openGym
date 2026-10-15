@@ -1,3 +1,4 @@
+import { createWorkoutTools } from './workout-tools'
 import { createAuthoringTools } from './authoring-tools'
 import { createLibraryTools } from './library-tools'
 import { createProgressionTools } from './progression-tools'
@@ -714,6 +715,6 @@ export function createTools(options: { env?: Environment; fetcher?: Fetcher } = 
     const env = options.env ?? process.env
     if (['activate_programme', 'shift_programme', 'skip_programme_session'].includes(tool.name) && env.OPENGYM_ENABLE_PROGRAMME_WRITES !== '1') throw Object.assign(new Error('Enable OPENGYM_ENABLE_PROGRAMME_WRITES=1 to use program actions.'), { code: 'WRITES_DISABLED' })
     return withRemoteState(() => tool.handler(params), options)
-  }, options) })), ...createAuthoringTools(options), ...createLibraryTools(options), ...createProgressionTools(options)]
+  }, options) })), ...createAuthoringTools(options), ...createLibraryTools(options), ...createProgressionTools(options), ...createWorkoutTools(options)]
 }
 export const TOOLS = createTools()

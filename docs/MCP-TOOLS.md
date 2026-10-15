@@ -3115,3 +3115,129 @@ Dry run by default. A write needs dry_run:false, confirm:true, both authoring/wr
   "$schema": "http://json-schema.org/draft-07/schema#"
 }
 ```
+
+## log_workout
+
+Log a past local-date workout; defaults to dry_run:true with the exact record and resolved ids. Explicit dry_run:false plus the programme write env gate commits. Freestyle has no programme effect; never touches an active workout.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "routine_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "duration_min": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 1440,
+      "default": 60
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 10000
+    },
+    "exercises": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "exercise": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reps": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9999
+                },
+                "seconds": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 86400
+                },
+                "weight": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 9999
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "kg",
+                    "lb"
+                  ]
+                },
+                "done": {
+                  "type": "boolean",
+                  "default": true
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 1000
+          }
+        },
+        "required": [
+          "exercise",
+          "sets"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 100
+    },
+    "dry_run": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "date",
+    "exercises"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
+
+## delete_workout
+
+Undo an agent-logged workout with confirm:true and the write env gate. Only unchanged records sealed by this tool can be undone. Refuses server-visible active workouts; phone-local drafts cannot be detected.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "workout_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "confirm": {
+      "type": "boolean",
+      "const": true
+    }
+  },
+  "required": [
+    "workout_id",
+    "confirm"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```

@@ -235,6 +235,12 @@ export function deleteEditedWorkout(state: EditState, index: ExerciseIndex = EXI
   const current = editedRecord(state)
   state.active = null
   if (!current) return false
+  return deleteCompletedWorkout(state, current, index)
+}
+
+/** Shared deletion path: remove the saved record and lower working weights it supplied. */
+export function deleteCompletedWorkout(state: EditState, current: Workout, index: ExerciseIndex = EXIDX) {
+  if (!state.workouts.includes(current)) return false
   state.workouts = state.workouts.filter(w => w !== current)
   lowerKeptWeights(state, [...new Set(list(current.entries).map(e => e?.id).filter(id => id != null))], current, null, index)
   return true

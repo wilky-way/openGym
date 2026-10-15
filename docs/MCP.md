@@ -35,7 +35,7 @@ Use the same command, arguments, and environment for a Codex MCP server. Keep th
 | `OPENGYM_TOKEN` | Agent/profile Bearer credential |
 | `OPENGYM_AUTHORING_DIR` | Optional local draft store outside repositories and sync roots |
 | `OPENGYM_ENABLE_PROGRAMME_AUTHORING` | `1` permits draft changes; otherwise authoring writes are refused |
-| `OPENGYM_ENABLE_PROGRAMME_WRITES` | `1` permits remote programme actions; otherwise writes are refused |
+| `OPENGYM_ENABLE_PROGRAMME_WRITES` | `1` permits remote programme actions and workout history writes; otherwise writes are refused |
 
 Default authoring directories: macOS `~/Library/Application Support/opengym-authoring`; Linux `${XDG_DATA_HOME:-~/.local/share}/opengym-authoring`. Local edits and remote writes are separate permissions. Remote publish/apply require both gates and explicit per-call confirmation. Publishing a draft adds it to your **private server library**, never to a public repository.
 
@@ -43,7 +43,33 @@ Default authoring directories: macOS `~/Library/Application Support/opengym-auth
 
 [MCP-TOOLS.md](MCP-TOOLS.md) and [mcp-tools.json](mcp-tools.json) are generated from the shipped tool registry and contain every tool description and input schema. Read the schema before calling a tool: extra keys are refused. The main groups are workout/routine/history reads, conditional programme lifecycle actions, local draft authoring, library inspection/publish, and progression validate/preview/apply.
 
-There is currently no MCP tool for recording arbitrary completed workouts or editing individual logged sets. Use the app for workout logging; an authorized API integration can use the conditional whole-document API in [API.md](API.md). Do not claim to have logged a workout after calling a read or preview tool.
+Regenerate both references with `bun packages/mcp/scripts/generate-docs.ts`.
+
+## Log a past workout
+
+`log_workout` defaults to `dry_run:true`: it authenticates and returns the exact proposed record, resolved exercise IDs, and any created exercise without saving. Use catalogue IDs or unambiguous names; ambiguous matches return choices. Dates are local `YYYY-MM-DD`, must be today or earlier, and the default 18:00 start plus duration must already have elapsed. Rep sets and timed sets are supported; supplied units are converted to the profile unit. Notes and an optional `routine_id` are supported. Freestyle logs have no programme effect; routine-linked logs use the same filing and programme advancement as the app.
+
+For example, preview this entirely invented session (choose a past date):
+
+```json
+{
+  "date": "2026-01-12",
+  "name": "Synthetic strength session",
+  "duration_min": 45,
+  "notes": "Invented example only",
+  "exercises": [
+    { "exercise": "0025", "sets": [
+      { "reps": 8, "weight": 40, "unit": "kg" },
+      { "reps": 8, "weight": 40, "unit": "kg" }
+    ] }
+  ],
+  "dry_run": true
+}
+```
+
+Review the returned record before explicitly sending `dry_run:false`. Saving requires `OPENGYM_ENABLE_PROGRAMME_WRITES=1`, the intended authenticated profile, and a profile previously synced through the app with a write ID. The local authoring gate is not required for history tools. The bridge uses conditional revision/write-ID updates and rereads after conflicts; it refuses a server-visible active workout. It cannot detect an unsynced phone-local session.
+
+`delete_workout` is a narrow undo: `{ "workout_id": "<id returned by log_workout>", "confirm": true }`. It requires the same write gate and no server-visible active workout, and only accepts an unchanged, agent-created record sealed by `log_workout`. Editing the record invalidates MCP undo; use the app to delete it instead. It has no dry-run mode. Never claim a workout was saved after a preview, and inspect history before retrying an uncertain write acknowledgement.
 
 ## Author a programme and its progression
 

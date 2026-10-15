@@ -1,3 +1,4 @@
+import { buildBackfillSession, fileBackfillWorkout } from '../../core/src/past-workout'
 import { guardedStoreUpdate, abortGuardedUpdate } from './lib/guarded-update'
 import { captureSheetTarget, type SheetTarget as ContextTarget } from './lib/sheet-target'
 import { useState, useEffect, useRef } from 'react'
@@ -29,10 +30,9 @@ import { buildSessionEntries, programmeInstanceFor } from '@opengym/core/session
 import { finishCompare, finishCardio } from '@opengym/core/finish-compare'
 import { joinSessionNoProg } from '@opengym/core/session-noprog'
 import { buildCombinedEntries, deriveSessionName, requireProgrammeStart } from '@opengym/core/session-merge'
-import { workoutsOn, backfillStart, backfillEnd, completeBackfill, historyAsOf, sessionHistory } from '@opengym/core/backfill'
-import { rebuildPrHistory, MAX_DURATION_MIN, endsInFuture } from '@opengym/core/workout-date'
+import { workoutsOn, sessionHistory } from '@opengym/core/backfill'
+import { MAX_DURATION_MIN, endsInFuture } from '@opengym/core/workout-date'
 import { editLeftEmpty, editChangesNothing, saveWorkoutEdit, deleteEditedWorkout } from '@opengym/core/session-edit'
-import { stampWorkout } from '@opengym/core/sync-merge'
 import type { ReactNode } from 'react'
 export interface ConfirmOptions {
   title?: string; message?: ReactNode; confirmText?: string; cancelText?: string; danger?: boolean;
@@ -315,21 +315,8 @@ export function logPastWorkoutSheet(initial?: {iso?: string; routineIds?: string
 function beginBackfill({ iso, time, durationMin, routineIds, replaceId }: {iso: string; time: string; durationMin: number; routineIds: string[]; replaceId: string | null}, target: SheetTarget) {
   if (S().active) { toast(t('Finish the current workout first.')); return }
   const st = S()
-  const start = backfillStart(iso, time)
-  const past = historyAsOf(st, { d: iso, start, replaceId })
-  const { entries, routineIds: rids, routines } = buildCombinedEntries(past, routineIds || [], currentIndex(past))
-  if (!targetUpdate(target, (s: any) => {
-    s.active = {
-      id: uid(), d: iso, start,
-      routineIds: rids,
-      ...(programmeInstanceFor(routines) ? { programmeInstance: programmeInstanceFor(routines) } : {}),
-      name: routines.length ? deriveSessionName(routines.map((r: any) => r.name)) : t('Freestyle'),
-      bw: null, cur: 0, entries,
-      backfill: { durationMin, replaceId: replaceId || null },
-      // Same layout snapshot as a live session (see beginWorkout).
-      workoutView: st.workoutView || 'cards',
-    }
-  })) return
+  const active = buildBackfillSession(st, { id: uid(), iso, time, durationMin, routineIds: routineIds || [], replaceId }, currentIndex(st))
+  if (!targetUpdate(target, (s: any) => { s.active = active })) return
   useUI.getState().stopRest()
   navToWorkout()
 }
@@ -822,21 +809,15 @@ function doFinishWorkout(target: SheetTarget) {
     })
     const completed = structuredClone(A)
     clearSheetRows(completed)
-    const w: StoreDocument & {d: string; start: number; entries: any[]} = buildCompletedWorkout(completed, {
-      end: past ? backfillEnd(A) : sessionEnd(A),
-      prs,
+    const finished = past ? fileBackfillWorkout(s.workouts, completed, index) : null
+    const w: StoreDocument & {d: string; start: number; entries: any[]} = finished?.workout || buildCompletedWorkout(completed, {
+      end: sessionEnd(A), prs,
       snapshotFor: (e: any) => isCustomEx(index[e.id], index) ? exerciseMuscleSnapshot(index[e.id]) : null,
     }, index)
-    w.vol = workoutVolume(w, index)
+    if (!past) w.vol = workoutVolume(w, index)
     shown = w
-    if (past) {
-      // Its start and end are in the past; the stamp says when it was logged, which is what a
-      // merge after a reset elsewhere asks of it (lib/sync-merge.js sinceReset).
-      stampWorkout(w)
-      const replaced = A.backfill.replaceId ? s.workouts.find((x: any) => x.id === A.backfill.replaceId) : null
-      const touched = [...new Set([...(replaced?.entries || []), ...w.entries].map((e: any) => e?.id).filter((id: any) => id != null))]
-      s.workouts = rebuildPrHistory(completeBackfill(s.workouts, A, w), touched, w, index)
-      shown = s.workouts.find((x: any) => x === w || (w.id != null && x.id === w.id)) || w
+    if (finished) {
+      s.workouts = finished.workouts
       prs.push(...[...(shown.prs || [])])
     } else {
       w.entries.forEach((e: any) => {
