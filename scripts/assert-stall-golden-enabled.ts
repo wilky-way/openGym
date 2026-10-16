@@ -14,7 +14,10 @@ export function assertStallGoldenEnabled(source: string): void {
       if (callee?.type === 'MemberExpression' && ['describe','it','test'].includes(callee.object?.name ?? '') && ['skip','todo','skipIf','runIf','only'].includes(callee.property?.name ?? '')) throw new Error('Stall golden must run unconditionally')
       const title = node.arguments?.[0]?.value
       if (callee?.type === 'Identifier' && callee.name === 'describe' && typeof title === 'string' && title.includes('P3-MUST-ENABLE')) enabledSuite = true
-      if (callee?.type === 'Identifier' && callee.name === 'evaluate' && node.arguments?.[1]?.type === 'Identifier' && node.arguments[1].name === 'stallExtensions') evaluated = true
+      if (callee?.type === 'Identifier' && callee.name === 'evaluate') {
+        if (node.arguments?.[1]?.type !== 'Identifier' || node.arguments[1].name !== 'stallExtensions') throw new Error('Every stall golden evaluate call must use the actual stallExtensions')
+        evaluated = true
+      }
     }
     for (const [key, child] of Object.entries(node)) if (!['loc','comments','tokens'].includes(key)) visit(child)
   }
