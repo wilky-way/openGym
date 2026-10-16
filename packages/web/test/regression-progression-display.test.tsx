@@ -190,10 +190,10 @@ it('reuses one engine replay across workout renders and invalidates it on a new 
  } finally {replay.mockRestore()}
 })
 
-it('shows effective training max and its seed unit read-only with no update or input path', () => {
+it('shows effective seed units without implicit writes and exposes explicit max adjustment', () => {
  const S = p7Fixture(); S.unit = 'kg'; S.programmes.cycles[0].tm = {bench: 999}; plant(S)
  const before = JSON.stringify(useStore.getState().S), saved = workoutSheetPlatform.kv.get(KEY), host = mount(<Programs/>), panel = host.querySelector('.training-maxes')!
- expect(panel).toBeTruthy(); expect(panel.querySelector('input')).toBeNull(); expect(panel.querySelector('button')).toBeNull()
+ expect(panel).toBeTruthy(); expect(panel.querySelector('input')).toBeNull(); expect(panel.querySelector('button')?.textContent).toBe('Adjust max')
  expect(panel.textContent).toContain('45.36 kg'); expect(panel.textContent).toContain('Seed'); expect(panel.textContent).not.toContain('999')
- expect(panel.textContent).toContain('progression and repeats'); expect(JSON.stringify(useStore.getState().S)).toBe(before); expect(workoutSheetPlatform.kv.get(KEY)).toBe(saved)
+ expect(panel.textContent).toContain('Reference max (basis unspecified)'); expect(JSON.stringify(useStore.getState().S)).toBe(before); expect(workoutSheetPlatform.kv.get(KEY)).toBe(saved)
 })

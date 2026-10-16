@@ -77,7 +77,7 @@ for (const kind of ['manual', 'fixed', 'history'] as const) it.each(pairs)(`moun
 it('LoadPreview labels the manual profile TM and its converted definition-unit seed', () => {
  fixture('lb', 'kg', 'manual')
  const host = mountedPreview(); enterTm(host, 100)
- expect(host.querySelector('input[type=number]')!.closest('label')!.textContent).toContain('Training max: bench (kg)')
+ expect(host.querySelector('input[type=number]')!.closest('label')!.textContent).toContain('Reference max (basis unspecified): bench (kg)')
  expect(host.querySelector('output[aria-label="Program training max: bench"]')?.textContent).toBe('220.46 lb')
 })
 it('Codex C-F6: a manual 100 kg TM at 65% prescribes 65 kg in an lb programme', () => {

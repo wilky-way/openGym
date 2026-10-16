@@ -34,7 +34,7 @@ it.each(['authored-lb', 'exact-kg'])('manual activation UI: 100 kg TM at 65 perc
  const click=(text:string)=>{const b=[...host.querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent?.trim()===text);expect(b,text).toBeTruthy();act(()=>b!.click())}
  try{
   await act(async()=>root.render(<Programs/>));click('Start this program')
-  const label=[...host.querySelectorAll('label')].find(l=>l.textContent?.includes('Training max: bench (kg)'))
+  const label=[...host.querySelectorAll('label')].find(l=>l.textContent?.includes('Reference max (basis unspecified): bench (kg)'))
   expect(label).toBeTruthy();const input=label!.querySelector('input')!
   act(()=>{Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value')!.set!.call(input,'100');input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}))})
   click('Confirm load');await act(async()=>{})
