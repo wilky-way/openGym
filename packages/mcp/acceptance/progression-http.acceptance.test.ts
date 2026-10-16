@@ -42,13 +42,29 @@ function target(state: any = fixture(), library: any[] = []) {
     calls.push({ method: init.method!, path: new URL(url).pathname, ...(init.body ? { body: JSON.parse(String(init.body)) } : {}) })
     return app.request(new Request(url, init))
   }
+  // Fixture setup uses a separate trusted browser through the real routes;
+  // these setup requests are separate from the MCP fetcher's call log.
+  const establishTrustedIdle = async () => {
+    const before = data.get(user.id), body = JSON.stringify({ state: { ...before.state!, active: null }, baseRev: before.rev, baseWid: before.state!._wid })
+    const agentHeaders = { Authorization: 'Bearer ' + env.OPENGYM_TOKEN, 'Content-Type': 'application/json' }
+    const refused = await app.request(new Request(env.OPENGYM_URL + '/api/data', { method: 'PUT', headers: agentHeaders, body }))
+    expect(refused.status).toBe(423)
+    expect(await refused.json()).toMatchObject({ code: 'TRAINING_NOW', guardStatus: 'unknown' })
+    expect(JSON.stringify(data.get(user.id))).toBe(JSON.stringify(before))
+    const browser = auth.mint(user, 'browser')
+    const idle = await app.request(new Request(env.OPENGYM_URL + '/api/data', { method: 'PUT', headers: { ...agentHeaders, Authorization: 'Bearer ' + browser }, body }))
+    expect(idle.status).toBe(200)
+    const activity = await app.request(new Request(env.OPENGYM_URL + '/api/data/activity', { headers: agentHeaders }))
+    expect(activity.status).toBe(200)
+    expect(await activity.json()).toMatchObject({ status: 'idle' })
+  }
   const tools = createTools({ env, fetcher })
   const call = async (name: string, p: any = {}) => tools.find(t => t.name === name)!.handler(p)
   const saved = () => data.get(user.id)
   const apply = (p: any = {}) => call('apply_progression', { cycle_id: 'c', weeks: [2], expected_rev: saved().rev, expected_wid: saved().state!._wid, confirmNoActiveSession: true, ...p })
   const preview = (p: any = {}) => call('preview_progression', { source: { definitionId: 'synthetic' }, cycle_id: 'c', weeks: [2], ...p })
   cleanups.push(() => { store.close(); rmSync(root, { recursive: true, force: true }) })
-  return { env, tools, calls, call, apply, preview, saved, live, state, fetcher }
+  return { env, tools, calls, call, apply, preview, saved, live, state, fetcher, establishTrustedIdle }
 }
 
 test('default and confirm-only apply are dry runs with unchanged revision, wid and stored bytes', async () => {
@@ -71,7 +87,8 @@ test('each write gate, explicit consent, active-session consent and undeclared k
   expect(h.calls).toEqual([])
 })
 test('confirmed apply writes only future prescriptions; second apply is a no-op and never estimates a TM seed', async () => {
-  const h = target(), before: any = h.saved(), result = await h.apply({ dry_run: false, confirm: true })
+  const h = target(); await h.establishTrustedIdle()
+  const before: any = h.saved(), result = await h.apply({ dry_run: false, confirm: true })
   expect(result.stateRev).toBe(before.rev + 1); expect(result.warnings).toEqual([])
   const after: any = h.saved().state
   expect(after.routines[1].ex[0].weight).toBe(80); expect(after.routines[0]).toEqual(before.state!.routines[0])
@@ -82,7 +99,8 @@ test('large confirmed apply always returns the committed revision with explicitl
   const state: any = fixture(), d = state.programmes.cycles[0].snapshot
   for (const w of d.weeks) { const base = syntheticSlot({ weeks: [w] }); w.days[0].sessions[0].routineSnapshot.ex = Array.from({ length: 60 },(_,i) => ({ ...structuredClone(base), slotId: 'bench-' + i })) }
   for (const [i,r] of state.routines.entries()) r.ex = structuredClone(d.weeks[i].days[0].sessions[0].routineSnapshot.ex)
-  const h = target(state), before = h.saved().rev, out = await h.apply({ dry_run: false, confirm: true })
+  const h = target(state); await h.establishTrustedIdle()
+  const before = h.saved().rev, out = await h.apply({ dry_run: false, confirm: true })
   expect(out.stateRev).toBe(before + 1); expect(h.saved().rev).toBe(out.stateRev); expect(out.changedTruncated).toBe(true)
   expect(out.totalChanges).toBeGreaterThan(out.changed.length); expect(Buffer.byteLength(JSON.stringify(out))).toBeLessThan(128 * 1024)
   expect((h.saved().state!.routines as any[])[1]!.ex.every((e: any) => e.weight === 80)).toBe(true)
@@ -107,7 +125,8 @@ test('inventory warning 422 is surfaced and never auto-confirmed; explicit inven
   const state: any = fixture(), d = state.programmes.cycles[0].snapshot
   state.customEx = [{ id: 'bar', name: 'Synthetic custom bar', eq: 'barbell' }]; state.plates = { lb: { 45: 1, 5: 1 } }
   for (const w of d.weeks) { syntheticSlot({ weeks: [w] }).id = 'bar' }
-  d.progressionRules[0].rounding.usePlates = true; const h = target(state), before = JSON.stringify(h.saved())
+  d.progressionRules[0].rounding.usePlates = true; const h = target(state); await h.establishTrustedIdle()
+  const before = JSON.stringify(h.saved())
   const preview = await h.preview(); expect(preview.warnings.some((w: any) => w.code === 'rounding.large-adjustment')).toBe(true)
   for (const p of [{}, { confirmInventoryAdjustment: false }]) {
     await expect(h.apply({ ...p, dry_run: false, confirm: true })).rejects.toMatchObject({ status: 422, code: 'INVALID_RULES', warnings: expect.arrayContaining([expect.objectContaining({ code: 'rounding.large-adjustment' })]) })
