@@ -71,14 +71,14 @@ function action(kind: string): () => void {
   return () => sheets.exConfigSheet.mock.calls.at(-1)![2]({ sets: 4, reps: 8, weight: 80 })
 }
 const kinds = ['delete', 'glyph', 'config', 'add', 'remove', 'replace', 'superset', 'scope', 'rotation', 'adopt', 'undo-routine', 'undo-exercise']
-it.each(kinds)('real sync store refuses %s when A changes to B inside the updater, byte-identically', kind => {
+it.each(kinds)('real W07 refuses %s when A changes to B inside the updater, byte-identically', kind => {
   const run = action(kind), original = useStore.getState().update
   let before!: ReturnType<typeof snapshot>
   useStore.setState({ update: (mut, push) => { replace('B'); before = snapshot(); original(mut, push) } })
   act(run)
   expect(before).toBeDefined(); expect(snapshot()).toEqual(before); expect(useUI.getState().toastMsg).toContain('changed')
 })
-it.each(kinds)('real sync store permits same-account %s', kind => {
+it.each(kinds)('real W07 permits same-account %s', kind => {
   const run = action(kind), before = snapshot(); act(run)
   expect(snapshot().state).not.toBe(before.state); expect(snapshot().bytes).not.toBe(before.bytes)
 })
@@ -95,7 +95,7 @@ it('an A → B → A transition invalidates the earlier editor callback', () => 
   const run = action('config'); replace('B'); replace('A'); const before = snapshot(); act(run)
   expect(snapshot()).toEqual(before); expect(useUI.getState().toastMsg).toContain('changed')
 })
-it.each(['profile', 'routine', 'session'])('real sync store refuses a changed %s inside the producer', kind => {
+it.each(['profile', 'routine', 'session'])('real W07 refuses a changed %s inside the producer', kind => {
   const run = action('config'), original = useStore.getState().update
   let before!: ReturnType<typeof snapshot>
   useStore.setState({ update: (mut, push) => {
@@ -113,7 +113,7 @@ it('checks the producer draft even when the outer owner still names A', () => {
   useStore.setState({ update: mut => { mut(draft) } }); act(run)
   expect(JSON.stringify(draft)).toBe(draftBefore); expect(snapshot()).toEqual(before)
 })
-it('a newer durable tab owner refuses the callback before sync store joins it', () => {
+it('a newer durable tab owner refuses the callback before W07 joins it', () => {
   const run = action('config')
   platform.kv.set('gym_owner', 'B'); platform.kv.set('gym_user', JSON.stringify({ id: 'B' })); platform.kv.set('gym_state_owner', 'B'); platform.kv.set('gym_state_v1', JSON.stringify(doc()))
   const before = snapshot(); act(run)
@@ -129,8 +129,8 @@ it('same-account session renewal allows the original editor callback', () => {
   expect(snapshot().state).not.toBe(before.state); expect(snapshot().bytes).not.toBe(before.bytes)
 })
 
-// Deliberate document replacements receive a concrete ephemeral identity.
-it.each(['undo-routine', 'undo-exercise'])('document replacement refuses stale %s against the real sync store seam', kind => {
+// Integration-owned W20 F3: W16 gives deliberate replacements a concrete ephemeral identity.
+it.each(['undo-routine', 'undo-exercise'])('W16 document replacement refuses stale %s against the real W07 seam', kind => {
   const run = action(kind), next = structuredClone(useStore.getState().S)
   if (kind === 'undo-exercise') next.routines[0]!.ex = [{...structuredClone(slot),weight:99}]
   else next.routines = [{id:'replacement',name:'Replacement plan',ex:[]}]
@@ -142,7 +142,7 @@ it.each(['undo-routine', 'undo-exercise'])('document replacement refuses stale %
   expect(snapshot()).toEqual(before); expect(write).not.toHaveBeenCalled()
   expect(useUI.getState().toastMsg).toContain('changed')
 })
-it.each(['undo-routine', 'undo-exercise'])('identical document replacement also refuses stale %s', kind => {
+it.each(['undo-routine', 'undo-exercise'])('W16 identical document replacement also refuses stale %s', kind => {
   const run = action(kind), next = structuredClone(useStore.getState().S)
   act(() => useStore.getState().replaceState(next,false))
   const before = snapshot(), write = vi.spyOn(platform.kv,'set')

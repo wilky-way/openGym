@@ -34,7 +34,7 @@ describe('English lazy details', () => {
     core._setDetailsLoader(load)
     core.instrFor(ex)
     expect(load).toHaveBeenCalledTimes(1)
-    // The browser listener invokes this shell-to-core language hook.
+    // W01's browser listener invokes this approved shell-to-core hook.
     core._retryDetails()
     expect(load).toHaveBeenCalledTimes(2)
   })

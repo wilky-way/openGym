@@ -4,8 +4,8 @@ import { startServer, softPasskey, user } from './passkey-helpers'
 import { deviceResponse, listDevices } from '../src/storage/devices'
 import { passkeyPositive, deviceLinkPositive } from './passkey-transcript-flows'
 
-test('passkey-positive-ceremony', () => passkeyPositive())
-test('device-link-positive', () => deviceLinkPositive())
+test('S13:passkey-positive-ceremony', () => passkeyPositive())
+test('S13:device-link-positive', () => deviceLinkPositive())
 
 test('default passkey and link sign-ins mint browser devices; secure cookies migrate', async () => {
   const owner=softPasskey(),phone=softPasskey()

@@ -34,7 +34,7 @@ const put=(mode='active')=>{
 beforeEach(()=>{globalThis.IS_REACT_ACT_ENVIRONMENT=true;vi.setSystemTime(new Date(date+'T12:00:00'));bindUI(useUI);useUI.setState({sheets:[],toastAction:null,toastMsg:''});localStorage.clear();const cache=new Map<string,string|Uint8Array>();testPlatform.objects={get:async(b,k)=>cache.get(b+':'+k)??null,put:async(b,k,v)=>{cache.set(b+':'+k,v)},delete:async(b,k)=>{cache.delete(b+':'+k)},keys:async()=>[]};testPlatform.transport.fetch=vi.fn(async()=>new Response(JSON.stringify({items:[],etag:'empty'})));put()})
 afterEach(()=>{act(()=>roots.splice(0).forEach(root=>root.unmount()));document.body.innerHTML=''})
 
-// All actions use the real sync store updater/persistence and real setUser + replaceState.
+// All actions use the real W07 updater/persistence and real setUser + replaceState.
 // The boundary variant switches after all pre-call validation, before the producer.
 const paths=['programs-resume','today-resume','block-repeat','block-next','block-stop','end','repeat-week','routine-skip','not-today-skip','shift','move','pause','rollover-accept','load','switch','library-load','library-switch','import-save','shift-undo','rollover-undo'] as const
 type Path=typeof paths[number]
@@ -43,7 +43,7 @@ async function capture(path:Path):Promise<()=>unknown> {
  if(path.startsWith('block-'))put('finished')
  if(path.startsWith('rollover-'))put('rollover')
  if(path==='today-resume'){const host=mount(<ProgrammeToday/>),b=button(host,'Pick up at week 1');return ()=>b.click()}
- if(path.startsWith('block-')){const host=mount(<ProgrammeRollover/>),label=path==='block-repeat'?'Repeat block':path==='block-next'?'Pick next program':'Stop program',b=button(host,label);return ()=>b.click()}
+ if(path.startsWith('block-')){const host=mount(<ProgrammeRollover/>),label=path==='block-repeat'?'Repeat block':path==='block-next'?'Pick next program':'Stop program',b=button(host,label);if(path==='block-repeat'){await act(async()=>b.click());const confirm=button(sheet(),'Confirm repeat');return ()=>confirm.click()}return ()=>b.click()}
  if(path==='end'){const host=mount(<Programs/>);await click(host,'End program');const b=button(sheet(),'End program');return ()=>b.click()}
  if(path==='repeat-week'){await click(mount(<ProgrammeToday/>),'Repeat week 1');const b=button(sheet(),'Repeat week');return ()=>b.click()}
  if(path==='routine-skip'){act(()=>programmeSkipSheet(useStore.getState().S.routines[0]));const b=button(sheet(),'Skip this session');return ()=>b.click()}
@@ -77,13 +77,13 @@ async function capture(path:Path):Promise<()=>unknown> {
 }
 // Keep the captured DOM node, even when React removes it after the switch.
 async function action(path:Path){if(path==='programs-resume'){put('paused');const host=mount(<Programs/>),b=button(host,'Resume program');return ()=>b.click()}return capture(path)}
-it.each(paths)('%s rejects a captured A action after real sync store switches to B, preserving saved bytes',async path=>{
+it.each(paths)('%s rejects a captured A action after real W07 switches to B, preserving saved bytes',async path=>{
  const run=await action(path),B=structuredClone(useStore.getState().S);B.accountMarker='B'
  let bytes:string|null=null
  await act(async()=>{replace(B,'B');bytes=testPlatform.kv.get(KEY);await run()});await settle()
  expect(testPlatform.kv.get(KEY)).toBe(bytes);expect(useStore.getState().S.accountMarker).toBe('B');expect(useUI.getState().toastMsg).toMatch(/changed/i)
 })
-it.each(paths)('%s guards inside the real sync store producer at an injected A→B boundary',async path=>{
+it.each(paths)('%s guards inside the real W07 producer at an injected A→B boundary',async path=>{
  const run=await action(path),B=structuredClone(useStore.getState().S);B.accountMarker='B'
  const original=useStore.getState().update;let bytes:string|null=null,entered=false
  useStore.setState({update:(mut,push)=>{entered=true;replace(B,'B');bytes=testPlatform.kv.get(KEY);original(mut,push)}})

@@ -1,0 +1,68 @@
+/* Warm paper, claret ink, and the hierarchy of a training diary. */
+:root[data-skin="logbook"] body{line-height:1.35;letter-spacing:0}
+:root[data-skin="logbook"] .hdr h1{font:var(--d-w) var(--d-size)/1.05 var(--f-display);letter-spacing:var(--d-ls)}
+:root[data-skin="logbook"] h2,:root[data-skin="logbook"] h3{font-family:var(--f-display);font-weight:500;letter-spacing:-.01em}
+:root[data-skin="logbook"] .card,:root[data-skin="logbook"] .sect-b,:root[data-skin="logbook"] .item{box-shadow:var(--card-edge)}
+:root[data-skin="logbook"] .btn{font-family:var(--f-btn);border-radius:var(--btn-r);letter-spacing:var(--btn-ls)}
+:root[data-skin="logbook"] .btn.primary:active{color:var(--on-acc-2)}
+:root[data-skin="logbook"] .btn.sm,:root[data-skin="logbook"] .btn.xs,:root[data-skin="logbook"] .chip,:root[data-skin="logbook"] .tag{border-radius:var(--chip-r)}
+:root[data-skin="logbook"] .chip.on{background:var(--acc);color:var(--on-acc)}
+:root[data-skin="logbook"] #tabbar{background:var(--bg-el);border-top-color:var(--sep);backdrop-filter:none;-webkit-backdrop-filter:none}
+:root[data-skin="logbook"] #tabbar button .icn{color:var(--label-3)}
+:root[data-skin="logbook"] #tabbar button.on .icn{color:var(--acc-ink)}
+:root[data-skin="logbook"] #tabbar button.start .cir{border-radius:var(--go-r);box-shadow:none}
+:root[data-skin="logbook"] #tabbar button.start .cir .icn{color:var(--on-acc)}
+:root[data-skin="logbook"] #tabbar button.start.rec .cir .icn{color:var(--on-orange)}
+:root[data-skin="logbook"] .seg{background:var(--surface-2)}
+:root[data-skin="logbook"] .seg-sel{background:var(--surface);box-shadow:var(--card-edge)}
+:root[data-skin="logbook"] .sheet,:root[data-skin="logbook"] .center{background:var(--bg-el)}
+:root[data-skin="logbook"] .sheet h3,:root[data-skin="logbook"] .center h3{font-size:var(--d2-size)}
+:root[data-skin="logbook"] .stp .num,:root[data-skin="logbook"] .effcell-stp .val,:root[data-skin="logbook"] #timer .t,:root[data-skin="logbook"] .card .big{font-family:var(--f-num);font-weight:var(--n-w);letter-spacing:0}
+:root[data-skin="logbook"] .setrow{padding-block:var(--row)}
+:root[data-skin="logbook"] .setrow .stp .num{font-size:var(--n-size)}
+:root[data-skin="logbook"] .setrow.eff3 .stp .num{font-size:20px}
+:root[data-skin="logbook"] .setrow.side .stp .num{font-size:17px}
+:root[data-skin="logbook"] .setrow.done,:root[data-skin="logbook"] .setrow.side.done{opacity:1}
+:root[data-skin="logbook"] .setrow.done .stp,:root[data-skin="logbook"] .setrow.done .effcell{background:var(--done-fill);color:var(--label-2)}
+:root[data-skin="logbook"] .setrow.done .stp .num{color:var(--label-2)}
+:root[data-skin="logbook"] .setrow.done .n{background:var(--surface-2);color:var(--label-2)}
+:root[data-skin="logbook"] .setrow.current,:root[data-skin="logbook"] .setrow-side.current{background:var(--cur-fill);box-shadow:var(--cur-edge);border-radius:var(--r);padding-inline:6px}
+:root[data-skin="logbook"] .setrow.current::before,:root[data-skin="logbook"] .setrow-side.current::before{display:none}
+:root[data-skin="logbook"] .setrow .set-target{color:var(--label-2)}
+:root[data-skin="logbook"] .exhd .exname,:root[data-skin="logbook"] .exhd .tt{font:500 var(--ex-size)/1.12 var(--f-display);letter-spacing:-.01em}
+:root[data-skin="logbook"] #timer{background:var(--rest-bg);color:var(--rest-fg)}
+:root[data-skin="logbook"] #timer .lbl{color:var(--label-2);opacity:1}
+:root[data-skin="logbook"] .program-today{padding:18px}
+:root[data-skin="logbook"] .program-today h2{font:500 13px var(--f-body);color:var(--label-2);margin-block:10px 6px}
+:root[data-skin="logbook"] .program-today>.tt{font:500 var(--d2-size)/1.12 var(--f-display);letter-spacing:-.01em;margin-bottom:5px}
+:root[data-skin="logbook"] .program-today>.row:first-child{gap:4px;align-items:start}
+:root[data-skin="logbook"] .program-today>.row:first-child>.small{padding-top:8px}
+:root[data-skin="logbook"] .program-today .ss{line-height:1.45}
+:root[data-skin="logbook"] .program-today .chips{gap:6px}
+:root[data-skin="logbook"] .program-today>.row>.btn{font-size:15px;padding-inline:10px;min-height:48px}
+:root[data-skin="logbook"] .program-today>.row>.btn:not(.primary):not(.ghost){background:var(--surface-2);color:var(--label)}
+:root[data-skin="logbook"] .program-today>.row>.btn:nth-child(2):not(.primary){background:var(--acc-soft);color:var(--acc-ink)}
+@media(max-width:359px){:root[data-skin="logbook"] .hdr h1{font-size:34px}:root[data-skin="logbook"] .setrow.eff3 .stp .num{font-size:17px}}
+
+:root[data-skin="logbook"] .exhd>.ex-name{font:500 var(--ex-size)/1.12 var(--f-display)!important;letter-spacing:-.01em!important}
+:root[data-skin="logbook"] .exhd.compact>.ex-name{font-size:17px!important}
+:root[data-skin="logbook"] .noprog,:root[data-skin="logbook"] .noprog .chip{color:var(--orange-ink)}
+
+/* Tint carries effort/status; text always uses measured ink on the tint. */
+:root[data-skin="logbook"] .effcell-stp{color:var(--label)!important}
+:root[data-skin="logbook"] .effpick.menu-list .menu-item .effpick-n{background:color-mix(in srgb,var(--bc) 16%,var(--surface));color:var(--label)}
+:root[data-skin="logbook"] .effpick .menu-on.is-on{color:var(--acc-ink)}
+:root[data-skin="logbook"] .btn.danger{background:color-mix(in srgb,var(--red) 8%,var(--surface));color:var(--red)}
+:root[data-skin="logbook"] .progline.warn,:root[data-skin="logbook"] .pr,:root[data-skin="logbook"] .mchip.miss{color:var(--label)}
+:root[data-skin="logbook"] .swpane.del button{color:var(--on-red)}
+:root[data-skin="logbook"] #timer.rest.paused .t{opacity:1}
+:root[data-skin="logbook"] .sp-root-title{font:500 40px/1.1 var(--f-display);letter-spacing:-.015em}
+:root[data-skin="logbook"] .focus-name{font-family:var(--f-display);font-weight:500}
+:root[data-skin="logbook"] .focus-note.pinned,:root[data-skin="logbook"] .focus-badge.warning{color:var(--label)}
+:root[data-skin="logbook"] .focus-failure{color:var(--on-purple)}
+:root[data-skin="logbook"] .focus-set.complete .stp .num:disabled,:root[data-skin="logbook"] .focus-set.locked .stp .num:disabled,:root[data-skin="logbook"] .focus-set.complete .focus-timed strong,:root[data-skin="logbook"] .focus-set.locked .focus-timed strong{color:var(--label-2)!important;-webkit-text-fill-color:var(--label-2)!important}
+:root[data-skin="logbook"] .chip.on .dim{color:var(--on-acc)}
+:root[data-skin="logbook"] .tag.acc{background:color-mix(in srgb,var(--acc) 10%,var(--surface))}
+/* Clipping a card swipe must not turn the hidden preview into a horizontal scroll container. */
+:root[data-skin="logbook"] .workout-swipe-stack{overflow:clip}
+:root[data-skin="logbook"] .refline>span{min-width:0;flex:1;overflow-wrap:break-word}

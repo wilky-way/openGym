@@ -17,7 +17,7 @@ test('every root-level module server.js needs is on the Dockerfile COPY line', (
   const runtime = api.split(/^FROM /m).at(-1)!
   expect(runtime.match(/^COPY .*$/gm)).toHaveLength(1)
   const web = readFileSync(resolve(import.meta.dir, '../../../web/Dockerfile'), 'utf8')
-  expect(web).toContain('ARG WEB_DIST=dist\nCOPY ${WEB_DIST}/ /usr/share/nginx/html/') // Release regressions Compose selects the native public artifact; context smoke keeps the dist default
+  expect(web).toContain('ARG WEB_DIST=dist\nCOPY ${WEB_DIST}/ /usr/share/nginx/html/') // I03 Compose selects the native public artifact; context smoke keeps the dist default
   expect(web).toContain('COPY catalogue/media/')
   expect(web).toContain('USER 101')
   expect(web).toMatch(/^FROM nginxinc\/nginx-unprivileged:alpine@sha256:[a-f0-9]{64}$/m)

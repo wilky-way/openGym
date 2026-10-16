@@ -38,7 +38,7 @@ export declare function matchExercise(e: any, query: any): any;
 export declare function searchExercises(list: any, query: any): any;
 export declare function similarExercises(list: any, query: any, exclude?: any[], limit?: number): any[];
 
-/** R2: caller-owned index; EXIDX is the catalogue-only default. */
+/** R2: caller-owned index; EXIDX is the catalogue-only default (K03). */
 export interface Exercise {
   id?: string; n?: string; bp?: string; tg?: string; eq?: string; mg?: string;
   sm?: string[] | string; st?: string[]; cat?: string; img?: string; gif?: string;

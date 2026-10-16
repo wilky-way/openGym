@@ -2,8 +2,8 @@
 import { describe, test, expect } from 'vitest'
 import { withRemoteState, getState, getUser } from '../src/state'
 import type { Fetcher } from '../src/http-client'
-const env = { OPENGYM_URL: 'http://127.0.0.1:1234', OPENGYM_TOKEN: 'synthetic-token', OPENGYM_UID: 'the operator' }
-function fixture({ state = null, status = 200, corrupt = false, user = 'the operator' }: any = {}) {
+const env = { OPENGYM_URL: 'http://127.0.0.1:1234', OPENGYM_TOKEN: 'synthetic-token', OPENGYM_UID: 'alex' }
+function fixture({ state = null, status = 200, corrupt = false, user = 'alex' }: any = {}) {
   const calls: string[] = []
   const fetcher: Fetcher = async url => {
     calls.push(url)
@@ -30,7 +30,7 @@ describe('a read failure is not "you never signed in"', () => {
   test('a permission failure names the file, not the server\'s path', async () => {
     const err: any = await fixture({ status: 403 }).load().catch(e => e)
     expect(err).toBeTruthy(); expect(err.code).toBe('API_REFUSED'); expect(err.message).toMatch(/refused.*403/)
-    expect(err.message).not.toContain('/'); expect(err.message).not.toContain('the operator')
+    expect(err.message).not.toContain('/'); expect(err.message).not.toContain('alex')
   })
   test('a good state file still loads, with the app defaults merged in', async () => {
     const S = await fixture({ state: { unit: 'lb', routines: [{ id: 'r1', name: 'R', ex: [] }], _wid: 'epoch' } }).load()
@@ -40,7 +40,7 @@ describe('a read failure is not "you never signed in"', () => {
 describe('the "which profile?" error is a config message, not a roster', () => {
   for (const label of ['several state files', 'several users, none synced yet']) {
     test(`${label}: names no uid and no absolute path`, async () => {
-      const calls: string[] = [], ids = ['the operator', 'secret-partner-uid', 'third-account']
+      const calls: string[] = [], ids = ['alex', 'secret-partner-uid', 'third-account']
       const fetcher: Fetcher = async url => { calls.push(url); throw new Error(ids.join(', ') + '/private/data') }
       const err: any = await withRemoteState(getState, { env: { ...env, OPENGYM_UID: '' }, fetcher }).catch(e => e)
       expect(err).toBeTruthy(); expect(err.code).toBe('CONFIG_REQUIRED'); expect(err.message).toMatch(/OPENGYM_UID/)
@@ -50,19 +50,19 @@ describe('the "which profile?" error is a config message, not a roster', () => {
   }
 })
 test('rechecks profile on every tool call and does not serve a cached doc after mismatch', async () => {
-  let uid = 'the operator', gets = 0
+  let uid = 'alex', gets = 0
   const fetcher: Fetcher = async url => ({ ok: true, status: 200, json: async () => {
     if (url.endsWith('/me')) return { user: { id: uid, name: 'Synthetic' } }
     if (url.endsWith('/rev')) return { rev: 2, wid: 'e' }
     gets++; return { rev: 2, state: { _wid: 'e', routines: [] } }
   } })
-  await withRemoteState(() => { expect(getUser().id).toBe('the operator') }, { env, fetcher })
+  await withRemoteState(() => { expect(getUser().id).toBe('alex') }, { env, fetcher })
   await withRemoteState(getState, { env, fetcher }); expect(gets).toBe(1)
   uid = 'different'; await expect(withRemoteState(getState, { env, fetcher })).rejects.toMatchObject({ code: 'PROFILE_MISMATCH' }); expect(gets).toBe(1)
 })
 test('same-revision restore with a different wid invalidates the cache', async () => {
   let wid = 'a', pulls = 0
-  const fetcher: Fetcher = async url => ({ ok: true, status: 200, json: async () => url.endsWith('/me') ? { user: { id: 'the operator', name: 'Synthetic' } } : url.endsWith('/rev') ? { rev: 7, wid } : (++pulls, { rev: 7, state: { _wid: wid } }) })
+  const fetcher: Fetcher = async url => ({ ok: true, status: 200, json: async () => url.endsWith('/me') ? { user: { id: 'alex', name: 'Synthetic' } } : url.endsWith('/rev') ? { rev: 7, wid } : (++pulls, { rev: 7, state: { _wid: wid } }) })
   expect((await withRemoteState(getState, { env, fetcher }))._wid).toBe('a')
   wid = 'b'; expect((await withRemoteState(getState, { env, fetcher }))._wid).toBe('b'); expect(pulls).toBe(2)
 })

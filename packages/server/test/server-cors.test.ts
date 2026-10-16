@@ -16,7 +16,7 @@ function fixture() {
 }
 for (const origin of ['https://gym.example.com', 'https://localhost', 'http://localhost']) {
   test(`the pairing preflight from ${origin} is answered by openGym with that origin allowed`, async () => {
-    // Security regression: only the configured ORIGIN is allowed.
+    // I03 security exception: only the configured ORIGIN is allowed.
     const h = fixture()
     const response = await fetch(`${h.api}/api/pair/redeem`, { method: 'OPTIONS', headers: preflight(origin) })
     assert.equal(response.status, 204)

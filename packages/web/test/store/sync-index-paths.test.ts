@@ -26,7 +26,7 @@ function converted(S: any, id: string, active = true) {
   expect(record.entries[0].sets[0].w).toBe(22)
   expect(record.vol).toBe(176)
   if (active) { expect(S.active.entries[0].sets[0].w).toBe(22); expect(S.active.vol).toBe(176) }
-  // Equal-Reset target on each real indirect client-merge path.
+  // K10 r1 equal-Reset target on each real indirect merge path.
   expect(S.programmes.offloaded?.obsolete).toBeUndefined()
 }
 it.each(['current', 'previous'])('account switching converts custom history and the %s active source into the existing stash unit', source => {

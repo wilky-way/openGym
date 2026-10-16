@@ -1,0 +1,3186 @@
+{
+  "F0": {
+    "packages": [
+      "contract",
+      "core",
+      "server",
+      "web",
+      "mcp",
+      "parity"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/mcp/test/private-library-guard.test.js",
+        "ported": "scripts/test/private-library-guard.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/mcp/test/private-library-guard.test.js"
+    ]
+  },
+  "F1": {
+    "packages": [
+      "contract"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "Contract foundation authors new tests; no legacy module test file is ported by F1."
+  },
+  "K03": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/exercises.test.js",
+        "ported": "packages/core/test/exercises.test.ts",
+        "waiver": {
+          "assertions": 11,
+          "reason": "English-only ruling removes the three translated-term/name/cache tests (11 assertions); canonical English and accent-insensitive custom names remain covered."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercises.custom.test.js",
+        "ported": "packages/core/test/exercises.custom.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercises.clip-ext.test.js",
+        "ported": "packages/core/test/exercises.clip-ext.test.ts",
+        "waiver": {
+          "assertions": 5,
+          "reason": "Native Android animated-WebP branch was deleted under R3; its five assertions are waived, while desktop MP4 behavior remains tested."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/equipment.test.js",
+        "ported": "packages/core/test/equipment.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/equipment-extra.test.js",
+        "ported": "packages/core/test/equipment-extra.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercise-muscle-batch-1.test.js",
+        "ported": "packages/core/test/exercise-muscle-batch-1.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercise-muscle-batch-2.test.js",
+        "ported": "packages/core/test/exercise-muscle-batch-2.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/starter.test.js",
+        "ported": "packages/core/test/starter.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/search-typo.test.js",
+        "ported": "packages/core/test/search-typo.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/catalogue-continuity.test.js",
+        "ported": "packages/core/test/catalogue-continuity.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercise-alias-ids.test.js",
+        "ported": "packages/core/test/exercise-alias-ids.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercise-figure.test.js",
+        "ported": "packages/core/test/exercise-figure.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercise-muscle-olympic.test.js",
+        "ported": "packages/core/test/exercise-muscle-olympic.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/assisted.test.js",
+        "ported": "packages/core/test/assisted.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/exercises.test.js",
+      "legacy/frontend/src/lib/exercises.custom.test.js",
+      "legacy/frontend/src/lib/exercises.clip-ext.test.js",
+      "legacy/frontend/src/lib/equipment.test.js",
+      "legacy/frontend/src/lib/equipment-extra.test.js",
+      "legacy/frontend/src/lib/exercise-muscle-batch-1.test.js",
+      "legacy/frontend/src/lib/exercise-muscle-batch-2.test.js",
+      "legacy/frontend/src/lib/starter.test.js",
+      "legacy/frontend/src/lib/search-typo.test.js",
+      "legacy/frontend/src/lib/catalogue-continuity.test.js",
+      "legacy/frontend/src/lib/exercise-alias-ids.test.js",
+      "legacy/frontend/src/lib/exercise-figure.test.js",
+      "legacy/frontend/src/lib/exercise-muscle-olympic.test.js",
+      "legacy/frontend/src/lib/assisted.test.js"
+    ]
+  },
+  "K15": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/backfill.test.js",
+        "ported": "packages/core/test/backfill.test.ts",
+        "waiver": {
+          "assertions": 4,
+          "reason": "Media deletion ruling removes the replaced-workout photos/videos carry test and its four assertions; note carry remains tested."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/workout-date.test.js",
+        "ported": "packages/core/test/workout-date.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/session-edit.test.js",
+        "ported": "packages/core/test/session-edit.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-rollover.test.js",
+        "ported": "packages/core/test/programme-rollover.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/backfill.test.js",
+      "legacy/frontend/src/lib/workout-date.test.js",
+      "legacy/frontend/src/lib/session-edit.test.js",
+      "legacy/frontend/src/lib/programme-rollover.test.js"
+    ]
+  },
+  "K06": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/history.test.js",
+        "ported": "packages/core/src/history.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/history.copy-row.test.js",
+        "ported": "packages/core/src/history.copy-row.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/history.move-entry.test.js",
+        "ported": "packages/core/src/history.move-entry.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/day-notes.test.js",
+        "ported": "packages/core/src/day-notes.test.ts",
+        "waiver": {
+          "reason": "K06 day-notes: server sync-rule expects moved to day-notes.diff.test.ts (legacy/api/sync-stamps import)",
+          "assertions": 4
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/bodyweight.test.js",
+        "ported": "packages/core/src/bodyweight.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/nudge.test.js",
+        "ported": "packages/core/src/nudge.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/history.test.js",
+      "legacy/frontend/src/lib/history.copy-row.test.js",
+      "legacy/frontend/src/lib/history.move-entry.test.js",
+      "legacy/frontend/src/lib/day-notes.test.js",
+      "legacy/frontend/src/lib/bodyweight.test.js",
+      "legacy/frontend/src/lib/nudge.test.js"
+    ]
+  },
+  "K02": {
+    "packages": [
+      "core",
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/i18n-core.test.js",
+      "legacy/frontend/src/lib/i18n-plural.test.js",
+      "legacy/frontend/src/lib/i18n-details-lang.test.js",
+      "legacy/frontend/src/lib/format-ago.test.js",
+      "legacy/frontend/src/lib/format-names.test.js",
+      "legacy/frontend/src/lib/week-start.test.js",
+      "legacy/frontend/src/lib/weight-decimals.test.js",
+      "legacy/frontend/src/lib/workout-model.test.js",
+      "legacy/frontend/src/lib/superset-meta.test.js",
+      "legacy/frontend/src/lib/rep-range.test.js",
+      "legacy/frontend/src/lib/programme-ui.test.js",
+      "legacy/frontend/src/lib/programme-targets.test.js",
+      "legacy/frontend/src/lib/nav.test.js",
+      "legacy/frontend/src/lib/failure-sets.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/i18n-core.test.js",
+        "ported": "packages/core/test/i18n-core.test.ts",
+        "waiver": {
+          "reason": "K02 English-only removes foreign locale derivation, picker, name-pack casing and bilingual-switch assertions",
+          "assertions": 44
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/i18n-plural.test.js",
+        "ported": "packages/core/test/i18n-plural.test.ts",
+        "waiver": {
+          "reason": "K02 English-only removes foreign CLDR plural forms and foreign-pack source inventories",
+          "assertions": 26
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/i18n-details-lang.test.js",
+        "ported": "packages/core/test/i18n-details-lang.test.ts",
+        "waiver": {
+          "reason": "K02 English-only replaces foreign description switching with English fallback and stale-load rejection",
+          "assertions": 6
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/format-ago.test.js",
+        "ported": "packages/core/test/format-ago.test.ts",
+        "waiver": {
+          "reason": "K02 English-only removes translated duration, translated set-count and German relative-date assertions",
+          "assertions": 9
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/format-names.test.js",
+        "ported": "packages/core/test/format-names.test.ts",
+        "waiver": {
+          "reason": "K02 English-only removes Spanish and German translated exercise-name assertions",
+          "assertions": 2
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/week-start.test.js",
+        "ported": "packages/core/test/week-start.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/weight-decimals.test.js",
+        "ported": "packages/core/test/weight-decimals.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/workout-model.test.js",
+        "ported": "packages/core/test/workout-model.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/superset-meta.test.js",
+        "ported": "packages/core/test/superset-meta.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/rep-range.test.js",
+        "ported": "packages/core/test/rep-range.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-ui.test.js",
+        "ported": "packages/core/test/programme-ui.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-targets.test.js",
+        "ported": "packages/core/test/programme-targets.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/nav.test.js",
+        "ported": "packages/web/test/nav.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/failure-sets.test.js",
+        "ported": "packages/core/test/failure-sets.test.ts"
+      }
+    ]
+  },
+  "K01": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/sha256.test.js",
+        "ported": "packages/core/test/sha256.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/zip.test.js",
+        "ported": "packages/core/test/zip.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/measurements.test.js",
+        "ported": "packages/core/test/measurements.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/sha256.test.js",
+      "legacy/frontend/src/lib/zip.test.js",
+      "legacy/frontend/src/lib/measurements.test.js"
+    ]
+  },
+  "K13": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/programme-conformance.test.js",
+        "ported": "packages/core/test/programme-conformance.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/programme-conformance.test.js"
+    ]
+  },
+  "K05": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/pyramid.test.js",
+        "ported": "packages/core/test/pyramid.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/backoff.test.js",
+        "ported": "packages/core/test/backoff.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/bar.test.js",
+        "ported": "packages/core/test/bar.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/bar-nobar.test.js",
+        "ported": "packages/core/test/bar-nobar.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/dumbbells.test.js",
+        "ported": "packages/core/test/dumbbells.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/dumbbell-inventory.test.js",
+        "ported": "packages/core/test/dumbbell-inventory.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/incline.test.js",
+        "ported": "packages/core/test/incline.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/speed.test.js",
+        "ported": "packages/core/test/speed.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/pyramid.test.js",
+      "legacy/frontend/src/lib/backoff.test.js",
+      "legacy/frontend/src/lib/bar.test.js",
+      "legacy/frontend/src/lib/bar-nobar.test.js",
+      "legacy/frontend/src/lib/dumbbells.test.js",
+      "legacy/frontend/src/lib/dumbbell-inventory.test.js",
+      "legacy/frontend/src/lib/incline.test.js",
+      "legacy/frontend/src/lib/speed.test.js"
+    ]
+  },
+  "S01": {
+    "packages": [
+      "server"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/server-cors.test.js",
+        "ported": "packages/server/test/server-cors.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-config-session.test.js",
+        "ported": "packages/server/test/server-config-session.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-health-writable.test.js",
+        "ported": "packages/server/test/server-health-writable.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-url.test.js",
+        "ported": "packages/server/test/server-url.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-body-errors.test.js",
+        "ported": "packages/server/test/server-body-errors.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-media.test.js",
+        "ported": "packages/server/test/body-deadline.test.ts",
+        "waiver": {
+          "reason": "S01 retains the framed-body deadline and header-timeout wiring from server-media; upload-only assertions are deleted with exercise-media uploads by the GM ruling.",
+          "assertions": 116
+        }
+      },
+      {
+        "legacy": "legacy/api/test/server-bad-input.test.js",
+        "ported": "packages/server/test/server-bad-input.test.ts",
+        "waiver": {
+          "reason": "S01 ports JSON parsing and body caps; route-field, authentication and storage assertions belong to S03/S13 (registration, pairing, logout), S04 (data documents) and S05 (rest-timer fields).",
+          "assertions": 23
+        }
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/server-cors.test.js",
+      "legacy/api/test/server-config-session.test.js",
+      "legacy/api/test/server-health-writable.test.js",
+      "legacy/api/test/server-url.test.js",
+      "legacy/api/test/server-body-errors.test.js",
+      "legacy/api/test/server-media.test.js",
+      "legacy/api/test/server-bad-input.test.js"
+    ]
+  },
+  "S02": {
+    "packages": [
+      "server"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/durable.test.js",
+        "ported": "packages/server/test/durable.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/durable.test.js"
+    ]
+  },
+  "K10": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/sync-merge.test.js",
+        "ported": "packages/core/test/sync-merge.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sync-changes.test.js",
+        "ported": "packages/core/test/sync-changes.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sync-legacy.test.js",
+        "ported": "packages/core/test/sync-legacy.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/units.test.js",
+        "ported": "packages/core/test/units.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sync-fuzz.test.js",
+        "ported": "packages/core/test/sync-fuzz.diff.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sync-routine-order.test.js",
+        "ported": "packages/core/test/sync-routine-order.diff.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sync-stamps-parity.test.js",
+        "ported": "packages/core/test/sync-stamps-parity.diff.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/sync-merge.test.js",
+      "legacy/frontend/src/lib/sync-changes.test.js",
+      "legacy/frontend/src/lib/sync-legacy.test.js",
+      "legacy/frontend/src/lib/units.test.js",
+      "legacy/frontend/src/lib/sync-fuzz.test.js",
+      "legacy/frontend/src/lib/sync-routine-order.test.js",
+      "legacy/frontend/src/lib/sync-stamps-parity.test.js"
+    ]
+  },
+  "K17": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/sync-stamps.test.js",
+        "ported": "packages/core/test/sync-stamps.test.ts",
+        "waiver": {
+          "reason": "K17 ports stamp-level results; HTTP status, revision assignment and private GET field stripping remain S04 assertions.",
+          "assertions": 9
+        }
+      },
+      {
+        "legacy": "legacy/api/test/programme-sync.test.js",
+        "ported": "packages/core/test/programme-sync.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/programme-fix1.test.js",
+        "ported": "packages/core/test/programme-fix1.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/programme-fix2.test.js",
+        "ported": "packages/core/test/programme-fix2.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/programme-targets-compat.test.js",
+        "ported": "packages/core/test/programme-targets-compat.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/sync-stamps.test.js",
+      "legacy/api/test/programme-sync.test.js",
+      "legacy/api/test/programme-fix1.test.js",
+      "legacy/api/test/programme-fix2.test.js",
+      "legacy/api/test/programme-targets-compat.test.js"
+    ]
+  },
+  "K04": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/programme-calendar.test.js",
+        "ported": "packages/core/test/programme-calendar.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/queue.test.js",
+        "ported": "packages/core/test/queue.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/rotation.test.js",
+        "ported": "packages/core/test/rotation.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-edit.test.js",
+        "ported": "packages/core/test/programme-edit.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-rule-text.test.js",
+        "ported": "packages/core/test/programme-rule-text.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/programme-calendar.test.js",
+      "legacy/frontend/src/lib/queue.test.js",
+      "legacy/frontend/src/lib/rotation.test.js",
+      "legacy/frontend/src/lib/programme-edit.test.js",
+      "legacy/frontend/src/lib/programme-rule-text.test.js"
+    ]
+  },
+  "F2": {
+    "packages": [
+      "parity"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/server-data-rev.test.js",
+        "ported": "packages/parity/test/server-data-rev.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-data-rev-endpoint.test.js",
+        "ported": "packages/parity/test/server-data-rev-endpoint.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-data-wid.test.js",
+        "ported": "packages/parity/test/server-data-wid.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-data-reset.test.js",
+        "ported": "packages/parity/test/server-data-reset.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/server-data-rev.test.js",
+      "legacy/api/test/server-data-rev-endpoint.test.js",
+      "legacy/api/test/server-data-wid.test.js",
+      "legacy/api/test/server-data-reset.test.js"
+    ]
+  },
+  "F3": {
+    "packages": [
+      "parity"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "F3 authors new golden scenarios and coverage checks; legacy API test names are inventoried in api-test-map.md rather than ported as module test twins."
+  },
+  "K08": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/progression.test.js",
+        "ported": "packages/core/test/progression.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/progression.extra-sets.test.js",
+        "ported": "packages/core/test/progression.extra-sets.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/progression.triple.test.js",
+        "ported": "packages/core/test/progression.triple.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/plates.test.js",
+        "ported": "packages/core/test/plates.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/progression-copy.test.js",
+        "ported": "packages/core/test/progression-copy.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/progression.test.js",
+      "legacy/frontend/src/lib/progression.extra-sets.test.js",
+      "legacy/frontend/src/lib/progression.triple.test.js",
+      "legacy/frontend/src/lib/plates.test.js",
+      "legacy/frontend/src/lib/progression-copy.test.js"
+    ]
+  },
+  "K09": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/onerm.test.js",
+        "ported": "packages/core/test/onerm.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/effort.test.js",
+        "ported": "packages/core/test/effort.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/muscles.test.js",
+        "ported": "packages/core/test/muscles.test.ts",
+        "waiver": {
+          "assertions": 2,
+          "reason": "English-only ruling deletes the MUSCLE_NAME locale-pack test (two assertion sites); muscle metadata, loads and balance windows retain all legacy assertions."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/per-set.test.js",
+        "ported": "packages/core/test/per-set.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercise-history.test.js",
+        "ported": "packages/core/test/exercise-history.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/onerm.test.js",
+      "legacy/frontend/src/lib/effort.test.js",
+      "legacy/frontend/src/lib/muscles.test.js",
+      "legacy/frontend/src/lib/per-set.test.js",
+      "legacy/frontend/src/lib/exercise-history.test.js"
+    ]
+  },
+  "K11": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/recovery.test.js",
+        "ported": "packages/core/test/recovery.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/recovery-view.test.js",
+        "ported": "packages/core/test/recovery-view.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/strength-exercises.test.js",
+        "ported": "packages/core/test/strength-exercises.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/structuralBalance.test.js",
+        "ported": "packages/core/test/structuralBalance.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/structuralBalance-view.test.js",
+        "ported": "packages/core/test/structuralBalance-view.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/demoSeed.test.js",
+        "ported": "packages/core/test/demoSeed.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/recovery.test.js",
+      "legacy/frontend/src/lib/recovery-view.test.js",
+      "legacy/frontend/src/lib/strength-exercises.test.js",
+      "legacy/frontend/src/lib/structuralBalance.test.js",
+      "legacy/frontend/src/lib/structuralBalance-view.test.js",
+      "legacy/frontend/src/lib/demoSeed.test.js"
+    ]
+  },
+  "K07": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/import-bodyweight.test.js",
+        "ported": "packages/core/test/import-bodyweight.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-csv.hostile.test.js",
+        "ported": "packages/core/test/import-csv.hostile.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-csv.strong.test.js",
+        "ported": "packages/core/test/import-csv.strong.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-csv.test.js",
+        "ported": "packages/core/test/import-csv.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-csv.twice.test.js",
+        "ported": "packages/core/test/import-csv.twice.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-effort.test.js",
+        "ported": "packages/core/test/import-effort.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-hevy.hostile.test.js",
+        "ported": "packages/core/test/import-hevy.hostile.test.ts",
+        "waiver": {
+          "assertions": 9,
+          "reason": "K07 defers the paging through whatever the server sends HTTP describe (9 assertions) to W01, which owns Hevy pagination and malformed HTTP response handling."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-hevy.test.js",
+        "ported": "packages/core/test/import-hevy.test.ts",
+        "waiver": {
+          "assertions": 5,
+          "reason": "K07 defers the importHevyData HTTP describe (5 assertions) to W01, which owns the Hevy fetch and authentication surface."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-match.test.js",
+        "ported": "packages/core/test/import-match.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-name-bodypart.test.js",
+        "ported": "packages/core/test/import-name-bodypart.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-reimport.test.js",
+        "ported": "packages/core/test/import-reimport.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/import-bodyweight.test.js",
+      "legacy/frontend/src/lib/import-csv.hostile.test.js",
+      "legacy/frontend/src/lib/import-csv.strong.test.js",
+      "legacy/frontend/src/lib/import-csv.test.js",
+      "legacy/frontend/src/lib/import-csv.twice.test.js",
+      "legacy/frontend/src/lib/import-effort.test.js",
+      "legacy/frontend/src/lib/import-hevy.hostile.test.js",
+      "legacy/frontend/src/lib/import-hevy.test.js",
+      "legacy/frontend/src/lib/import-match.test.js",
+      "legacy/frontend/src/lib/import-name-bodypart.test.js",
+      "legacy/frontend/src/lib/import-reimport.test.js"
+    ]
+  },
+  "K12": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/programme.test.js",
+        "ported": "packages/core/test/programme.diff.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-controls.test.js",
+        "ported": "packages/core/test/programme-controls.diff.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-materialize.test.js",
+        "ported": "packages/core/test/programme-materialize.diff.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-import.test.js",
+        "ported": "packages/core/test/programme-import.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-today.test.js",
+        "ported": "packages/core/test/programme-today.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-lifecycle.test.js",
+        "ported": "packages/core/test/programme-lifecycle.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-refresh.test.js",
+        "ported": "packages/core/test/programme-refresh.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/programme-agent.test.js",
+        "ported": "packages/core/test/programme-agent.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/programme.test.js",
+      "legacy/frontend/src/lib/programme-controls.test.js",
+      "legacy/frontend/src/lib/programme-materialize.test.js",
+      "legacy/frontend/src/lib/programme-import.test.js",
+      "legacy/frontend/src/lib/programme-today.test.js",
+      "legacy/frontend/src/lib/programme-lifecycle.test.js",
+      "legacy/frontend/src/lib/programme-refresh.test.js",
+      "legacy/frontend/src/lib/programme-agent.test.js"
+    ]
+  },
+  "K14": {
+    "packages": [
+      "core"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/session-start.test.js",
+        "ported": "packages/core/test/session-start.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/session-merge.test.js",
+        "ported": "packages/core/test/session-merge.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/session-routines.test.js",
+        "ported": "packages/core/test/session-routines.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/session-repeat.test.js",
+        "ported": "packages/core/test/session-repeat.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/finish-workout.test.js",
+        "ported": "packages/core/test/finish-workout.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/finish-compare.test.js",
+        "ported": "packages/core/test/finish-compare.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/supersetFlow.test.js",
+        "ported": "packages/core/test/supersetFlow.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/workout-keys.test.js",
+        "ported": "packages/core/test/workout-keys.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/routines.test.js",
+        "ported": "packages/core/test/routines.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/session-start.plan.test.js",
+        "ported": "packages/core/test/session-start.plan.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/routines.update.test.js",
+        "ported": "packages/core/test/routines.update.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/routines.replace.test.js",
+        "ported": "packages/core/test/routines.replace.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/session-noprog.test.js",
+        "ported": "packages/core/test/session-noprog.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/active-workout-order.test.js",
+        "ported": "packages/core/test/active-workout-order.test.ts",
+        "waiver": {
+          "assertions": 8,
+          "reason": "English-only ruling deletes active-workout move locale-pack coverage (8 assertions); the move behavior and English source labels are retained."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/active-exercise-swap.test.js",
+        "ported": "packages/core/test/active-exercise-swap.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/session-start.test.js",
+      "legacy/frontend/src/lib/session-merge.test.js",
+      "legacy/frontend/src/lib/session-routines.test.js",
+      "legacy/frontend/src/lib/session-repeat.test.js",
+      "legacy/frontend/src/lib/finish-workout.test.js",
+      "legacy/frontend/src/lib/finish-compare.test.js",
+      "legacy/frontend/src/lib/supersetFlow.test.js",
+      "legacy/frontend/src/lib/workout-keys.test.js",
+      "legacy/frontend/src/lib/routines.test.js",
+      "legacy/frontend/src/lib/session-start.plan.test.js",
+      "legacy/frontend/src/lib/routines.update.test.js",
+      "legacy/frontend/src/lib/routines.replace.test.js",
+      "legacy/frontend/src/lib/session-noprog.test.js",
+      "legacy/frontend/src/lib/active-workout-order.test.js",
+      "legacy/frontend/src/lib/active-exercise-swap.test.js"
+    ]
+  },
+  "K16": {
+    "packages": [
+      "core",
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/plan-share.test.js",
+      "legacy/frontend/src/lib/fit-export.test.js",
+      "legacy/frontend/src/lib/workout-card.test.js",
+      "legacy/frontend/src/lib/workout-text.test.js",
+      "legacy/frontend/src/lib/plan-print.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/plan-share.test.js",
+        "ported": "packages/core/test/plan-share.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/fit-export.test.js",
+        "ported": "packages/core/test/fit-export.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/workout-card.test.js",
+        "ported": "packages/core/test/workout-card.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/workout-text.test.js",
+        "ported": "packages/core/test/workout-text.test.ts",
+        "waiver": {
+          "assertions": 2,
+          "reason": "English-only ruling removes workout-text language-pack casing tests; canonical English exercise names remain covered in the text twin."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/plan-print.test.js",
+        "ported": "packages/core/test/plan-print.test.ts",
+        "waiver": {
+          "assertions": 4,
+          "reason": "English-only ruling removes plan-print translated-name casing and German body-part translation assertions; English print casing and separate body-part spacing remain covered."
+        }
+      }
+    ]
+  },
+  "P1": {
+    "packages": [
+      "core",
+      "contract"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "P1 adds declarative progression authoring with no legacy test twin; K13 retains the complete conformance twin and differential gate."
+  },
+  "P2": {
+    "packages": [
+      "core"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New declarative progression engine; legacy routine progression remains owned and parity-tested by K08."
+  },
+  "P3": {
+    "packages": [
+      "core"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New declarative rpe-load, amrap-tm and stall handlers; K08 owns legacy routine progression twins and K09 owns core onerm twins."
+  },
+  "P4": {
+    "packages": [
+      "core"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New declarative volume-ramp, scheduled-deload and multi-week hypothetical preview. Legacy routine progression stays owned and parity-tested by K08; core muscles is consumed unchanged from K03."
+  },
+  "S03": {
+    "packages": [
+      "server"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/rate-limit.test.js",
+        "ported": "packages/server/test/rate-limit.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-pairing.test.js",
+        "ported": "packages/server/test/server-pairing.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-token-refresh.test.js",
+        "ported": "packages/server/test/server-token-refresh.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-anon-flood.test.js",
+        "ported": "packages/server/test/server-anon-flood.test.ts",
+        "waiver": {
+          "reason": "S03 ports pairing audit flood suppression and newest-code replacement; the five assertion sites in junk passkey sign-ins and sign-ups are answered but not each written to the audit log belong to S13 with passkey handlers.",
+          "assertions": 5
+        }
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/rate-limit.test.js",
+      "legacy/api/test/server-pairing.test.js",
+      "legacy/api/test/server-token-refresh.test.js",
+      "legacy/api/test/server-anon-flood.test.js"
+    ]
+  },
+  "S06": {
+    "packages": [
+      "server"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/server-admin-state.test.js",
+        "ported": "packages/server/test/server-admin-state.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-admin-delete.test.js",
+        "ported": "packages/server/test/server-admin-delete.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/server-admin-state.test.js",
+      "legacy/api/test/server-admin-delete.test.js"
+    ]
+  },
+  "S13": {
+    "packages": [
+      "server"
+    ],
+    "legacyTests": [
+      "legacy/api/test/passkeys-store.test.js",
+      "legacy/api/test/device-link.test.js",
+      "legacy/api/test/verify-error.test.js",
+      "legacy/api/test/server-passkeys.test.js",
+      "legacy/api/test/server-first-user-admin.test.js",
+      "legacy/api/test/server-anon-flood.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/passkeys-store.test.js",
+        "ported": "packages/server/test/passkeys-store.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/device-link.test.js",
+        "ported": "packages/server/test/device-link.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/verify-error.test.js",
+        "ported": "packages/server/test/verify-error.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-passkeys.test.js",
+        "ported": "packages/server/test/server-passkeys.test.ts",
+        "waiver": {
+          "reason": "S13 removes 39 assertion sites in seven password-only cases and the password-change part of the mixed link case because password login and password proof are deleted; the password-on last-way-in case now asserts passkey-only refusal for both flag values.",
+          "assertions": 39
+        }
+      },
+      {
+        "legacy": "legacy/api/test/server-first-user-admin.test.js",
+        "ported": "packages/server/test/server-first-user-admin.test.ts",
+        "waiver": {
+          "reason": "S13 removes eight password-registration assertion sites because password registration is deleted; the surviving admin.first-user audit assertion moves to passkey registration, mixed bootstrap cases use passkey registration, and ADMIN_UIDS is asserted through authenticated me instead of the S06-owned admin users route.",
+          "assertions": 8
+        }
+      },
+      {
+        "legacy": "legacy/api/test/server-anon-flood.test.js",
+        "ported": "packages/server/test/server-anon-flood.test.ts"
+      }
+    ]
+  },
+  "S04": {
+    "packages": [
+      "server"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/server-data-rev.test.js",
+        "ported": "packages/server/test/server-data-rev.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-data-wid.test.js",
+        "ported": "packages/server/test/server-data-wid.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-data-reset.test.js",
+        "ported": "packages/server/test/server-data-reset.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-data-rev-endpoint.test.js",
+        "ported": "packages/server/test/server-data-rev-endpoint.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-state-cache-bounds.test.js",
+        "ported": "packages/server/test/data-cache-bounds.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-state-read-cost.test.js",
+        "ported": "packages/server/test/data-read-cost.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-bad-input.test.js",
+        "ported": "packages/server/test/data-bad-input.test.ts",
+        "waiver": {
+          "reason": "S04 ports data-body validation, oversize transport, entry filtering and deep nesting; registration/pairing field validation belongs to S03/S13 and rest-timer field validation to S05.",
+          "assertions": 9
+        }
+      },
+      {
+        "legacy": "legacy/api/test/server-db-unreadable.test.js",
+        "ported": "packages/server/test/data-unreadable.test.ts",
+        "waiver": {
+          "reason": "S04 ports the named unreadable-state GET/PUT refusal; the three db.json recovery/startup scenarios belong to storage/import units S02/S09.",
+          "assertions": 12
+        }
+      },
+      {
+        "legacy": "legacy/api/test/server-admin-state.test.js",
+        "ported": "packages/server/test/data-pull.test.ts",
+        "waiver": {
+          "reason": "S04 ports the named real GET-data pull assertion with S06 installed; the other admin-state scenarios remain covered by S06.",
+          "assertions": 20
+        }
+      },
+      {
+        "legacy": "legacy/api/test/durable.test.js",
+        "ported": "packages/server/test/data-durable.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/server-data-rev.test.js",
+      "legacy/api/test/server-data-wid.test.js",
+      "legacy/api/test/server-data-reset.test.js",
+      "legacy/api/test/server-data-rev-endpoint.test.js",
+      "legacy/api/test/server-state-cache-bounds.test.js",
+      "legacy/api/test/server-state-read-cost.test.js",
+      "legacy/api/test/server-bad-input.test.js",
+      "legacy/api/test/server-db-unreadable.test.js",
+      "legacy/api/test/server-admin-state.test.js",
+      "legacy/api/test/durable.test.js"
+    ]
+  },
+  "S08": {
+    "packages": [
+      "server"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "S08 authors the new programme library and validation HTTP surface; legacy has no library repository or route tests. K13 owns the conformance legacy twins."
+  },
+  "S09": {
+    "packages": [
+      "server"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/server-db-unreadable.test.js",
+        "ported": "packages/server/test/migration-recovery.test.ts",
+        "waiver": {
+          "assertions": 3,
+          "reason": "S09 ports the three account recovery scenarios; S04 owns unreadable-state GET/PUT refusal (three assertions). Deleted password registration is represented by a synthetic account creation and rollback mirror; failed imports preserve the unreadable source without making an aside copy."
+        }
+      }
+    ],
+    "legacyTests": [
+      "legacy/api/test/server-db-unreadable.test.js"
+    ]
+  },
+  "S05": {
+    "packages": [
+      "server",
+      "core"
+    ],
+    "legacyTests": [
+      "legacy/api/test/server-push-device.test.js",
+      "legacy/api/test/server-push-filter.test.js",
+      "legacy/api/test/server-push-allowed-private.test.js",
+      "legacy/api/test/server-push-prune-save.test.js",
+      "legacy/api/test/server-push-status.test.js",
+      "legacy/api/test/server-presence.test.js",
+      "legacy/api/test/server-reminder.test.js",
+      "legacy/api/test/server-nudge.test.js",
+      "legacy/api/test/nudge.test.js",
+      "legacy/api/test/nudge-copy.test.js",
+      "legacy/api/test/push-messages.test.js",
+      "legacy/api/test/server-state-cache-bounds.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/server-push-device.test.js",
+        "ported": "packages/server/test/server-push-device.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-push-filter.test.js",
+        "ported": "packages/server/test/server-push-filter.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-push-allowed-private.test.js",
+        "ported": "packages/server/test/server-push-allowed-private.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-push-prune-save.test.js",
+        "ported": "packages/server/test/server-push-prune-save.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-push-status.test.js",
+        "ported": "packages/server/test/server-push-status.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-presence.test.js",
+        "ported": "packages/server/test/server-presence.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-reminder.test.js",
+        "ported": "packages/server/test/server-reminder.test.ts",
+        "waiver": {
+          "reason": "S05 reminder twin: PUT /api/data array-shape validation (7 assertion sites) belongs to S04; this unit ports every reminder-tick case and adds pinned boundary transcripts.",
+          "assertions": 7
+        }
+      },
+      {
+        "legacy": "legacy/api/test/server-nudge.test.js",
+        "ported": "packages/server/test/server-nudge.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/nudge.test.js",
+        "ported": "packages/server/test/nudge.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/nudge-copy.test.js",
+        "ported": "packages/server/test/nudge-copy.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/push-messages.test.js",
+        "ported": "packages/server/test/push-messages.test.ts"
+      },
+      {
+        "legacy": "legacy/api/test/server-state-cache-bounds.test.js",
+        "ported": "packages/server/test/server-state-cache-bounds.test.ts"
+      }
+    ]
+  },
+  "S10": {
+    "packages": [
+      "server"
+    ],
+    "legacyTests": [
+      "legacy/api/test/dockerfile-copy.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/dockerfile-copy.test.js",
+        "ported": "packages/server/test/dockerfile-copy.test.ts"
+      }
+    ]
+  },
+  "S11": {
+    "packages": [
+      "server"
+    ],
+    "legacyTests": [
+      "legacy/api/test/rate-limit.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/api/test/rate-limit.test.js",
+        "ported": "packages/server/test/rate-limit.test.ts"
+      }
+    ]
+  },
+  "P5": {
+    "packages": [
+      "core",
+      "server"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New progression HTTP endpoints and activation TM seed resolver; S04 owns legacy data route twins."
+  },
+  "M01": {
+    "packages": [
+      "mcp"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/mcp/test/tools.test.js",
+        "ported": "packages/mcp/test/tools.diff.test.ts"
+      },
+      {
+        "legacy": "legacy/mcp/test/labels.test.js",
+        "ported": "packages/mcp/test/labels.test.ts"
+      },
+      {
+        "legacy": "legacy/mcp/test/programme-tools.test.js",
+        "ported": "packages/mcp/test/programme-tools.test.ts"
+      },
+      {
+        "legacy": "legacy/mcp/test/state.test.js",
+        "ported": "packages/mcp/test/state.test.ts"
+      }
+    ],
+    "legacyTests": [
+      "legacy/mcp/test/tools.test.js",
+      "legacy/mcp/test/labels.test.js",
+      "legacy/mcp/test/programme-tools.test.js",
+      "legacy/mcp/test/state.test.js"
+    ]
+  },
+  "M02": {
+    "packages": [
+      "mcp"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New MCP authoring tools and local SQLite draft store have no legacy twin; M01 retains the legacy tools."
+  },
+  "M04": {
+    "packages": [
+      "core",
+      "web",
+      "mcp"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New agent workout log/undo tools; shared historical session construction and filing retain W14/K14 behavior, whose legacy inventories remain unchanged."
+  },
+  "M03": {
+    "packages": [
+      "mcp"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New library list, keyed programme diff and explicit draft publication have no legacy test twin; M01 retains the legacy tools."
+  },
+  "P6": {
+    "packages": [
+      "mcp"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New MCP progression tools and declarative draft rule operations have no legacy twins; M01 retains the complete legacy MCP inventory."
+  },
+  "W00": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/storage-environment.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/storage-environment.test.js",
+        "ported": "packages/web/test/storage-environment.test.ts"
+      }
+    ]
+  },
+  "W04": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/sound.test.js",
+      "legacy/frontend/src/lib/wakelock.test.js",
+      "legacy/frontend/src/lib/viewport-guard.test.js",
+      "legacy/frontend/src/lib/hchips.test.js",
+      "legacy/frontend/src/lib/accent.test.js",
+      "legacy/frontend/src/lib/duration.test.js",
+      "legacy/frontend/src/lib/use-sheet-keyboard.test.js",
+      "legacy/frontend/src/lib/use-swipe-row.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/sound.test.js",
+        "ported": "packages/web/test/sound.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/wakelock.test.js",
+        "ported": "packages/web/test/wakelock.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/viewport-guard.test.js",
+        "ported": "packages/web/test/viewport-guard.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/hchips.test.js",
+        "ported": "packages/web/test/hchips.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/accent.test.js",
+        "ported": "packages/web/test/accent.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/duration.test.js",
+        "ported": "packages/web/test/duration.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/use-sheet-keyboard.test.js",
+        "ported": "packages/web/test/use-sheet-keyboard.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/use-swipe-row.test.js",
+        "ported": "packages/web/test/use-swipe-row.test.ts"
+      }
+    ]
+  },
+  "W05": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/components/ui.test.jsx",
+      "legacy/frontend/src/components/SwipeCards.test.jsx",
+      "legacy/frontend/src/components/SwipeRow.pointerup.test.jsx",
+      "legacy/frontend/src/components/SwipeRow.layout.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/components/ui.test.jsx",
+        "ported": "packages/web/test/ui.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/SwipeCards.test.jsx",
+        "ported": "packages/web/test/SwipeCards.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/SwipeRow.pointerup.test.jsx",
+        "ported": "packages/web/test/SwipeRow.pointerup.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/SwipeRow.layout.test.jsx",
+        "ported": "packages/web/test/SwipeRow.layout.test.tsx"
+      }
+    ]
+  },
+  "W06": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/store/useUI.pause.test.js",
+      "legacy/frontend/src/store/useUI.rest-alert.test.js",
+      "legacy/frontend/src/store/useUI.rest-kill.test.js",
+      "legacy/frontend/src/store/useUI.rest-reload.test.js",
+      "legacy/frontend/src/store/useUI.test.js",
+      "legacy/frontend/src/store/useUI.timer-alerts.test.js",
+      "legacy/frontend/src/store/useUI.toast.test.js",
+      "legacy/frontend/src/store/useUI.work-reload.test.js",
+      "legacy/frontend/src/store/persistence.test.js",
+      "legacy/frontend/src/store/useStore.restore.test.jsx",
+      "legacy/frontend/src/store/useStore.weighin-default.test.jsx",
+      "legacy/frontend/src/store/useStore.default-lang.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/store/useUI.pause.test.js",
+        "ported": "packages/web/test/store/useUI.pause.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useUI.rest-alert.test.js",
+        "ported": "packages/web/test/store/useUI.rest-alert.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useUI.rest-kill.test.js",
+        "ported": "packages/web/test/store/useUI.rest-kill.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useUI.rest-reload.test.js",
+        "ported": "packages/web/test/store/useUI.rest-reload.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useUI.test.js",
+        "ported": "packages/web/test/store/useUI.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useUI.timer-alerts.test.js",
+        "ported": "packages/web/test/store/useUI.timer-alerts.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useUI.toast.test.js",
+        "ported": "packages/web/test/store/useUI.toast.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useUI.work-reload.test.js",
+        "ported": "packages/web/test/store/useUI.work-reload.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/persistence.test.js",
+        "ported": "packages/web/test/store/persistence.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.restore.test.jsx",
+        "ported": "packages/web/test/store/useStore.restore.test.ts",
+        "waiver": {
+          "reason": "W06 helper split: only the four pure restoredStateFor cases belong here; pull/push/account/storage/quota cases belong to W07.",
+          "assertions": 85
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.weighin-default.test.jsx",
+        "ported": "packages/web/test/store/useStore.weighin-default.test.ts",
+        "waiver": {
+          "reason": "W06 helper split: resetEverything and setUser cases belong to W07; fresh/restarted/restore defaults remain here.",
+          "assertions": 11
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.default-lang.test.jsx",
+        "ported": "packages/web/test/store/useStore.default-lang.test.ts",
+        "waiver": {
+          "reason": "W06 English-only ruling deletes foreign default-language behavior; the two-device polling case belongs to W07 sync.",
+          "assertions": 14
+        }
+      }
+    ]
+  },
+  "W01": {
+    "packages": [
+      "web",
+      "core"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/lib/api.test.js",
+      "legacy/frontend/src/lib/api.connection.test.js",
+      "legacy/frontend/src/lib/api.pair-probe.test.js",
+      "legacy/frontend/src/lib/api.pair-http.test.js",
+      "legacy/frontend/src/lib/api-base.test.js",
+      "legacy/frontend/src/lib/push.test.js",
+      "legacy/frontend/src/lib/qr.test.js",
+      "legacy/frontend/src/lib/scan-web.test.js",
+      "legacy/frontend/src/lib/audit.test.js",
+      "legacy/frontend/src/lib/device-link.test.js",
+      "legacy/frontend/src/lib/default-lang.test.js",
+      "legacy/frontend/src/lib/i18n-details-retry.test.js",
+      "legacy/frontend/src/lib/import-hevy.test.js",
+      "legacy/frontend/src/lib/import-hevy.hostile.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/lib/api.test.js",
+        "ported": "packages/web/test/api.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/api.connection.test.js",
+        "ported": "packages/web/test/api.connection.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/api.pair-probe.test.js",
+        "ported": "packages/web/test/api.pair-probe.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/api.pair-http.test.js",
+        "ported": "packages/web/test/api.pair-http.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/api-base.test.js",
+        "ported": "packages/web/test/api-base.test.ts",
+        "waiver": {
+          "reason": "W01 defers nginx, Docker and BASE_PATH describes to W23; W01 ports app-base and transport beacon only",
+          "assertions": 52
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/push.test.js",
+        "ported": "packages/web/test/push.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/qr.test.js",
+        "ported": "packages/web/test/qr.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/scan-web.test.js",
+        "ported": "packages/web/test/scan-web.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/audit.test.js",
+        "ported": "packages/web/test/audit.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/device-link.test.js",
+        "ported": "packages/web/test/device-link.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/default-lang.test.js",
+        "ported": "packages/web/test/default-lang.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/i18n-details-retry.test.js",
+        "ported": "packages/web/test/i18n-details-retry.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-hevy.test.js",
+        "ported": "packages/web/test/import-hevy.http.test.ts",
+        "waiver": {
+          "reason": "W01 ports importHevyData HTTP describe (5 assertions); all other import-hevy parser describes remain owned and ported by K07",
+          "assertions": 62
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/import-hevy.hostile.test.js",
+        "ported": "packages/web/test/import-hevy.hostile.http.test.ts",
+        "waiver": {
+          "reason": "W01 ports paging through whatever the server sends HTTP describe (9 assertions); all other hostile Hevy parser describes remain owned and ported by K07",
+          "assertions": 52
+        }
+      }
+    ]
+  },
+  "W07": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/store/useStore.adopt-hold.test.jsx",
+      "legacy/frontend/src/store/useStore.adopt.test.jsx",
+      "legacy/frontend/src/store/useStore.balance-sync.test.jsx",
+      "legacy/frontend/src/store/useStore.clock.test.jsx",
+      "legacy/frontend/src/store/useStore.config.test.jsx",
+      "legacy/frontend/src/store/useStore.default-lang.test.jsx",
+      "legacy/frontend/src/store/useStore.device-link.test.jsx",
+      "legacy/frontend/src/store/useStore.gymcards.test.jsx",
+      "legacy/frontend/src/store/useStore.hold-signout.test.jsx",
+      "legacy/frontend/src/store/useStore.import-check.test.jsx",
+      "legacy/frontend/src/store/useStore.import-restore.test.jsx",
+      "legacy/frontend/src/store/useStore.kept-copy.test.jsx",
+      "legacy/frontend/src/store/useStore.legacy-upgrade.test.jsx",
+      "legacy/frontend/src/store/useStore.media.test.jsx",
+      "legacy/frontend/src/store/useStore.plan-sync.test.jsx",
+      "legacy/frontend/src/store/useStore.quota.test.jsx",
+      "legacy/frontend/src/store/useStore.reset-sync.test.jsx",
+      "legacy/frontend/src/store/useStore.restore.test.jsx",
+      "legacy/frontend/src/store/useStore.rev-rewind.test.jsx",
+      "legacy/frontend/src/store/useStore.signin-safety.test.jsx",
+      "legacy/frontend/src/store/useStore.stash-unit.test.jsx",
+      "legacy/frontend/src/store/useStore.sync-status.test.jsx",
+      "legacy/frontend/src/store/useStore.sync.test.jsx",
+      "legacy/frontend/src/store/useStore.tabs-join.test.jsx",
+      "legacy/frontend/src/store/useStore.tabs-owner.test.jsx",
+      "legacy/frontend/src/store/useStore.tabs.test.jsx",
+      "legacy/frontend/src/store/useStore.unit-sync.test.jsx",
+      "legacy/frontend/src/store/useStore.weighin-default.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/store/useStore.adopt-hold.test.jsx",
+        "ported": "packages/web/test/store/useStore.adopt-hold.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.adopt.test.jsx",
+        "ported": "packages/web/test/store/useStore.adopt.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.balance-sync.test.jsx",
+        "ported": "packages/web/test/store/useStore.balance-sync.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.clock.test.jsx",
+        "ported": "packages/web/test/store/useStore.clock.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.config.test.jsx",
+        "ported": "packages/web/test/store/useStore.config.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.default-lang.test.jsx",
+        "ported": "packages/web/test/store/sync-default-lang.test.ts",
+        "waiver": {
+          "reason": "W07 default-language complement keeps the two-device polling case; W06 owns helpers and foreign-language UI is deleted.",
+          "assertions": 13
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.device-link.test.jsx",
+        "ported": "packages/web/test/store/useStore.device-link.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.gymcards.test.jsx",
+        "ported": "packages/web/test/store/useStore.gymcards.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.hold-signout.test.jsx",
+        "ported": "packages/web/test/store/useStore.hold-signout.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.import-check.test.jsx",
+        "ported": "packages/web/test/store/useStore.import-check.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.import-restore.test.jsx",
+        "ported": "packages/web/test/store/useStore.import-restore.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.kept-copy.test.jsx",
+        "ported": "packages/web/test/store/useStore.kept-copy.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.legacy-upgrade.test.jsx",
+        "ported": "packages/web/test/store/useStore.legacy-upgrade.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.media.test.jsx",
+        "ported": "packages/web/test/store/sync-media-deleted.test.ts",
+        "waiver": {
+          "reason": "W07 media-deleted ruling removes all owed-media cases; opaque document fields still round-trip.",
+          "assertions": 31
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.plan-sync.test.jsx",
+        "ported": "packages/web/test/store/useStore.plan-sync.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.quota.test.jsx",
+        "ported": "packages/web/test/store/useStore.quota.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.reset-sync.test.jsx",
+        "ported": "packages/web/test/store/useStore.reset-sync.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.restore.test.jsx",
+        "ported": "packages/web/test/store/sync-restore.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.rev-rewind.test.jsx",
+        "ported": "packages/web/test/store/useStore.rev-rewind.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.signin-safety.test.jsx",
+        "ported": "packages/web/test/store/useStore.signin-safety.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.stash-unit.test.jsx",
+        "ported": "packages/web/test/store/useStore.stash-unit.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.sync-status.test.jsx",
+        "ported": "packages/web/test/store/useStore.sync-status.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.sync.test.jsx",
+        "ported": "packages/web/test/store/useStore.sync.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.tabs-join.test.jsx",
+        "ported": "packages/web/test/store/useStore.tabs-join.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.tabs-owner.test.jsx",
+        "ported": "packages/web/test/store/useStore.tabs-owner.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.tabs.test.jsx",
+        "ported": "packages/web/test/store/useStore.tabs.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.unit-sync.test.jsx",
+        "ported": "packages/web/test/store/useStore.unit-sync.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/store/useStore.weighin-default.test.jsx",
+        "ported": "packages/web/test/store/sync-weighin-default.test.ts"
+      }
+    ]
+  },
+  "W08": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [],
+    "newTestsOnlyReason": "W07 already ports and inventories every surviving legacy useStore public action and its transcript twins; W08 retains those implementations and adds new library, lifecycle wrappers and activation seed seam tests.",
+    "tests": []
+  },
+  "W09": {
+    "packages": [
+      "web",
+      "core"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/components/Modals.test.jsx",
+      "legacy/frontend/src/components/Toast.test.js",
+      "legacy/frontend/src/components/DurationWheel.test.jsx",
+      "legacy/frontend/src/components/RestTimer.ready.test.jsx",
+      "legacy/frontend/src/components/RestTimer.dock.test.jsx",
+      "legacy/frontend/src/components/LineChart.test.jsx",
+      "legacy/frontend/src/components/Heatmap.test.jsx",
+      "legacy/frontend/src/components/BodyMap.test.jsx",
+      "legacy/frontend/src/lib/exercise-chips.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/components/Modals.test.jsx",
+        "ported": "packages/web/test/Modals.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/Toast.test.js",
+        "ported": "packages/web/test/Toast.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/DurationWheel.test.jsx",
+        "ported": "packages/web/test/DurationWheel.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/RestTimer.ready.test.jsx",
+        "ported": "packages/web/test/RestTimer.ready.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/RestTimer.dock.test.jsx",
+        "ported": "packages/web/test/RestTimer.dock.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/LineChart.test.jsx",
+        "ported": "packages/web/test/LineChart.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/Heatmap.test.jsx",
+        "ported": "packages/web/test/Heatmap.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/BodyMap.test.jsx",
+        "ported": "packages/web/test/BodyMap.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/exercise-chips.test.js",
+        "ported": "packages/core/test/exercise-chips.test.ts"
+      }
+    ]
+  },
+  "W10": {
+    "packages": [
+      "web",
+      "core"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/components/MuscleExplorer.test.jsx",
+      "legacy/frontend/src/lib/favourites.test.js",
+      "legacy/frontend/src/components/Media.test.jsx",
+      "legacy/frontend/src/components/Media.autoplay.test.jsx",
+      "legacy/frontend/src/components/Media.thumb.test.jsx",
+      "legacy/frontend/src/components/CustomMediaField.offline.test.jsx",
+      "legacy/frontend/src/auto-more.test.jsx",
+      "legacy/frontend/src/sheets.muscle-names.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/components/MuscleExplorer.test.jsx",
+        "ported": "packages/web/test/MuscleExplorer.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/favourites.test.js",
+        "ported": "packages/core/test/favourites.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/Media.test.jsx",
+        "ported": "packages/web/test/W10-media-deleted.test.ts",
+        "waiver": {
+          "assertions": 69,
+          "reason": "W10 media deletion: Media.test.jsx is waived in full because its component and all media paths are deleted by the GM ruling."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/Media.autoplay.test.jsx",
+        "ported": "packages/web/test/W10-media-deleted.test.ts",
+        "waiver": {
+          "assertions": 5,
+          "reason": "W10 media deletion: Media.autoplay.test.jsx is waived in full because its component and all media paths are deleted by the GM ruling."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/Media.thumb.test.jsx",
+        "ported": "packages/web/test/W10-media-deleted.test.ts",
+        "waiver": {
+          "assertions": 5,
+          "reason": "W10 media deletion: Media.thumb.test.jsx is waived in full because its component and all media paths are deleted by the GM ruling."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/CustomMediaField.offline.test.jsx",
+        "ported": "packages/web/test/W10-media-deleted.test.ts",
+        "waiver": {
+          "assertions": 4,
+          "reason": "W10 media deletion: CustomMediaField.offline.test.jsx is waived in full because its component and all media paths are deleted by the GM ruling."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/auto-more.test.jsx",
+        "ported": "packages/web/test/auto-more.test.tsx",
+        "waiver": {
+          "assertions": 10,
+          "reason": "W10 shared auto-more split: Library and picker cases (10 assertions) belong to W19 and W12; W10 retains the explorer automatic-paging case."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.muscle-names.test.jsx",
+        "ported": "packages/web/test/sheets.muscle-names.test.tsx",
+        "waiver": {
+          "assertions": 7,
+          "reason": "W10 shared muscle-names split: picker/config-sheet cases (7 assertions, including deleted German behavior) belong to W12; W10 retains the English explorer target-label case."
+        }
+      }
+    ]
+  },
+  "W11": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/sheets.add-device-data.test.jsx",
+      "legacy/frontend/src/sheets.starter.test.jsx",
+      "legacy/frontend/src/sheets.menu-sections.test.jsx",
+      "legacy/frontend/src/sheets.weighin-history.test.jsx",
+      "legacy/frontend/src/sheets.weight-input.test.jsx",
+      "legacy/frontend/src/sheets.import-summary.test.jsx",
+      "legacy/frontend/src/sheets.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/sheets.add-device-data.test.jsx",
+        "ported": "packages/web/test/sheets.add-device-data.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.starter.test.jsx",
+        "ported": "packages/web/test/sheets.starter.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.menu-sections.test.jsx",
+        "ported": "packages/web/test/sheets.menu-sections.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.weighin-history.test.jsx",
+        "ported": "packages/web/test/sheets.weighin-history.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.weight-input.test.jsx",
+        "ported": "packages/web/test/sheets.weight-input.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.import-summary.test.jsx",
+        "ported": "packages/web/test/sheets.import-summary.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.test.jsx",
+        "ported": "packages/web/test/sheets.test.tsx",
+        "waiver": {
+          "assertions": 15,
+          "reason": "W11 ports only menu sheet title in sheets.test.jsx; W12 owns the exercise configuration progression step describe and its 15 assertions."
+        }
+      }
+    ]
+  },
+  "W12": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/sheets.backoff.test.jsx",
+      "legacy/frontend/src/sheets.config-failure.test.jsx",
+      "legacy/frontend/src/sheets.config-pyramid-weight.test.jsx",
+      "legacy/frontend/src/sheets.config-rest.test.jsx",
+      "legacy/frontend/src/sheets.config-triple.test.jsx",
+      "legacy/frontend/src/sheets.config-typing.test.jsx",
+      "legacy/frontend/src/sheets.custom-edit.test.jsx",
+      "legacy/frontend/src/sheets.custom-target.test.jsx",
+      "legacy/frontend/src/sheets.dbload.test.jsx",
+      "legacy/frontend/src/sheets.detail-tags.test.jsx",
+      "legacy/frontend/src/sheets.dumbbells.test.jsx",
+      "legacy/frontend/src/sheets.effort-picker.test.jsx",
+      "legacy/frontend/src/sheets.favourites.test.jsx",
+      "legacy/frontend/src/sheets.history.test.jsx",
+      "legacy/frontend/src/sheets.library-qa.test.jsx",
+      "legacy/frontend/src/sheets.picker-equipment.test.jsx",
+      "legacy/frontend/src/sheets.picker-type.test.jsx",
+      "legacy/frontend/src/sheets.plates.test.jsx",
+      "legacy/frontend/src/sheets.progression-row.test.jsx",
+      "legacy/frontend/src/sheets.replace.test.jsx",
+      "legacy/frontend/src/sheets.speed.test.jsx",
+      "legacy/frontend/src/sheets.swap.test.jsx",
+      "legacy/frontend/src/sheets.swap-same-muscle.test.jsx",
+      "legacy/frontend/src/sheets.test.jsx",
+      "legacy/frontend/src/sheets.muscle-names.test.jsx",
+      "legacy/frontend/src/sheets.programme-fix1.test.jsx",
+      "legacy/frontend/src/auto-more.test.jsx",
+      "legacy/frontend/src/sheets.custom-media.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/sheets.backoff.test.jsx",
+        "ported": "packages/web/test/W12-backoff.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.config-failure.test.jsx",
+        "ported": "packages/web/test/W12-config-failure.test.tsx",
+        "waiver": {
+          "reason": "W12 scope/deletion split: sheets.config-failure.test.jsx",
+          "assertions": 2
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.config-pyramid-weight.test.jsx",
+        "ported": "packages/web/test/W12-config-pyramid-weight.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.config-rest.test.jsx",
+        "ported": "packages/web/test/W12-config-rest.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.config-triple.test.jsx",
+        "ported": "packages/web/test/W12-config-triple.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.config-typing.test.jsx",
+        "ported": "packages/web/test/W12-config-typing.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.custom-edit.test.jsx",
+        "ported": "packages/web/test/W12-custom-edit.test.tsx",
+        "waiver": {
+          "reason": "W12 scope/deletion split: sheets.custom-edit.test.jsx",
+          "assertions": 5
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.custom-target.test.jsx",
+        "ported": "packages/web/test/W12-custom-target.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.dbload.test.jsx",
+        "ported": "packages/web/test/W12-dbload.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.detail-tags.test.jsx",
+        "ported": "packages/web/test/W12-detail-tags.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.dumbbells.test.jsx",
+        "ported": "packages/web/test/W12-dumbbells.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.effort-picker.test.jsx",
+        "ported": "packages/web/test/W12-effort-picker.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.favourites.test.jsx",
+        "ported": "packages/web/test/W12-favourites.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.history.test.jsx",
+        "ported": "packages/web/test/W12-history.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.library-qa.test.jsx",
+        "ported": "packages/web/test/W12-library-qa.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.picker-equipment.test.jsx",
+        "ported": "packages/web/test/W12-picker-equipment.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.picker-type.test.jsx",
+        "ported": "packages/web/test/W12-picker-type.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.plates.test.jsx",
+        "ported": "packages/web/test/W12-plates.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.progression-row.test.jsx",
+        "ported": "packages/web/test/W12-progression-row.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.replace.test.jsx",
+        "ported": "packages/web/test/W12-replace.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.speed.test.jsx",
+        "ported": "packages/web/test/W12-speed.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.swap.test.jsx",
+        "ported": "packages/web/test/W12-swap.test.tsx",
+        "waiver": {
+          "reason": "W12 scope/deletion split: sheets.swap.test.jsx",
+          "assertions": 2
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.swap-same-muscle.test.jsx",
+        "ported": "packages/web/test/W12-swap-same-muscle.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.test.jsx",
+        "ported": "packages/web/test/W12-sheets.test.tsx",
+        "waiver": {
+          "reason": "W12 scope/deletion split: sheets.test.jsx",
+          "assertions": 2
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.muscle-names.test.jsx",
+        "ported": "packages/web/test/W12-muscle-names.test.tsx",
+        "waiver": {
+          "reason": "W12 scope/deletion split: sheets.muscle-names.test.jsx",
+          "assertions": 5
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.programme-fix1.test.jsx",
+        "ported": "packages/web/test/W12-programme-fix1.test.tsx",
+        "waiver": {
+          "reason": "W12 scope/deletion split: sheets.programme-fix1.test.jsx",
+          "assertions": 27
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/auto-more.test.jsx",
+        "ported": "packages/web/test/W12-auto-more.test.tsx",
+        "waiver": {
+          "reason": "W12 scope/deletion split: auto-more.test.jsx",
+          "assertions": 10
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.custom-media.test.jsx",
+        "ported": "packages/web/test/W12-media-deleted.test.ts",
+        "waiver": {
+          "reason": "W12 scope/deletion split: sheets.custom-media.test.jsx",
+          "assertions": 29
+        }
+      }
+    ]
+  },
+  "W13": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/sheets.dayoverride.test.jsx",
+      "legacy/frontend/src/sheets.day-assign.test.jsx",
+      "legacy/frontend/src/sheets.workoutdate.test.jsx",
+      "legacy/frontend/src/sheets.workout-detail.test.jsx",
+      "legacy/frontend/src/sheets.calendar.test.jsx",
+      "legacy/frontend/src/sheets.plan-import-toast.test.jsx",
+      "legacy/frontend/src/sheets.session-routine.test.jsx",
+      "legacy/frontend/src/sheets.day-note.test.jsx",
+      "legacy/frontend/src/sheets.combine-ui.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/sheets.dayoverride.test.jsx",
+        "ported": "packages/web/test/sheets.dayoverride.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.day-assign.test.jsx",
+        "ported": "packages/web/test/sheets.day-assign.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.workoutdate.test.jsx",
+        "ported": "packages/web/test/sheets.workoutdate.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.workout-detail.test.jsx",
+        "ported": "packages/web/test/sheets.workout-detail.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.calendar.test.jsx",
+        "ported": "packages/web/test/sheets.calendar.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.plan-import-toast.test.jsx",
+        "ported": "packages/web/test/sheets.plan-import-toast.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.session-routine.test.jsx",
+        "ported": "packages/web/test/sheets.session-routine.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.day-note.test.jsx",
+        "ported": "packages/web/test/sheets.day-note.test.tsx",
+        "waiver": {
+          "reason": "W13 defers the History noted-day view case to W18; calendar and the W09 Heatmap case remain executed here.",
+          "assertions": 4
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.combine-ui.test.jsx",
+        "ported": "packages/web/test/sheets.combine-ui.test.tsx",
+        "waiver": {
+          "reason": "W13 owns WorkoutDetail per-routine grouping; W14 owns the Add routine mid-session sheet describe.",
+          "assertions": 9
+        }
+      }
+    ]
+  },
+  "W14": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/sheets.combine.test.jsx",
+      "legacy/frontend/src/sheets.plan-session.test.jsx",
+      "legacy/frontend/src/sheets.finish-hold.test.jsx",
+      "legacy/frontend/src/sheets.workout-edit-exit.test.jsx",
+      "legacy/frontend/src/sheets.weighin.test.jsx",
+      "legacy/frontend/src/sheets.workoutview.test.jsx",
+      "legacy/frontend/src/sheets.backfill.test.jsx",
+      "legacy/frontend/src/sheets.combine-ui.test.jsx",
+      "legacy/frontend/src/lib/notes-render.test.jsx",
+      "legacy/frontend/src/lib/rename-workout.test.jsx",
+      "legacy/frontend/src/lib/session-note.test.jsx",
+      "legacy/frontend/src/sheets.programme-fix1.test.jsx",
+      "legacy/frontend/src/sheets.programme-fix2.test.jsx",
+      "legacy/frontend/src/sheets.missed-day.test.jsx",
+      "legacy/frontend/src/unknown-exercise-ids.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/sheets.combine.test.jsx",
+        "ported": "packages/web/test/sheets.combine.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.plan-session.test.jsx",
+        "ported": "packages/web/test/sheets.plan-session.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.finish-hold.test.jsx",
+        "ported": "packages/web/test/sheets.finish-hold.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.workout-edit-exit.test.jsx",
+        "ported": "packages/web/test/sheets.workout-edit-exit.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.weighin.test.jsx",
+        "ported": "packages/web/test/sheets.weighin.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.workoutview.test.jsx",
+        "ported": "packages/web/test/sheets.workoutview.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.backfill.test.jsx",
+        "ported": "packages/web/test/sheets.backfill.test.tsx",
+        "waiver": {
+          "reason": "W14 deletes the media replacement hint case under the binding media-deleted ruling; all backfill date, duration, layout and session assertions remain.",
+          "assertions": 2
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.combine-ui.test.jsx",
+        "ported": "packages/web/test/sheets-d.combine-ui.test.tsx",
+        "waiver": {
+          "reason": "W14 ports Add routine mid-session; the WorkoutDetail per-routine grouping describe and its assertions belong to W13.",
+          "assertions": 5
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/notes-render.test.jsx",
+        "ported": "packages/web/test/notes-render.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/rename-workout.test.jsx",
+        "ported": "packages/web/test/rename-workout.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/session-note.test.jsx",
+        "ported": "packages/web/test/sheets-d.session-note.test.tsx",
+        "waiver": {
+          "reason": "W14 ports the during-workout session note case; the two WorkoutDetail history-note cases belong to W13.",
+          "assertions": 2
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.programme-fix1.test.jsx",
+        "ported": "packages/web/test/sheets-d.programme-fix1.test.tsx",
+        "waiver": {
+          "reason": "W14 ports F4 beginWorkout future-start guard; ExConfig F1 cases belong to W12, pending button to W17, English locale exception to W12, deload to K12 and import to W11.",
+          "assertions": 28
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.programme-fix2.test.jsx",
+        "ported": "packages/web/test/sheets.programme-fix2.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.missed-day.test.jsx",
+        "ported": "packages/web/test/sheets-d.missed-day.test.tsx",
+        "waiver": {
+          "reason": "W14 ports supplied-day backfill and finish cases through logPastWorkoutSheet directly; the DayOverride offer visibility case belongs to W13.",
+          "assertions": 6
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/unknown-exercise-ids.test.jsx",
+        "ported": "packages/web/test/sheets-d.unknown-exercise-ids.test.tsx",
+        "waiver": {
+          "reason": "W14 ports the unknown-exercise starting/finishing preservation case and all its kept-state assertions; the other shared cases belong to K03 (placeholder), W18 (four running layouts), W19 (history/stats/library/structural balance), W20 (plan/routine editor), W23 (Home), W12/W13 (exercise/history/workout detail sheets), and W07 (persist/merge/adopt).",
+          "assertions": 7
+        }
+      }
+    ]
+  },
+  "W16": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/components/ProgrammeSession.targets.test.jsx",
+      "legacy/frontend/src/components/ProgrammeImport.test.jsx",
+      "legacy/frontend/src/components/ProgrammeCalendar.test.jsx",
+      "legacy/frontend/src/components/ProgrammeToday.test.jsx",
+      "legacy/frontend/src/components/ProgrammeRollover.test.jsx",
+      "legacy/frontend/src/views/Programs.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/components/ProgrammeSession.targets.test.jsx",
+        "ported": "packages/web/test/ProgrammeSession.targets.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/ProgrammeImport.test.jsx",
+        "ported": "packages/web/test/ProgrammeImport.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/ProgrammeCalendar.test.jsx",
+        "ported": "packages/web/test/ProgrammeCalendar.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/ProgrammeToday.test.jsx",
+        "ported": "packages/web/test/ProgrammeToday.test.tsx",
+        "waiver": {
+          "reason": "W16 defers the three Home stock-row integration cases to W23: keeps the stock today row, different-workout door and ordinary weekday routine alongside the program; keeps the logged-today tick after a program session is finished; keeps active workout Resume in the stock row even while the program is paused.",
+          "assertions": 9
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/ProgrammeRollover.test.jsx",
+        "ported": "packages/web/test/ProgrammeRollover.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Programs.test.jsx",
+        "ported": "packages/web/test/Programs.test.tsx",
+        "waiver": {
+          "reason": "W16 defers dayOverrideSheet integration to W13: the rendered day sheet saves a program pin through the real store cleanup and can clear it; a programme day pin replaces a %s override (rest/personal).",
+          "assertions": 6
+        }
+      }
+    ]
+  },
+  "W17": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/views/FocusView.test.jsx",
+      "legacy/frontend/src/components/WorkoutSettingsSheet.test.jsx",
+      "legacy/frontend/src/views/Workout.swipe.test.jsx",
+      "legacy/frontend/src/views/Workout.stepper.test.jsx",
+      "legacy/frontend/src/views/Workout.speed.test.jsx",
+      "legacy/frontend/src/views/Workout.incline.test.jsx",
+      "legacy/frontend/src/views/Workout.plates.test.jsx",
+      "legacy/frontend/src/views/Workout.dumbbells.test.jsx",
+      "legacy/frontend/src/views/Workout.test.jsx",
+      "legacy/frontend/src/views/Workout.noprog.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/views/FocusView.test.jsx",
+        "ported": "packages/web/test/FocusView.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/WorkoutSettingsSheet.test.jsx",
+        "ported": "packages/web/test/WorkoutSettingsSheet.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.swipe.test.jsx",
+        "ported": "packages/web/test/Workout.swipe.test.tsx",
+        "waiver": {
+          "assertions": 23,
+          "reason": "W17 defers timed callback rebinding (11 assertions), one-time hint scheduling (9) and Cards outer swipe (1) to W18, and deletes the foreign-pack copy-verb case (2) under the English-only ruling."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.stepper.test.jsx",
+        "ported": "packages/web/test/Workout.stepper.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.speed.test.jsx",
+        "ported": "packages/web/test/Workout.speed.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.incline.test.jsx",
+        "ported": "packages/web/test/Workout.incline.test.tsx",
+        "waiver": {
+          "assertions": 1,
+          "reason": "W17 owns incline controls; W18 owns the one added-row grade inheritance assertion."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.plates.test.jsx",
+        "ported": "packages/web/test/Workout.plates.test.tsx",
+        "waiver": {
+          "assertions": 1,
+          "reason": "W17 owns saved-editor plate suppression; W18 owns the one Editing a saved workout header assertion."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.dumbbells.test.jsx",
+        "ported": "packages/web/test/Workout.dumbbells.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.test.jsx",
+        "ported": "packages/web/test/Workout.test.tsx",
+        "waiver": {
+          "assertions": 525,
+          "reason": "W17 splits the shared Workout component twin: W18 owns shell, parent lifecycle, timers and navigation assertions listed in W17-INVENTORY; foreign-language packs and media-render cases are deleted under the binding rulings."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.noprog.test.jsx",
+        "ported": "packages/web/test/Workout.noprog.test.tsx",
+        "waiver": {
+          "assertions": 20,
+          "reason": "W17 owns the progression switch, marker and Undo component cases; W18 owns the twenty parent Exercise settings, rebuild and swap assertions listed in W17-INVENTORY."
+        }
+      }
+    ]
+  },
+  "W22": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/views/Settings.sound.test.jsx",
+      "legacy/frontend/src/views/Settings.speed.test.jsx",
+      "legacy/frontend/src/views/Settings.workoutview.test.jsx",
+      "legacy/frontend/src/views/Settings.logref.test.jsx",
+      "legacy/frontend/src/views/Settings.startfrom.test.jsx",
+      "legacy/frontend/src/views/Settings.schedule.test.jsx",
+      "legacy/frontend/src/views/Settings.accent.test.jsx",
+      "legacy/frontend/src/views/Settings.connstatus.test.jsx",
+      "legacy/frontend/src/views/Settings.gifsize.test.jsx",
+      "legacy/frontend/src/views/week-start.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/views/Settings.sound.test.jsx",
+        "ported": "packages/web/test/Settings.sound.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.speed.test.jsx",
+        "ported": "packages/web/test/Settings.speed.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.workoutview.test.jsx",
+        "ported": "packages/web/test/Settings.workoutview.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.logref.test.jsx",
+        "ported": "packages/web/test/Settings.logref.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.startfrom.test.jsx",
+        "ported": "packages/web/test/Settings.startfrom.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.schedule.test.jsx",
+        "ported": "packages/web/test/Settings.schedule.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.accent.test.jsx",
+        "ported": "packages/web/test/Settings.accent.test.tsx",
+        "waiver": {
+          "reason": "W22 accent search case belongs to W21 settings search; W22 retains both Logbook preservation cases.",
+          "assertions": 1
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.connstatus.test.jsx",
+        "ported": "packages/web/test/Settings.connstatus.test.tsx",
+        "waiver": {
+          "reason": "W22 account guest-footer cases belong to W21; W22 retains connection-toggle and Look guest-footer cases.",
+          "assertions": 3
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.gifsize.test.jsx",
+        "ported": "packages/web/test/Settings.gifsize.test.tsx",
+        "waiver": {
+          "reason": "W22 exercise animations are deleted with media by GM ruling; replacement asserts the control and writes are absent.",
+          "assertions": 7
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/week-start.test.jsx",
+        "ported": "packages/web/test/week-start.test.tsx",
+        "waiver": {
+          "reason": "W22 owns Settings week-start cases; all Plan week-start and combined-day cases belong to W20.",
+          "assertions": 10
+        }
+      }
+    ]
+  },
+  "W18": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/views/Workout.edit-empty.test.jsx",
+      "legacy/frontend/src/views/Workout.hold.test.jsx",
+      "legacy/frontend/src/views/Workout.incline.test.jsx",
+      "legacy/frontend/src/views/Workout.keys.test.jsx",
+      "legacy/frontend/src/views/Workout.noprog-session.test.jsx",
+      "legacy/frontend/src/views/Workout.noprog.test.jsx",
+      "legacy/frontend/src/views/Workout.plates.test.jsx",
+      "legacy/frontend/src/views/Workout.remove.test.jsx",
+      "legacy/frontend/src/views/Workout.sheet-scroll.test.jsx",
+      "legacy/frontend/src/views/Workout.superset-scroll.test.jsx",
+      "legacy/frontend/src/views/Workout.swipe.test.jsx",
+      "legacy/frontend/src/views/Workout.test.jsx",
+      "legacy/frontend/src/components/WorkoutScrollAnchor.test.jsx",
+      "legacy/frontend/src/sheets.day-note.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/views/Workout.edit-empty.test.jsx",
+        "ported": "packages/web/test/W18-Workout.edit-empty.test.tsx",
+        "waiver": {
+          "reason": "W18 saved-workout photo and video editing is deleted under the GM media ruling; all non-media editor cases remain.",
+          "assertions": 1
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.hold.test.jsx",
+        "ported": "packages/web/test/W18-Workout.hold.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.incline.test.jsx",
+        "ported": "packages/web/test/W18-Workout.incline.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.keys.test.jsx",
+        "ported": "packages/web/test/W18-Workout.keys.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.noprog-session.test.jsx",
+        "ported": "packages/web/test/W18-Workout.noprog-session.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.noprog.test.jsx",
+        "ported": "packages/web/test/W18-Workout.noprog.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.plates.test.jsx",
+        "ported": "packages/web/test/W18-Workout.plates.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.remove.test.jsx",
+        "ported": "packages/web/test/W18-Workout.remove.test.tsx",
+        "waiver": {
+          "reason": "W18 foreign-locale removal copy is deleted under the English-only GM ruling; English removal and safety cases remain.",
+          "assertions": 3
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.sheet-scroll.test.jsx",
+        "ported": "packages/web/test/W18-Workout.sheet-scroll.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.superset-scroll.test.jsx",
+        "ported": "packages/web/test/W18-Workout.superset-scroll.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.swipe.test.jsx",
+        "ported": "packages/web/test/W18-Workout.swipe.test.tsx",
+        "waiver": {
+          "reason": "W18 foreign-locale and workout thumbnail/media cases are deleted under the English-only and media GM rulings; English behavior remains.",
+          "assertions": 3
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Workout.test.jsx",
+        "ported": "packages/web/test/W18-Workout.test.tsx",
+        "waiver": {
+          "reason": "W18 foreign-locale and workout thumbnail/media cases are deleted under the English-only and media GM rulings; English behavior remains.",
+          "assertions": 8
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/WorkoutScrollAnchor.test.jsx",
+        "ported": "packages/web/test/W18-WorkoutScrollAnchor.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.day-note.test.jsx",
+        "ported": "packages/web/test/W18-History.day-note.test.tsx",
+        "waiver": {
+          "reason": "W18 owns the four-site History noted untrained-day case; other sheets.day-note cases are W13-owned and covered there.",
+          "assertions": 26
+        }
+      }
+    ]
+  },
+  "W19": {
+    "packages": [
+      "web",
+      "core"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/views/StructuralBalance.test.jsx",
+      "legacy/frontend/src/views/Stats.plan-volume.test.jsx",
+      "legacy/frontend/src/views/Library.test.jsx",
+      "legacy/frontend/src/views/ProgressPhotos.test.js",
+      "legacy/frontend/src/views/Stats.recovery.test.jsx",
+      "legacy/frontend/src/views/Stats.test.js",
+      "legacy/frontend/src/views/Stats.weekly-volume.test.jsx",
+      "legacy/frontend/src/views/Stats.ex-range.test.jsx",
+      "legacy/frontend/src/views/ProgressPhotos.compare.test.jsx",
+      "legacy/frontend/src/views/Stats.speed.test.jsx",
+      "legacy/frontend/src/auto-more.test.jsx",
+      "legacy/frontend/src/search-count.test.jsx",
+      "legacy/frontend/src/search-clear.test.jsx",
+      "legacy/frontend/src/exercise-view.test.jsx",
+      "legacy/frontend/src/sheets.day-note.test.jsx",
+      "legacy/frontend/src/unknown-exercise-ids.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/views/StructuralBalance.test.jsx",
+        "ported": "packages/web/test/views/StructuralBalance.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Stats.plan-volume.test.jsx",
+        "ported": "packages/web/test/views/Stats.plan-volume.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Library.test.jsx",
+        "ported": "packages/web/test/views/Library.test.tsx",
+        "waiver": {
+          "reason": "W19 English-only ruling deletes Library locale-pack casing and Russian plural tests; catalogue counts remain, with media wording removed.",
+          "assertions": 7
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/ProgressPhotos.test.js",
+        "ported": "packages/web/test/views/ProgressPhotos.deleted.test.ts",
+        "waiver": {
+          "reason": "W19 media deletion waives ProgressPhotos and ProgressPhotos.compare by name; no photo gallery or comparison slider is ported.",
+          "assertions": 20
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Stats.recovery.test.jsx",
+        "ported": "packages/web/test/views/Stats.recovery.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Stats.test.js",
+        "ported": "packages/web/test/views/Stats.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Stats.weekly-volume.test.jsx",
+        "ported": "packages/web/test/views/Stats.weekly-volume.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Stats.ex-range.test.jsx",
+        "ported": "packages/web/test/views/Stats.ex-range.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/ProgressPhotos.compare.test.jsx",
+        "ported": "packages/web/test/views/ProgressPhotos.deleted.test.ts",
+        "waiver": {
+          "reason": "W19 media deletion waives ProgressPhotos and ProgressPhotos.compare by name; no photo gallery or comparison slider is ported.",
+          "assertions": 2
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Stats.speed.test.jsx",
+        "ported": "packages/web/test/views/Stats.speed.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/auto-more.test.jsx",
+        "ported": "packages/web/test/views/Library.auto-more.test.tsx",
+        "waiver": {
+          "assertions": 4,
+          "reason": "W19 shared auto-more split: picker paging (2 assertions) belongs to W12 and muscle explorer paging (2 assertions) belongs to W10; Library paging retains all 8 assertions."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/search-count.test.jsx",
+        "ported": "packages/web/test/views/search-count.test.tsx",
+        "waiver": {
+          "assertions": 0,
+          "reason": "W19 shared search-count split: Library retains all 11 static assertion sites and both Library cases; exercise picker iterations belong to W12."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/search-clear.test.jsx",
+        "ported": "packages/web/test/views/search-clear.test.tsx",
+        "waiver": {
+          "assertions": 0,
+          "reason": "W19 shared search-clear split: Library retains all 9 static assertion sites and both Library cases; exercise picker iterations belong to W12."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/exercise-view.test.jsx",
+        "ported": "packages/web/test/views/exercise-view.test.tsx",
+        "waiver": {
+          "assertions": 8,
+          "reason": "W19 shared exercise-view split: Library and Muscles retain their five cases (17 assertion sites), including the grid CSS rule; picker switching (8 sites) belongs to W12."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.day-note.test.jsx",
+        "ported": "packages/web/test/views/sheets.day-note.test.tsx",
+        "waiver": {
+          "assertions": 26,
+          "reason": "W19 shared day-note split: History retains its exact named case and 4 assertion sites through the typed row seam; day/note/calendar sheets (23 sites) belong to W11-W14 and heatmap behavior (3 sites) belongs to W09."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/unknown-exercise-ids.test.jsx",
+        "ported": "packages/web/test/views/unknown-exercise-ids.test.tsx",
+        "waiver": {
+          "assertions": 9,
+          "reason": "W19 shared unknown-exercise-ids split: Library, StructuralBalance, History and Stats retain three exact named cases, all 9 state-preservation assertion sites and Stats output; non-W19 Home/Plan/RoutineEdit/Workout/sheet/store cases and 9 assertion sites belong to W15-W18, W11-W14 and W05-W06."
+        }
+      }
+    ]
+  },
+  "W15": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/components/Passkeys.test.jsx",
+      "legacy/frontend/src/components/ServerSync.leave.test.jsx",
+      "legacy/frontend/src/components/ServerSync.media.test.jsx",
+      "legacy/frontend/src/components/SyncBanner.test.jsx",
+      "legacy/frontend/src/components/TabBar.test.jsx",
+      "legacy/frontend/src/views/Login.device-link.test.jsx",
+      "legacy/frontend/src/views/Login.password.test.jsx",
+      "legacy/frontend/src/lib/guest.test.js"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/components/Passkeys.test.jsx",
+        "ported": "packages/web/test/Passkeys.test.tsx",
+        "waiver": {
+          "reason": "W15 removes the two password owner-proof scenarios and the current-wrong password assertion; all passkey ceremonies and device-link cases remain, dates use en-US, and unknown auth errors use safe fixed text.",
+          "assertions": 16
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/ServerSync.leave.test.jsx",
+        "ported": "packages/web/test/ServerSync.leave.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/components/ServerSync.media.test.jsx",
+        "ported": "packages/web/test/ServerSync.media.test.tsx",
+        "waiver": {
+          "reason": "W15 deletes media properties from OwedSheet; the JSON backup case and all non-media auth/refusal/retry assertions from the mixed legacy file remain.",
+          "assertions": 11
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/SyncBanner.test.jsx",
+        "ported": "packages/web/test/SyncBanner.test.tsx",
+        "waiver": {
+          "reason": "W15 deletes the single demo-only banner scenario because demo builds are deleted; all network/auth/hold/grace/settings scenarios remain.",
+          "assertions": 1
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/TabBar.test.jsx",
+        "ported": "packages/web/test/TabBar.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Login.device-link.test.jsx",
+        "ported": "packages/web/test/Login.device-link.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Login.password.test.jsx",
+        "ported": "packages/web/test/Login.password.test.tsx",
+        "waiver": {
+          "reason": "W15 deletes password sign-in and registration, retaining the no-password baseline and adding a regression that legacy password_login never enables password UI.",
+          "assertions": 14
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/guest.test.js",
+        "ported": "packages/web/test/guest.test.ts"
+      }
+    ]
+  },
+  "W21": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/views/Settings.account-id.test.jsx",
+      "legacy/frontend/src/views/Settings.nudge.test.jsx",
+      "legacy/frontend/src/views/Settings.passkeys.test.jsx",
+      "legacy/frontend/src/views/Settings.reset.test.jsx",
+      "legacy/frontend/src/views/Settings.server-sync.test.jsx",
+      "legacy/frontend/src/views/Settings.media.test.jsx",
+      "legacy/frontend/src/views/settings-pages.test.jsx",
+      "legacy/frontend/src/views/Settings.accent.test.jsx",
+      "legacy/frontend/src/views/Settings.connstatus.test.jsx",
+      "legacy/frontend/src/views/Settings.pairing.test.jsx",
+      "legacy/frontend/src/views/Settings.password.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/views/Settings.account-id.test.jsx",
+        "ported": "packages/web/test/Settings.account-id.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.nudge.test.jsx",
+        "ported": "packages/web/test/Settings.nudge.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.passkeys.test.jsx",
+        "ported": "packages/web/test/Settings.passkeys.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.reset.test.jsx",
+        "ported": "packages/web/test/Settings.reset.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.server-sync.test.jsx",
+        "ported": "packages/web/test/Settings.server-sync.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.media.test.jsx",
+        "ported": "packages/web/test/Settings.media.test.tsx",
+        "waiver": {
+          "reason": "W21 deletes media exports, uploads and sweeping; JSON and ZIP state import, conflict confirmation and reset delegation remain under their original test names.",
+          "assertions": 5
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/settings-pages.test.jsx",
+        "ported": "packages/web/test/settings-pages.test.tsx",
+        "waiver": {
+          "reason": "W21 owns settings search and its pure index tests; W23 owns root/router/page flash and wheel DOM cases (62 assertions), and English-only removes locale-pack cases (8 assertions).",
+          "assertions": 70
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.accent.test.jsx",
+        "ported": "packages/web/test/settings-pages.test.tsx",
+        "waiver": {
+          "reason": "W21 retains the accent search assertion; W22 retains the two Logbook palette preservation cases (5 assertions).",
+          "assertions": 5
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.connstatus.test.jsx",
+        "ported": "packages/web/test/Settings.safety.test.tsx",
+        "waiver": {
+          "reason": "W21 retains the two Account guest-footer cases (3 assertions); W22 retains Show connection status and Look guest-footer cases (10 assertions).",
+          "assertions": 10
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.pairing.test.jsx",
+        "ported": "packages/web/test/Settings.pairing.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Settings.password.test.jsx",
+        "ported": "packages/web/test/Settings.password.test.tsx",
+        "waiver": {
+          "reason": "W21 deletes password rows and login/registration ceremonies; passkey, guest and direct re-sign-in baselines remain under the original four names.",
+          "assertions": 2
+        }
+      }
+    ]
+  },
+  "W20": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/views/RoutineEdit.programme.test.jsx",
+      "legacy/frontend/src/views/Plan.routine-count.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.replace.test.jsx",
+      "legacy/frontend/src/views/Plan.undo-sync.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.move.test.jsx",
+      "legacy/frontend/src/views/Plan.swipe.test.jsx",
+      "legacy/frontend/src/views/Plan.routine-order.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.progression.test.jsx",
+      "legacy/frontend/src/views/Plan.rotation.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.grip.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.drag.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.swipe.test.jsx",
+      "legacy/frontend/src/views/Plan.day-rows.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.add-top.test.jsx",
+      "legacy/frontend/src/views/RoutineEdit.print.test.jsx",
+      "legacy/frontend/src/views/week-start.test.jsx",
+      "legacy/frontend/src/sheets.programme-fix1.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.programme.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.programme.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Plan.routine-count.test.jsx",
+        "ported": "packages/web/test/views/Plan.routine-count.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.replace.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.replace.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Plan.undo-sync.test.jsx",
+        "ported": "packages/web/test/views/Plan.undo-sync.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.move.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.move.test.tsx",
+        "waiver": {
+          "assertions": 3,
+          "reason": "W20 removes the three assertion sites for the deleted foreign locale-pack inventory; accessible names and focus behavior remain tested with English under a foreign preference."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Plan.swipe.test.jsx",
+        "ported": "packages/web/test/views/Plan.swipe.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Plan.routine-order.test.jsx",
+        "ported": "packages/web/test/views/Plan.routine-order.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.progression.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.progression.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Plan.rotation.test.jsx",
+        "ported": "packages/web/test/views/Plan.rotation.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.grip.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.grip.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.drag.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.drag.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.swipe.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.swipe.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Plan.day-rows.test.jsx",
+        "ported": "packages/web/test/views/Plan.day-rows.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.add-top.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.add-top.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/RoutineEdit.print.test.jsx",
+        "ported": "packages/web/test/views/RoutineEdit.print.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/week-start.test.jsx",
+        "ported": "packages/web/test/views/W20-week-start.test.tsx",
+        "waiver": {
+          "assertions": 6,
+          "reason": "W20 owns the Plan week-start and combined-day cases; W22 owns the Settings week-start cases."
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.programme-fix1.test.jsx",
+        "ported": "packages/web/test/views/W20-programme-fix1.test.tsx",
+        "waiver": {
+          "assertions": 28,
+          "reason": "W20 owns F1 mounted RoutineEdit scoped Save; W12 owns F1 pyramid metadata, W14 owns beginWorkout, and the remaining programme cases stay with their respective owners."
+        }
+      }
+    ]
+  },
+  "P7": {
+    "packages": [
+      "web"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "New read-only declarative prescription displays; W16 owns ProgrammeToday/Programs legacy twins and W18 owns ExerciseBlock/Workout legacy twins, all retained unchanged."
+  },
+  "W23": {
+    "packages": [
+      "web",
+      "core"
+    ],
+    "legacyTests": [
+      "legacy/frontend/src/views/Home.queue.test.jsx",
+      "legacy/frontend/src/views/Home.startdoor.test.jsx",
+      "legacy/frontend/src/views/Home.weight-card.test.jsx",
+      "legacy/frontend/src/views/CheckIn.test.jsx",
+      "legacy/frontend/src/views/CheckIn.reorder.test.jsx",
+      "legacy/frontend/src/views/Admin.test.jsx",
+      "legacy/frontend/src/views/Admin.password.test.jsx",
+      "legacy/frontend/src/App.scroll.test.jsx",
+      "legacy/frontend/src/lib/sw.test.js",
+      "legacy/frontend/src/lib/sw-lazy.test.js",
+      "legacy/frontend/src/lib/sw-media.test.js",
+      "legacy/frontend/src/lib/sw-offline-launch.test.js",
+      "legacy/frontend/src/lib/sw-subpath.test.js",
+      "legacy/frontend/src/logbook.test.js",
+      "legacy/frontend/src/lib/api-base.test.js",
+      "legacy/frontend/src/views/settings-pages.test.jsx",
+      "legacy/frontend/src/components/ProgrammeToday.test.jsx",
+      "legacy/frontend/src/sheets.programme-fix1.test.jsx",
+      "legacy/frontend/src/unknown-exercise-ids.test.jsx"
+    ],
+    "tests": [
+      {
+        "legacy": "legacy/frontend/src/views/Home.queue.test.jsx",
+        "ported": "packages/web/test/Home.queue.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Home.startdoor.test.jsx",
+        "ported": "packages/web/test/Home.startdoor.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Home.weight-card.test.jsx",
+        "ported": "packages/web/test/Home.weight-card.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/CheckIn.test.jsx",
+        "ported": "packages/web/test/CheckIn.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/CheckIn.reorder.test.jsx",
+        "ported": "packages/web/test/CheckIn.reorder.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Admin.test.jsx",
+        "ported": "packages/web/test/Admin.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/views/Admin.password.test.jsx",
+        "ported": "packages/web/test/Admin.password.test.tsx",
+        "waiver": {
+          "reason": "W23 removes the password-reset ceremony, password flags and sign-in email display under the passkey-only ruling; the no-password and no-address baselines remain.",
+          "assertions": 16
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/App.scroll.test.jsx",
+        "ported": "packages/web/test/App.scroll.test.tsx"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sw.test.js",
+        "ported": "packages/web/test/sw.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sw-lazy.test.js",
+        "ported": "packages/web/test/sw-lazy.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sw-media.test.js",
+        "ported": "packages/web/test/sw-media.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sw-offline-launch.test.js",
+        "ported": "packages/web/test/sw-offline-launch.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/sw-subpath.test.js",
+        "ported": "packages/web/test/sw-subpath.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/logbook.test.js",
+        "ported": "packages/web/test/logbook.test.ts"
+      },
+      {
+        "legacy": "legacy/frontend/src/lib/api-base.test.js",
+        "ported": "packages/web/test/shell.api-base.test.ts",
+        "waiver": {
+          "reason": "W23 owns nginx, Docker and BASE_PATH twins; W01 retains app-base and beacon (14 assertions), while the S11 pinned dist container and R3 removed upload location replace source assertions.",
+          "assertions": 14
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/views/settings-pages.test.jsx",
+        "ported": "packages/web/test/Settings.root.test.tsx",
+        "waiver": {
+          "reason": "W23 retains root, router, row flash and wheel DOM twins; W21 owns the remaining pure search cases and English-only removes locale-pack coverage; removed exercise animation UI is asserted absent.",
+          "assertions": 30
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/components/ProgrammeToday.test.jsx",
+        "ported": "packages/web/test/shell.composed.test.tsx",
+        "waiver": {
+          "reason": "W23 retains the three Home stock-row integration cases (9 assertions); W16 retains all other ProgrammeToday cases.",
+          "assertions": 35
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/sheets.programme-fix1.test.jsx",
+        "ported": "packages/web/test/shell.composed.test.tsx",
+        "waiver": {
+          "reason": "W23 retains F4 pending session Start (2 assertions); W12, W14, W16 and W20 retain their explicitly split other programme-fix1 cases, and English-only removes the locale-pack case.",
+          "assertions": 29
+        }
+      },
+      {
+        "legacy": "legacy/frontend/src/unknown-exercise-ids.test.jsx",
+        "ported": "packages/web/test/shell.unknown-exercise-ids.test.tsx"
+      }
+    ]
+  },
+  "I01": {
+    "packages": [
+      "parity"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "I01 authors a production-browser differential suite and normalizer regressions; legacy UI module twins remain owned by W units."
+  },
+  "W24": {
+    "packages": [
+      "web"
+    ],
+    "legacyTests": [],
+    "tests": [],
+    "newTestsOnlyReason": "W24 is a new read-only session/day preview feature beyond legacy parity; W16 and W20 retain their legacy test inventories, with the Plan day-row assertion updated for the explicit Preview affordance."
+  },
+  "I03": {
+    "packages": [
+      "contract",
+      "core",
+      "server",
+      "web",
+      "mcp",
+      "parity"
+    ],
+    "legacyTests": [],
+    "tests": [],
+    "newTestsOnlyReason": "Final integration pass reuses every release-unit twin and adds safety regressions; no existing assertion budget is reduced. Performance is prepared here and measured only in a GM-approved quiet window."
+  },
+  "I02": {
+    "packages": [
+      "parity"
+    ],
+    "tests": [],
+    "legacyTests": [],
+    "newTestsOnlyReason": "I02 authors leased real-image compatibility/cutover/browser rehearsals, with aggregate acceptance receipts; legacy UI twins and the separately committed SW regressions remain owned by W23."
+  },
+  "W30": {
+    "packages": [
+      "contract",
+      "core",
+      "web",
+      "server",
+      "mcp",
+      "parity"
+    ],
+    "legacyTests": [],
+    "tests": [],
+    "newTestsOnlyReason": "W30 adds opt-in community conversion and repeat/load continuity with synthetic behavioral coverage; ordinary programme and session behavior remains under the existing legacy differential suites."
+  }
+}

@@ -257,7 +257,7 @@ describe('hiding the no-server line', () => {
   })
 })
 
-// Review of the compatibility baseline: while a sign-in's question held sync, the screens said nothing at all.
+// Review of 771184c9: while a sign-in's question held sync, the screens said nothing at all.
 describe('a sign-in waiting for its question', () => {
   it('says nothing syncs until it is answered, and the tap runs Sync now, which asks it', () => {
     mocks.sync = sync('held')
@@ -364,8 +364,8 @@ describe('with the connection status switched off', () => {
   })
 })
 
-// UI twins isolate the seam; store/auth-action.test.ts verifies real carrier and upload fencing.
-vi.mock('../src/lib/auth-actions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
+// UI twins isolate the seam; store/auth-transaction.test.ts verifies real carrier and upload fencing.
+vi.mock('../src/lib/auth-transactions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
   if (!valid()) return null
   const user = await exchange()
   if (!valid()) return null

@@ -3,7 +3,8 @@ import { randomBytes } from 'node:crypto'
 import { stampPut, type StampReport } from '@opengym/core/server-stamp'
 import { readStateDoc, writeStateMirror, writeAccountsMirror } from './storage'
 import { ApiError, json } from './http'
-import type { AuthService } from './auth'
+import type { AuthService, Session } from './auth'
+import { assertNotTraining, observeTrainingPut, trainingStatus, ownTrainingMarker } from './training-guard'
 import type { GymApp } from './app'
 
 type Doc = Record<string, unknown>
@@ -11,7 +12,7 @@ const object = (value: unknown): value is Doc => !!value && typeof value === 'ob
 const records = (value: unknown[]) => value.filter(object)
 export const MAX_STORED_BYTES = 5 * 1024 * 1024
 // Measured against the SQLite linked into Bun 1.4.1: 800 total object/array
-// 800 containers is valid, 801 is not; migration imports use the same validation seam.
+// containers is valid, 801 is not. S09 uses the same import validation seam.
 export const MAX_STATE_CONTAINERS = 800
 const forClient = (state: Doc | null): Doc | null => {
   if (!state) return null
@@ -47,7 +48,7 @@ export interface DataOptions {
 }
 export interface PutResult { ok: true; ts: unknown; rev: number; wid: string }
 
-/** Sole whole-document writer. Progression apply calls compareAndWrite with baseRev/baseWid and
+/** Sole whole-document writer. P5 calls compareAndWrite with baseRev/baseWid and
  * stamped:true; conflict errors carry the current client-safe document. */
 export class DataService {
   private readonly now: () => number
@@ -108,7 +109,7 @@ export class DataService {
     while (this.cache.size > 64) this.cache.delete(this.cache.keys().next().value!)
     return value
   }
-  compareAndWrite(profileId: string, body: Record<string, unknown>): PutResult {
+  compareAndWrite(profileId: string, body: Record<string, unknown>, session?: Session): PutResult {
     const start = performance.now()
     let afterWrite = start
     const state = body.state
@@ -125,6 +126,11 @@ export class DataService {
           (body.baseRev != null && Object.hasOwn(body, 'baseWid') && body.baseWid !== (cur?._wid || null))) {
         throw new ApiError(409, 'conflict', { rev: curRev, state: forClient(cur) })
       }
+      if (session?.device.kind === 'agent' || body.requireIdle === true) {
+        assertNotTraining(this.db, profileId, this.now())
+        if (!Number.isSafeInteger(body.baseRev) || !Object.hasOwn(body,'baseWid') || typeof body.baseWid !== 'string') throw new ApiError(409,'conditional write required',{code:'REV_CONFLICT'})
+      }
+      if (session) observeTrainingPut(this.db, session, body, this.now())
       delete state.active
 
       const report: StampReport = {}
@@ -137,8 +143,8 @@ export class DataService {
           if (cur!.resetIds && typeof cur!.resetIds === 'object') state.resetIds = cur!.resetIds
           else delete state.resetIds
         }
-        // OFFLOAD_RULE gates manifest producers, not consumption. Server stamping always
-        // Applies the shared offload helper before programme stamping/union, even with producers disabled.
+        // OFFLOAD_RULE gates manifest producers, not consumption. K17 always
+        // applies K10's helper before programme stamping/union, even dark.
         stampPut(cur, state, { overRead: body.baseRev != null && body.baseRev === curRev, stamped: body.stamped === true, now, report })
       } catch (error) { if (error instanceof RangeError || error instanceof TypeError) throw new ApiError(400, 'invalid state'); throw error }
       this.options.observe?.('depth_stamp', performance.now() - phase)
@@ -193,12 +199,17 @@ export function installData(app: GymApp, data: DataService, auth?: AuthService):
     return profileId
   }
   app.get('/api/data', c => json(200, data.get(required(c.get('session')?.user.id))))
+  app.get('/api/data/activity', c => {
+    const s = c.get('session')
+    const uid = required(s?.user.id)
+    return json(200, { status:trainingStatus(data.db, uid, auth?.now() ?? Date.now()), ...(s ? {own:ownTrainingMarker(data.db,s)} : {}) })
+  })
   app.get('/api/data/rev', c => json(200, data.rev(required(c.get('session')?.user.id))))
   app.put('/api/data', async c => {
     required(c.get('session')?.user.id)
     const body = await c.get('body').readJson()
     // A device may be revoked while its request body is arriving.
     const session = auth ? auth.sessionOf(c.req.raw) : c.get('session')
-    return json(200, data.compareAndWrite(required(session?.user.id), body))
+    return json(200, data.compareAndWrite(required(session?.user.id), body, session ?? undefined))
   })
 }

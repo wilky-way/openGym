@@ -1,4 +1,4 @@
 export type * from '../domain/programme-model'
 export type { ProgrammeTarget, ProgrammeProgression } from '../domain/programme-model.named.generated'
-// The shared contract exposes progression-rule types alongside the additive JSON schema.
+// Rule JSON schema is P1's additive change; F1 exposes the already-frozen rule types.
 export type * from '../domain/progression'

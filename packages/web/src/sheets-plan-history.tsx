@@ -1,3 +1,5 @@
+import { NativeTarget } from './components/NativeTarget'
+import { Thumb } from './components/Media'
 import { guardedStoreUpdate, abortGuardedUpdate } from './lib/guarded-update'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { KeyValueStore } from '@opengym/contract/platform/adapters'
@@ -54,7 +56,7 @@ useStore.subscribe((next, prev) => {
 interface SheetTarget { context:ShellContext; epoch: number; key: string; workout?: ExportWorkout; kv?: KeyValueStore; durableOwner?: string | null; durableRequired: boolean }
 function captureTarget(w?: ExportWorkout): SheetTarget {
   const state = useStore.getState()
-  // Sync store can join another tab's saved editor AFTER the producer. Inspect its shell-owned
+  // W07 can join another tab's saved editor AFTER the producer. Inspect its shell-owned
   // durable context too, even when the corresponding storage event is still queued.
   const durableRequired = typeof state.replaceState === 'function'
   let kv: KeyValueStore | undefined
@@ -80,7 +82,7 @@ function durableTargetCurrent(target: SheetTarget): boolean {
     if (owner !== target.durableOwner ||
       (user?.id ?? null) !== (useStore.getState().user?.id ?? null)) return false
     const raw = target.kv.get('gym_state_v1')
-    if (!raw) return true // First durable save; sync store keeps its recovery guarantees
+    if (!raw) return true // first durable save; W07 keeps its recovery guarantees
     const saved = JSON.parse(raw)
     return target.key === contextKey({ ...useStore.getState(), user, S: saved }) &&
       (!target.workout || (saved.workouts || []).some((w: ExportWorkout) => sameWorkout(w, target.workout)))
@@ -96,7 +98,7 @@ function validateTarget(target: SheetTarget): boolean {
   return false
 }
 function updateTarget(target: SheetTarget, mut: (s: StoreDocument) => void): boolean {
-  // Refuse before invoking sync store: even a no-op updater stamps/persists the document.
+  // Refuse before invoking W07: even a no-op updater stamps/persists the document.
   if (!validateTarget(target)) return false
   return guardedStoreUpdate(s => targetCurrent(target, s), mut,
     {update, onStale: () => toast(t('This sheet is out of date. Open it again.'))})
@@ -328,7 +330,7 @@ function DayNote({ iso, target, close }: any) {
   const [text, setText] = useState(had?.text || '')
   const write = (v: any) => {
     if (!updateTarget(target, (s: any) => {
-      // Preserve future fields while canonicalizing/clearing tag, text and stamp.
+      // Preserve future fields while letting K02 canonicalize/clear tag, text and stamp.
       const { tag: _tag, text: _text, _ts: _stamp, ...unknown } = s.dayNotes?.[iso] || {}
       const notes = withDayNote(s.dayNotes, iso, v)
       notes[iso] = { ...unknown, ...notes[iso] }
@@ -527,8 +529,10 @@ function WorkoutDetail({ w, target, close }: any) {
   const entryRow = (e: any, i: any) => {
     const ex = index[e.id]
     return <div key={i} className="row wd-ex" style={{ alignItems: 'flex-start' }} {...tappable(() => { if (validateTarget(target)) services.exerciseHistorySheet(e.id) })}>
+      {ex && <Thumb ex={ex} />}
       <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`} style={{ fontWeight: 600 }}>{nameOf(e)} {w.prs && w.prs.includes(e.id) && <span className="pr"><Icon name="trophy" />PR</span>}</div>
         <div className="ss">{e.sets.filter(hasCompletedWork).map((s: any) => setLabel(e.id, s, e.target, speedUnitOf(st), index)).join('  ·  ') || t('no sets')}</div>
+        {e.sets.filter((s:any)=>hasCompletedWork(s) && s.nativeTarget?.relativeLoad).map((s:any,i:number)=><div key={i} className="small"><NativeTarget row={s}/></div>)}
         {e.note && <div className="small dim" style={{ marginTop: 3 }}>
           {e.notePin && <Icon name="pin" style={{ fontSize: 12, marginInlineEnd: 4, verticalAlign: '-1px', color: 'var(--yellow)' }} />}{e.note}
         </div>}</div>

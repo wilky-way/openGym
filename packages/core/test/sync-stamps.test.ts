@@ -82,7 +82,7 @@ test('a reset keeps its own records; a replace without baseRev keeps the stored 
   assert.equal(replace.edited.restSec, NOW - 4000);
 });
 
-// Transport tests cover HTTP revisions; these tests pin both stamped document results.
+// S04 owns the HTTP transport/revision assertions. This unit pins the two document results.
 test('PUT /api/data: an older app\'s push does not wipe the records, and its delete is stamped', () => {
   const cur: SyncRecord = { _ts: 1, workouts: [{id:'w2',d:'2026-10-02',start:3,end:4}], routines: [], deleted: {workouts:{w1:1000}} };
   stampPut(null, cur, {stamped:true,now:NOW});
@@ -214,7 +214,7 @@ test('an older app\'s push never gets the write ids stamped as settings, and an 
 // An older app takes the revision it is told for the copy it sent and reads the profile again only
 // once the revision moves (v1.3.9 pullState). When the server put back what it left out, the
 // stored document goes one revision further, so that app's next check reads it.
-// The stamper reports when transport must take the +2 revision path.
+// S04 retains transport/revision assertions; the stamper reports when the +2 path is needed.
 test('PUT /api/data: a document the server corrected for an older app is one revision further than it was told', () => {
   const cur: SyncRecord = {workouts:[],routines:[{id:'r1',name:'P',ex:[{id:'sq',sets:4,pyramid:[12,10,8,6]}],_ts:5}]};
   const next: SyncRecord = {workouts:[],routines:[{id:'r1',name:'P',ex:[{id:'sq',sets:4}],_ts:6}]};
@@ -222,7 +222,7 @@ test('PUT /api/data: a document the server corrected for an older app is one rev
   stampPut(cur,next,{overRead:true,now:NOW,report});
   assert.equal(report.changed,true);
   assert.deepEqual(next.routines[0].ex[0].pyramid,[12,10,8,6]);
-  const again=clone(next); again.routines[0].name='load replay';
+  const again=clone(next); again.routines[0].name='P2';
   const unchanged: StampReport = {};
   stampPut(next,again,{overRead:true,now:NOW+1,report:unchanged});
   assert.equal(unchanged.changed,undefined);

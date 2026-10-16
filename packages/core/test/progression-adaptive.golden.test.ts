@@ -5,7 +5,7 @@ import type { LinearRule } from '../../contract/domain/progression'
 const linear = (): LinearRule => ({ id: 'linear', kind: 'linear', increment: 5, unit: 'lb', every: { sessions: 1 }, success: 'all-sets-all-reps', rounding })
 const load = (x: ReturnType<typeof p3Input>, week: number) => { x.weeks = [week]; return evaluate(x).weeks[0]!.slots[0]!.sets.map(s => s.load) }
 
-describe('AMRAP hand-computed band and boundary goldens', () => {
+describe('P3 AMRAP hand-computed band and boundary goldens', () => {
   it('composition failures produce no guessed prescriptions or timeline changes', () => {
     const bump = bumpRule(), duplicate = structuredClone(bump); duplicate.id = 'second-bump'
     const multiple = evaluate(p3Input(percentage(), [bump, duplicate]))
@@ -57,7 +57,7 @@ describe('AMRAP hand-computed band and boundary goldens', () => {
   })
 })
 
-describe('stall hand-computed failure-count and load goldens', () => {
+describe('P3 stall hand-computed failure-count and load goldens', () => {
   it('skipped occurrence neither counts nor resets; shifted second failure resets latest actual150*.9=135', () => {
     const x = p3Input(linear(), [stallRule({ kind: 'reset', pct: 0.9 })])
     x.logs = [p3Log(1, 100, 5), p3Log(2, 900, 5), p3Log(3, 150, 5, {}, '2026-01-22')]
@@ -106,7 +106,7 @@ describe('stall hand-computed failure-count and load goldens', () => {
   })
 })
 
-describe('TM deload/restore hand-computed timeline goldens', () => {
+describe('P3 TM deload/restore hand-computed timeline goldens', () => {
   it('current-week asOf sees day-after TM reset without rewriting earlier week targets', () => {
     const x = p3Input(percentage(), [stallRule({ kind: 'reset', pct: 0.9 }, 'tm', 1)])
     x.cycle!.weekIndex = 1; x.logs = [p3Log(1, 200, 4)]

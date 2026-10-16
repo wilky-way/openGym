@@ -23,7 +23,7 @@ const fixture = () => {
   return { index, routine, state }
 }
 
-describe('caller-owned exercise index', () => {
+describe('K14 caller-owned exercise index', () => {
   it('forwards the index through combined building and every exercise-sensitive dependency', () => {
     const { index, state } = fixture()
     const spies = [vi.spyOn(history, 'buildSets'), vi.spyOn(history, 'barFloor'), vi.spyOn(history, 'modeOf'),

@@ -1,7 +1,7 @@
 import type { Why } from '../../../contract/domain/progression'
 
 const templates: Record<Why['kind'], (i: Why['inputs']) => string> = {
-  authored: i => i.reason === 'no-seed' ? 'Choose a starting load; no authored seed is available.' : 'Use the authored prescription.',
+  authored: i => i.source === 'manual-max' ? `Use the reviewed reference max ${i.value}.${i.cancelledRestores ? ' Cancel the pending deload restore for this lift.' : ''}` : i.reason === 'no-seed' ? 'Choose a starting load; no authored seed is available.' : 'Use the authored prescription.',
   percentage: i => `Use ${Number(i.pct) * 100}% of ${i.basis} ${i.reference ?? 'unavailable'}.`,
   linear: i => i.assisted ? `Use ${i.increment} less assistance after every ${i.every} successful ${i.period}; ${i.bumps} reductions earned.` : `Add ${i.increment} after every ${i.every} successful ${i.period}; ${i.bumps} increases earned.`,
   double: i => i.assisted ? `Use ${i.increment} less assistance when ${i.condition} reach the rep ceiling; ${i.bumps} reductions earned.` : `Increase by ${i.increment} when ${i.condition} reach the rep ceiling; ${i.bumps} increases earned.`,

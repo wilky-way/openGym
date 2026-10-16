@@ -1,4 +1,4 @@
-/** Stall and deload semantics:
+/** GM-approved P3 semantics (2026-10-13, msg_68aaebd0fc08):
  * AMRAP effective date = max(next week/lap boundary, day after shifted exposure).
  * Stall fires once per N failures; success/action resets the counter, skips do not count.
  * Load reset/repeat use latest actual working loads; overrides end at later actual logs.

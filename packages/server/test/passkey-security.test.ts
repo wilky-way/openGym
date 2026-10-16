@@ -80,7 +80,7 @@ test('opaque credential identifiers reject encoded slash, dot-dot and backslash 
 })
 
 test('real authenticator rejects wrong RP, origin, challenge, signature, user-presence and replayed counters', async () => {
-  const key = softPasskey('passkeys-counter-replay')
+  const key = softPasskey('S13-counter-replay')
   const h = await startServer(undefined, {users:[user('u1','Synthetic')],creds:[key.row('u1')]})
   for (const extra of [{origin:'https://evil.example'}, {rpId:'evil.example'}, {flags:0}]) {
     const o = (await h.req('POST','/api/login/options')).body
@@ -102,7 +102,7 @@ test('real authenticator rejects wrong RP, origin, challenge, signature, user-pr
   assert.equal((await h.req('POST','/api/login/verify',{body:{cid:o.cid,credential:signed}})).status,400)
   // A zero counter on a backed-up authenticator is supported by SimpleWebAuthn; counters are compared where nonzero.
   assert.equal(h.db().creds[0].counter,6)
-  const resetKey = softPasskey('passkeys-counter-replay')
+  const resetKey = softPasskey('S13-counter-replay')
   const next = (await h.req('POST','/api/login/options')).body
   assert.equal((await h.req('POST','/api/login/verify',{body:{cid:next.cid,credential:resetKey.assertion(next.options.challenge)}})).status,400)
   assert.equal(h.db().creds[0].counter,6)

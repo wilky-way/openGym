@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx",
+    "**/*.d.ts"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@opengym/core/*": [
+        "../contract/core-api/*"
+      ],
+      "saxes": [
+        "./types/saxes-6.0.0.d.ts"
+      ]
+    }
+  }
+}

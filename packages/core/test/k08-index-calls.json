@@ -1,0 +1,342 @@
+[
+  {
+    "site": "progression.ts:124:defaultIncrement",
+    "file": "progression.ts",
+    "line": 124,
+    "name": "defaultIncrement",
+    "start": 7359,
+    "end": 7398,
+    "text": "defaultIncrement(cfg?.id!, unit, index)",
+    "mutant": "defaultIncrement(cfg?.id!, unit)"
+  },
+  {
+    "site": "progression.ts:136:modeOf",
+    "file": "progression.ts",
+    "line": 136,
+    "name": "modeOf",
+    "start": 8112,
+    "end": 8136,
+    "text": "modeOf(cfg || {}, index)",
+    "mutant": "modeOf(cfg || {})"
+  },
+  {
+    "site": "progression.ts:254:modeOf",
+    "file": "progression.ts",
+    "line": 254,
+    "name": "modeOf",
+    "start": 14456,
+    "end": 14472,
+    "text": "modeOf(c, index)",
+    "mutant": "modeOf(c)"
+  },
+  {
+    "site": "progression.ts:269:isBw",
+    "file": "progression.ts",
+    "line": 269,
+    "name": "isBw",
+    "start": 15478,
+    "end": 15494,
+    "text": "isBw(cfg, index)",
+    "mutant": "isBw(cfg)"
+  },
+  {
+    "site": "progression.ts:269:isLoadedEq",
+    "file": "progression.ts",
+    "line": 269,
+    "name": "isLoadedEq",
+    "start": 15499,
+    "end": 15524,
+    "text": "isLoadedEq(cfg.id, index)",
+    "mutant": "isLoadedEq(cfg.id)"
+  },
+  {
+    "site": "progression.ts:269:isAssisted",
+    "file": "progression.ts",
+    "line": 269,
+    "name": "isAssisted",
+    "start": 15528,
+    "end": 15550,
+    "text": "isAssisted(cfg, index)",
+    "mutant": "isAssisted(cfg)"
+  },
+  {
+    "site": "progression.ts:275:plannedOf",
+    "file": "progression.ts",
+    "line": 275,
+    "name": "plannedOf",
+    "start": 15944,
+    "end": 15965,
+    "text": "plannedOf(cfg, index)",
+    "mutant": "plannedOf(cfg)"
+  },
+  {
+    "site": "progression.ts:292:isAssisted",
+    "file": "progression.ts",
+    "line": 292,
+    "name": "isAssisted",
+    "start": 16861,
+    "end": 16924,
+    "text": "isAssisted(entry && entry.id ? { id: entry.id } : entry, index)",
+    "mutant": "isAssisted(entry && entry.id ? { id: entry.id } : entry)"
+  },
+  {
+    "site": "progression.ts:299:modeOf",
+    "file": "progression.ts",
+    "line": 299,
+    "name": "modeOf",
+    "start": 17257,
+    "end": 17308,
+    "text": "modeOf({ ...target, id: entry && entry.id }, index)",
+    "mutant": "modeOf({ ...target, id: entry && entry.id })"
+  },
+  {
+    "site": "progression.ts:333:loadOf",
+    "file": "progression.ts",
+    "line": 333,
+    "name": "loadOf",
+    "start": 19867,
+    "end": 19893,
+    "text": "loadOf(entry, sets, index)",
+    "mutant": "loadOf(entry, sets)"
+  },
+  {
+    "site": "progression.ts:351:loadOf",
+    "file": "progression.ts",
+    "line": 351,
+    "name": "loadOf",
+    "start": 21065,
+    "end": 21091,
+    "text": "loadOf(entry, sets, index)",
+    "mutant": "loadOf(entry, sets)"
+  },
+  {
+    "site": "progression.ts:371:sessionsIn",
+    "file": "progression.ts",
+    "line": 371,
+    "name": "sessionsIn",
+    "start": 22321,
+    "end": 22362,
+    "text": "sessionsIn(S, exId, fallback, rid, index)",
+    "mutant": "sessionsIn(S, exId, fallback, rid)"
+  },
+  {
+    "site": "progression.ts:374:sessionsIn",
+    "file": "progression.ts",
+    "line": 374,
+    "name": "sessionsIn",
+    "start": 22407,
+    "end": 22449,
+    "text": "sessionsIn(S, exId, fallback, null, index)",
+    "mutant": "sessionsIn(S, exId, fallback, null)"
+  },
+  {
+    "site": "progression.ts:392:readSession",
+    "file": "progression.ts",
+    "line": 392,
+    "name": "readSession",
+    "start": 23775,
+    "end": 23810,
+    "text": "readSession(entry, fallback, index)",
+    "mutant": "readSession(entry, fallback)"
+  },
+  {
+    "site": "progression.ts:485:modeOf",
+    "file": "progression.ts",
+    "line": 485,
+    "name": "modeOf",
+    "start": 30035,
+    "end": 30053,
+    "text": "modeOf(cfg, index)",
+    "mutant": "modeOf(cfg)"
+  },
+  {
+    "site": "progression.ts:486:policyFor",
+    "file": "progression.ts",
+    "line": 486,
+    "name": "policyFor",
+    "start": 30071,
+    "end": 30107,
+    "text": "policyFor(cfg, routine, mode, index)",
+    "mutant": "policyFor(cfg, routine, mode)"
+  },
+  {
+    "site": "progression.ts:490:weightIncrement",
+    "file": "progression.ts",
+    "line": 490,
+    "name": "weightIncrement",
+    "start": 30238,
+    "end": 30271,
+    "text": "weightIncrement(cfg, unit, index)",
+    "mutant": "weightIncrement(cfg, unit)"
+  },
+  {
+    "site": "progression.ts:495:isAssisted",
+    "file": "progression.ts",
+    "line": 495,
+    "name": "isAssisted",
+    "start": 30621,
+    "end": 30643,
+    "text": "isAssisted(cfg, index)",
+    "mutant": "isAssisted(cfg)"
+  },
+  {
+    "site": "progression.ts:500:ownedWeightsFor",
+    "file": "progression.ts",
+    "line": 500,
+    "name": "ownedWeightsFor",
+    "start": 31054,
+    "end": 31084,
+    "text": "ownedWeightsFor(S, cfg, index)",
+    "mutant": "ownedWeightsFor(S, cfg)"
+  },
+  {
+    "site": "progression.ts:512:sessionsFor",
+    "file": "progression.ts",
+    "line": 512,
+    "name": "sessionsFor",
+    "start": 32022,
+    "end": 32069,
+    "text": "sessionsFor(S, cfg.id, cfg, routine?.id, index)",
+    "mutant": "sessionsFor(S, cfg.id, cfg, routine?.id)"
+  },
+  {
+    "site": "progression.ts:534:planChanged",
+    "file": "progression.ts",
+    "line": 534,
+    "name": "planChanged",
+    "start": 33763,
+    "end": 33800,
+    "text": "planChanged(last.planned, cfg, index)",
+    "mutant": "planChanged(last.planned, cfg)"
+  },
+  {
+    "site": "progression.ts:542:climbsReps",
+    "file": "progression.ts",
+    "line": 542,
+    "name": "climbsReps",
+    "start": 34632,
+    "end": 34654,
+    "text": "climbsReps(cfg, index)",
+    "mutant": "climbsReps(cfg)"
+  },
+  {
+    "site": "progression.ts:582:climbsReps",
+    "file": "progression.ts",
+    "line": 582,
+    "name": "climbsReps",
+    "start": 37086,
+    "end": 37108,
+    "text": "climbsReps(cfg, index)",
+    "mutant": "climbsReps(cfg)"
+  },
+  {
+    "site": "progression.ts:639:isBw",
+    "file": "progression.ts",
+    "line": 639,
+    "name": "isBw",
+    "start": 41256,
+    "end": 41275,
+    "text": "isBw(target, index)",
+    "mutant": "isBw(target)"
+  },
+  {
+    "site": "plates.ts:197:exOf",
+    "file": "plates.ts",
+    "line": 197,
+    "name": "exOf",
+    "start": 10015,
+    "end": 10034,
+    "text": "exOf(cfg.id, index)",
+    "mutant": "exOf(cfg.id)"
+  },
+  {
+    "site": "plates.ts:200:usesBar",
+    "file": "plates.ts",
+    "line": 200,
+    "name": "usesBar",
+    "start": 10112,
+    "end": 10130,
+    "text": "usesBar(ex, index)",
+    "mutant": "usesBar(ex)"
+  },
+  {
+    "site": "plates.ts:202:isBw",
+    "file": "plates.ts",
+    "line": 202,
+    "name": "isBw",
+    "start": 10250,
+    "end": 10266,
+    "text": "isBw(cfg, index)",
+    "mutant": "isBw(cfg)"
+  },
+  {
+    "site": "plates.ts:212:exOf",
+    "file": "plates.ts",
+    "line": 212,
+    "name": "exOf",
+    "start": 10692,
+    "end": 10711,
+    "text": "exOf(exOrId, index)",
+    "mutant": "exOf(exOrId)"
+  },
+  {
+    "site": "plates.ts:254:ownedWeightsFor",
+    "file": "plates.ts",
+    "line": 254,
+    "name": "ownedWeightsFor",
+    "start": 13140,
+    "end": 13170,
+    "text": "ownedWeightsFor(S, cfg, index)",
+    "mutant": "ownedWeightsFor(S, cfg)"
+  },
+  {
+    "site": "plates.ts:256:loadKindFor",
+    "file": "plates.ts",
+    "line": 256,
+    "name": "loadKindFor",
+    "start": 13242,
+    "end": 13268,
+    "text": "loadKindFor(S, cfg, index)",
+    "mutant": "loadKindFor(S, cfg)"
+  },
+  {
+    "site": "plates.ts:258:baseWeightFor",
+    "file": "plates.ts",
+    "line": 258,
+    "name": "baseWeightFor",
+    "start": 13352,
+    "end": 13384,
+    "text": "baseWeightFor(S, cfg?.id, index)",
+    "mutant": "baseWeightFor(S, cfg?.id)"
+  },
+  {
+    "site": "plates.ts:267:weightIncrement",
+    "file": "plates.ts",
+    "line": 267,
+    "name": "weightIncrement",
+    "start": 13674,
+    "end": 13733,
+    "text": "weightIncrement(cfg, S?.unit === 'lb' ? 'lb' : 'kg', index)",
+    "mutant": "weightIncrement(cfg, S?.unit === 'lb' ? 'lb' : 'kg')"
+  },
+  {
+    "site": "programme-tm.ts:13:dropGrid",
+    "file": "programme-tm.ts",
+    "line": 27,
+    "name": "dropGrid",
+    "start": 2022,
+    "end": 2045,
+    "text": "dropGrid(S, cfg, index)",
+    "mutant": "dropGrid(S, cfg)"
+  },
+  {
+    "site": "programme-tm.ts:13:weightIncrement",
+    "file": "programme-tm.ts",
+    "line": 27,
+    "name": "weightIncrement",
+    "start": 2054,
+    "end": 2089,
+    "text": "weightIncrement(cfg, S.unit, index)",
+    "mutant": "weightIncrement(cfg, S.unit)"
+  }
+]

@@ -21,7 +21,7 @@ function current(target: PlanTarget, state: StoreDocument): boolean {
   const st = useStore.getState()
   try { if (target.endpoint !== clientPlatform().server.baseUrl()) return false } catch { if (target.endpoint !== null) return false }
   if (target.epoch !== epoch || target.owner !== ownerKey(st, state) || target.valid?.() === false || target.matches?.(state) === false) return false
-  // Sync store may join another tab's context after the producer. Refuse a pending owner switch.
+  // W07 may join another tab's context after the producer. Refuse a pending owner switch.
   if (typeof st.replaceState === 'function') {
     try {
       const kv = clientPlatform().kv, user = JSON.parse(kv.get('gym_user') || 'null')

@@ -1,0 +1,857 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "openGym ProgrammeDefinition",
+  "description": "Structural validity; use programmeConformance for Complete and Ready. Unknown extension fields are retained.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 10000,
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 10000,
+      "minLength": 1
+    },
+    "unit": {
+      "enum": [
+        "kg",
+        "lb"
+      ]
+    },
+    "end": {
+      "anyOf": [
+        {
+          "enum": [
+            "next",
+            "repeat",
+            "stop"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "goal": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "level": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "daysPerWeek": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lengthWeeks": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "equipment": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 10000,
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "licence": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string",
+            "maxLength": 10000
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "endPlan": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "deload",
+                "test",
+                "repeat",
+                "next",
+                "stop"
+              ]
+            },
+            "instructions": {
+              "type": "string",
+              "maxLength": 10000,
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "instructions"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "instructions": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "needsReview": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "rulesSupported": {
+      "type": "boolean"
+    },
+    "weeks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/week"
+      },
+      "minItems": 1,
+      "maxItems": 64
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "unit",
+    "weeks"
+  ],
+  "$defs": {
+    "slot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "open": {
+          "type": "boolean"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "slotId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "main",
+                "supplement",
+                "accessory",
+                "gpp"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "reps": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "const": "max"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "repsMin": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "const": "max"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pyramid": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "const": "max"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "mode": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "sec": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "rir": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "rpe": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "pct": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "setTargets": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "rir": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                  },
+                  "rpe": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                  },
+                  "pct": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "setRepsMin": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "const": "max"
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pyramidWeight": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 10000
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "tm": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "percentages": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "reference": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "percentages"
+          ]
+        },
+        "progression": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "linear",
+                    "double",
+                    "reps-sum",
+                    "percentage",
+                    "authored",
+                    "manual",
+                    "none"
+                  ]
+                },
+                "instructions": {
+                  "type": "string",
+                  "maxLength": 10000,
+                  "minLength": 1
+                },
+                "parameters": {
+                  "type": "object"
+                },
+                "provenance": {
+                  "type": "string",
+                  "maxLength": 10000
+                }
+              },
+              "required": [
+                "kind",
+                "instructions"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "loadGuidance": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generatedRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                "minItems": 1,
+                "maxItems": 100
+              },
+              "pct": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "minItems": 1,
+                "maxItems": 100
+              },
+              "rir": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "rpe": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 10
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "drop_pct": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "until_rpe": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 10
+              },
+              "total_reps": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "from": {
+                "const": "top_set"
+              },
+              "open_count": {
+                "const": true
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "maxItems": 100
+        },
+        "authoredInstructions": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "noteKind": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "restSec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sets"
+      ]
+    },
+    "session": {
+      "type": "object",
+      "properties": {
+        "sessionTemplateId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "routineSnapshot": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 10000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ex": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/slot"
+              },
+              "maxItems": 100
+            }
+          },
+          "required": [
+            "ex"
+          ]
+        }
+      },
+      "required": [
+        "routineSnapshot"
+      ]
+    },
+    "day": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "maxLength": 10000,
+          "minLength": 1
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/session"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      },
+      "required": [
+        "key",
+        "sessions"
+      ]
+    },
+    "week": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "train",
+                "deload",
+                "test",
+                "inserted"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "weekId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rir": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "deload": {
+          "type": "object",
+          "properties": {
+            "authored": {
+              "type": "boolean"
+            },
+            "setsFactor": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "loadFactor": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "from": {
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": []
+        },
+        "days": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/day"
+          },
+          "minItems": 1,
+          "maxItems": 14
+        }
+      },
+      "required": [
+        "index",
+        "days"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "rir": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "rpe": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "progression": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "linear",
+            "double",
+            "reps-sum",
+            "percentage",
+            "authored",
+            "manual",
+            "none"
+          ]
+        },
+        "instructions": {
+          "type": "string",
+          "maxLength": 10000,
+          "minLength": 1
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "provenance": {
+          "type": "string",
+          "maxLength": 10000
+        }
+      },
+      "required": [
+        "kind",
+        "instructions"
+      ]
+    }
+  },
+  "x-opengym-semantic-constraints": [
+    "Unique week indexes and day keys within each week.",
+    "Resolved catalogue/custom exercise ID or open=true with no ID.",
+    "Explicit reps, pyramid or timed duration; numeric strings must be positive integers.",
+    "Per-set arrays match pyramid length or set count; percentage arrays match pyramid length.",
+    "Rep range minimum does not exceed maximum; loads are finite and nonnegative.",
+    "At most 10000 expanded sets; metadata depth at most 20; importNeedsPrescription must be false."
+  ]
+}

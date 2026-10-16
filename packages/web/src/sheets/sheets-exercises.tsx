@@ -1,3 +1,4 @@
+import Media, { Thumb } from '../components/Media'
 import { useUI } from '../store/useUI'
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useStore } from '../store/useStore'
@@ -54,7 +55,7 @@ const ui = () => useUI.getState()
 const toast = (message: string) => ui().toast(message)
 export interface ExerciseConfirmOptions { title?: string; message: string; confirmText?: string; danger?: boolean; onConfirm?: () => void }
 let confirmService: ((options: ExerciseConfirmOptions) => unknown) | undefined
-/** The shell supplies a shared dialog without a store ↔ sheets cycle. */
+/** W11/shell supplies its shared dialog without a store ↔ sheets cycle. */
 export function configureExerciseSheets(services: { confirmSheet: (options: ExerciseConfirmOptions) => unknown }): void { confirmService = services.confirmSheet }
 function ConfirmExerciseDialog({ close, validate, title, message, confirmText, danger, onConfirm }: ExerciseConfirmOptions & { close: () => void; validate: ValidateTarget }) {
   return <div style={{ textAlign: 'center', padding: '4px 0' }}>
@@ -315,6 +316,7 @@ function ExerciseDetail({ ex, close, validate }: { ex: ExerciseRow; close: Close
     toast(on ? t('Added to favourites') : t('Removed from favourites'))
   }
   return <>
+    <Media ex={ex} />
     <div className="row between" style={{ gap: 8, alignItems: 'flex-start' }}>
       <h3 className={'exdetail-name ' + exerciseNameClass(ex)}>{exerciseNameFor(ex)}</h3>
       <button className={'iconbtn fav-btn' + (fav ? ' on' : '')} aria-pressed={fav}
@@ -658,7 +660,7 @@ function ExercisePicker({ onPick, title, close, like, validate }: { validate: Va
     ? similarExercises((profile && !showAll ? all.filter((e: any) => exAvailable(st, e)) : all).filter((e: any) => bp === SAME || !bp || e.bp === bp), q, f, f.length ? 12 : 30)
     : []
   const pickRow = (e: any) => <div key={e.id} className="item" {...tappable(() => onPick(e))}>
-        <div className="grow"><div className={`tt ${exerciseNameClass(e)}`}>{isFav(st, e.id) && <Icon name="starFill" className="fav-star" />}{exerciseNameFor(e)}</div><div className="ss capitalize">{t((MUSCLE_NAME as Record<string, any>)[e.tg] || e.tg || e.bp)} · {t(e.eq)}</div></div>
+        <Thumb ex={e} /><div className="grow"><div className={`tt ${exerciseNameClass(e)}`}>{isFav(st, e.id) && <Icon name="starFill" className="fav-star" />}{exerciseNameFor(e)}</div><div className="ss capitalize">{t((MUSCLE_NAME as Record<string, any>)[e.tg] || e.tg || e.bp)} · {t(e.eq)}</div></div>
         {/* Accent tag = already in a routine/log ("Chosen"); the yellow star by the name = favourite. */}
         {usage[e.id] && <span className="tag acc"><Icon name="starFill" /></span>}
         {/* A "+" glyph reads as "add this now" — it used to just open the same detail sheet as
@@ -1029,7 +1031,7 @@ function ExConfig({ validate, ex, existing, onSave, onDelete, onReplace, close, 
     if (!validate() || progressionStepInvalid) return
     close()
     const saveConfig = (out: any) => {
-      // ExConfig unknown-key preservation (design safety exception): unlike legacy
+      // ExConfig unknown-key preservation (GM safety exception): unlike legacy
       // sheets.jsx:1687, ordinary Save retains newer clients' opaque keys. Known
       // fields still use exactly the legacy canonicalization and removal rules.
       const opaque = { ...existing }
@@ -1115,6 +1117,7 @@ function ExConfig({ validate, ex, existing, onSave, onDelete, onReplace, close, 
     }
   }
   return <>
+    <Media ex={ex} />
     <h3 className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</h3>
     {/* The same tags the exercise detail sheet shows, secondaries included: choosing what goes
         into a plan is exactly when "what else does this hit" matters, and until now that was

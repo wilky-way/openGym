@@ -19,12 +19,12 @@ export interface PrescriptionDisplay {
   slots: { prescription: PrescribedSlot; name: string; sessionName: string }[]
 }
 
-/** The same preview inputs as progression API, evaluated locally. Never writes or materializes a TM seed. */
+/** The same preview inputs as P5, evaluated locally. Never writes or materializes a TM seed. */
 export function progressionDisplay(S: StoreDocument, definition: unknown, cycle: EngineInput['cycle'] | undefined,
-  weeks: number[], today: string, index: ExerciseIndex = createExerciseIndex(S.customEx)): PrescriptionDisplay | null {
+  weeks: number[], today: string, index: ExerciseIndex = createExerciseIndex(S.customEx), materializationDate?: string): PrescriptionDisplay | null {
   const attached = attachedSlots(definition)
   if (!attached.length) return null
-  // Progression API refuses malformed cycle dates before preview; never show a load from date rollover.
+  // P5 refuses malformed cycle dates before preview; never show a load from date rollover.
   if (cycle && (!isProgrammeDate(cycle.week1StartDate) || !Number.isInteger(cycle.weekIndex))) return {
     slots: [], result: {weeks: [], tm: {}, warnings: [], error: {code: 'INVALID_DEFINITION',
       issues: [{path: 'cycle', message: 'Invalid cycle date or week'}]}},
@@ -35,7 +35,7 @@ export function progressionDisplay(S: StoreDocument, definition: unknown, cycle:
     warnings.push({code: 'log.invalid-date', message: `Excluded log ${i}: expected a valid YYYY-MM-DD date.`})
     return false
   })
-  const result = preview({definition, cycle, logs, weeks, asOf: today, now: today,
+  const result = preview({definition, cycle, logs, weeks, asOf: today, now: today, materializationDate, historyCycles: list(S.programmes?.cycles),
     profile: {...S, unit: S.unit === 'kg' ? 'kg' : 'lb', effortScale: S.effort === 'rpe' || S.effortScale === 'rpe' ? 'rpe' : 'rir'}}, {}, index)
   const merged = new Map([...result.warnings, ...warnings].map(w => [JSON.stringify(w), w]))
   result.warnings = [...merged].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).map(([, w]) => w)
@@ -51,14 +51,17 @@ export function progressionDisplay(S: StoreDocument, definition: unknown, cycle:
 
 export const sameSlot = (a: SlotRef, b: SlotRef) => a.week === b.week && a.day === b.day && a.session === b.session && a.slot === b.slot
 
-// Sync store uses immutable drafts. One preview per state/cycle/week/day covers all rendered entries;
+// W07 uses immutable drafts. One preview per state/cycle/week/day covers all rendered entries;
 // a local edit, history pull, account change or catalogue edit creates a new state and cache.
 const entryPreviews = new WeakMap<StoreDocument, Map<object, Map<string, PrescriptionDisplay | null>>>()
-function cachedEntryPreview(S: StoreDocument, cycle: any, week: number, today: string) {
+function cachedEntryPreview(S: StoreDocument, cycle: any, week: number, today: string, activeAt?: number, activeDate?: string) {
   let cycles = entryPreviews.get(S); if (!cycles) entryPreviews.set(S, cycles = new Map())
   let displays = cycles.get(cycle); if (!displays) cycles.set(cycle, displays = new Map())
-  const key = JSON.stringify([week, today, cycle, S.customEx, S.unit, S.effort, S.effortScale, S.plates, S.barWeights, S.dumbbells, S.dbLoad])
-  if (!displays.has(key)) displays.set(key, progressionDisplay(S, cycle.snapshot, cycle, [week], today))
+  const key = JSON.stringify([week, today, activeAt, activeDate, cycle, S.customEx, S.unit, S.effort, S.effortScale, S.plates, S.barWeights, S.dumbbells, S.dbLoad])
+  if (!displays.has(key)) {
+    const source = activeAt === undefined || !cycle.maxAdjustments?.length ? cycle : {...cycle,maxAdjustments:cycle.maxAdjustments.filter((event: {recordedAt:number})=>event.recordedAt<=activeAt)}
+    displays.set(key, progressionDisplay(S, cycle.snapshot, source, [week], today, createExerciseIndex(S.customEx), activeDate))
+  }
   return displays.get(key)!
 }
 /** No positional/exercise-id fallback: duplicates and stale session identities must not guess a target. */
@@ -70,7 +73,9 @@ export function entryPrescription(S: StoreDocument, entry: Record<string, any>, 
   const ref = {week: occurrence.weekIndex, day: occurrence.dayKey, session: occurrence.sessionTemplateId ?? '', slot: entry.target.slotId}
   const authored = attachedSlots(cycle.snapshot).filter(a => sameSlot(a.ref, ref))
   if (authored.length !== 1 || authored[0]!.slot.id && authored[0]!.slot.id !== entry.id) return null
-  const display = cachedEntryPreview(S, cycle, occurrence.weekIndex, today)
+  const activeAt = S.active?.entries?.includes(entry) && Number.isFinite(S.active.start) ? S.active.start as number : undefined
+  const activeDate = activeAt !== undefined && isProgrammeDate(S.active.d) ? S.active.d as string : undefined
+  const display = cachedEntryPreview(S, cycle, occurrence.weekIndex, today, activeAt, activeDate)
   if (!display) return null
   return {slots: display.slots.filter(({prescription: p}) => sameSlot(p.ref, ref)), result: {...display.result,
     warnings: display.result.warnings.filter(w => !w.ref || sameSlot(w.ref, ref)),

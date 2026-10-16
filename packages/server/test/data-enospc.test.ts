@@ -1,4 +1,4 @@
-// Opt in with a dedicated, size-limited RAM filesystem supplied through DATA_RAMDISK_DIR.
+// Run by scripts/s04-enospc.ts in an isolated, size-limited RAM filesystem.
 import { test, expect } from 'bun:test'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -6,7 +6,7 @@ import { openStore, putUser, readStateDoc } from '../src/storage'
 import { DataService } from '../src/data'
 import { user } from './helpers'
 
-const ramdisk = process.env.DATA_RAMDISK_DIR
+const ramdisk = process.env.S04_RAMDISK_DIR
 test.skipIf(!ramdisk)('scratch RAM filesystem ENOSPC during PUT rolls back and preserves acknowledged bytes', () => {
   const dir = fs.mkdtempSync(path.join(ramdisk!, 'data-'))
   const store = openStore(dir)

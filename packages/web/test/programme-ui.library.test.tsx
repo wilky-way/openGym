@@ -50,12 +50,13 @@ it('removes an already-loaded private detail immediately on sign out',async()=>{
  const host=mount(<Programs/>);await settle();await click(host,definition.name+'Valid · Private importLibrary');await settle();expect(host.textContent).toContain(definition.name)
  act(()=>useStore.setState({user:null}));expect(host.textContent).not.toContain(definition.name)
 })
-it.each(['week','block'] as const)('the %s repeat UI rejects from-e1rm without a resolver atomically',async path=>{
+it.each(['week','block'] as const)('the %s repeat UI requires history or explicit manual seed review',async path=>{
  const S:any=structuredClone(DEF);S.customEx=[custom];const d={...definition,tmSeeds:{lift:{fromE1rm:{pct:.9}}}}
  activate(S,d,{cycleId:'c',today:'2026-10-12'},createExerciseIndex(S.customEx));S.programmes.cycles[0].tm={lift:44};S.programmes.cycles[0].tmSeed={lift:44}
  if(path==='block')skip(S,'c','c:w1d1',{today:'2026-10-12'});else S.programmes.cycles[0].status='paused'
  useStore.setState({S});const before=structuredClone(S);const host=mount(path==='block'?<ProgrammeRollover/>:<ProgrammeToday/>)
  await click(host,path==='block'?'Repeat block':'Repeat week 1')
+ if(path==='block'){expect(useStore.getState().S).toEqual(before);const sh=useUI.getState().sheets.at(-1)!;await click(mount(sh.render(()=>{})),'Confirm repeat');expect(useStore.getState().S.programmes.cycles).toHaveLength(2);return}
  if(path==='week'){const sh=useUI.getState().sheets.at(-1)!;await click(mount(sh.render(()=>{})),'Repeat week')}
  expect(useStore.getState().S).toEqual(before);expect(useUI.getState().toastMsg).toContain('training max history')
 })

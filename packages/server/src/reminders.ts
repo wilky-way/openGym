@@ -41,7 +41,7 @@ export function serverNudgeFor(state: unknown, iso: string): string | null {
   const raw = record(state), S = { ...raw, workouts: records(raw.workouts), routines: records(raw.routines) }
   const dayBefore = (d: string) => new Date(Date.parse(d + 'T12:00:00Z') - 86400000).toISOString().slice(0, 10)
   const logged = (d: string) => S.workouts.some(w => w.d === d)
-  // Compatibility R2 adapter: scalar misses differ from core list misses on malformed
+  // GM-approved R2 adapter: scalar misses differ from core list misses on malformed
   // falsy IDs. Compose core primitives without changing the core nudge module.
   const missed = (d: string): string | null => {
     if (logged(d) || excusedOn(S, d)) return null

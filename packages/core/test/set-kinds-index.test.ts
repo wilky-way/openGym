@@ -1,4 +1,4 @@
-// Native exercise catalogue integration: actual custom outputs, without contract doubles.
+// Native K03 integration: actual custom-exercise outputs, without contract doubles.
 import { readFileSync } from 'node:fs'
 import { parse } from '@babel/parser'
 import { describe, expect, it } from 'vitest'
@@ -12,12 +12,12 @@ import {
   meaningFactor, entryAs, workoutAs, historyAs, ownedWeightsFor,
 } from '@opengym/core/dumbbells.js'
 
-const bar = { id: 'set-kind-custom-bar', eq: 'trap bar' }
-const single = { id: 'set-kind-custom-single', eq: 'dumbbell', n: 'Single arm press' }
-const pair = { id: 'set-kind-custom-pair', eq: 'dumbbell', n: 'Two arm press' }
-const heavy = { id: 'set-kind-custom-heavy', eq: 'leverage machine', bp: 'upper legs' }
-const assisted = { id: 'set-kind-custom-assisted', eq: 'leverage machine', n: 'Assisted dip' }
-const cardio = { id: 'set-kind-custom-cardio', n: 'Escalier libre' }
+const bar = { id: 'k05-custom-bar', eq: 'trap bar' }
+const single = { id: 'k05-custom-single', eq: 'dumbbell', n: 'Single arm press' }
+const pair = { id: 'k05-custom-pair', eq: 'dumbbell', n: 'Two arm press' }
+const heavy = { id: 'k05-custom-heavy', eq: 'leverage machine', bp: 'upper legs' }
+const assisted = { id: 'k05-custom-assisted', eq: 'leverage machine', n: 'Assisted dip' }
+const cardio = { id: 'k05-custom-cardio', n: 'Escalier libre' }
 const index: ExerciseIndex = createExerciseIndex([bar, single, pair, heavy, assisted, cardio])
 const singleCfg = { id: single.id, dbLoad: 'total' }
 const entry = { id: single.id, target: { dbLoad: 'total' }, sets: [{ w: 20, r: 8, done: true }], topW: 20 }

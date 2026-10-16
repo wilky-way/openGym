@@ -35,7 +35,7 @@ export async function shareBlob(blob: Blob, name: string, title: string): Promis
   return true
 }
 
-/** Application shell binds this capability at boot; a native shell can replace browser printing. */
+/** W23 binds this capability at boot; a native shell can replace browser printing. */
 export type PrintHTML = (html: string) => void
 let printHTMLShell: PrintHTML = createBrowserPrintHTML()
 export function configurePlanHistoryPrint(print: PrintHTML): void { printHTMLShell = print }

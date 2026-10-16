@@ -101,7 +101,7 @@ describe('converting the unit while another device logs in the old one', () => {
     expect(S.exWeights['0025'].w).toBe(55)
   })
 
-  // Review of the compatibility baseline: the history was relabelled, but the running session was converted.
+  // Review of 771184c9: the history was relabelled, but the running session was converted.
   it('a label-only switch elsewhere relabels the running session too, on a pull and on a merge', async () => {
     const active: any = { id: 'run', d: TODAY, start: 5, entries: [{ id: '0025', sets: [{ w: 100, r: 5, done: true }] }] }
     const serverLb: any = { ...clone(KG), unit: 'lb', _ts: 200, unitSet: { at: 150, convert: false }, _rev: 2 }

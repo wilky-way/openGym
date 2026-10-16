@@ -9,7 +9,7 @@ import { deleteInvite, deleteUser, getInvite, getUser, listInvites, listSubs, li
 import { saveAccountsMirror, type AccountsMirrorOptions } from './accounts-mirror'
 
 export interface AdminServices extends AccountsMirrorOptions {
-  /** Push presence owns the ephemeral activity registry. */
+  /** S05 owns the ephemeral activity registry. */
   livePresence?: (uid: string) => Record<string, unknown> | null
   dropPresence?: (uid: string) => void
 }

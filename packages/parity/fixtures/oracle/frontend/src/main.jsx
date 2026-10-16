@@ -1,0 +1,30 @@
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App.jsx'
+import { useStore } from './store/useStore.js'
+import { startMediaSync } from './lib/media-sync.js'
+
+// Only normal faces and used weights. Vite bundles these fonts; the PWA precaches them.
+import './fonts.css'
+import './index.css'
+import './logbook.css'
+
+// App.jsx restores per-route scroll itself; the browser's own attempt races it.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode><App /></StrictMode>
+)
+
+// The photos and videos of custom exercises, in every build (the phone and the demo included):
+// uploads of what the server lacks, the local clean-up, and the plan's files kept offline.
+startMediaSync(useStore)
+
+// this keeps the focused field above it. Idle everywhere else.
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {})
+  // The plan's exercise media, kept by the worker for a workout opened without a network (#281).
+  // It only fetches ahead while the page runs as the installed app; a tab keeps what it has shown.
+  import('./lib/media-prefetch.js').then(m => m.startMediaPrefetch(useStore)).catch(() => {})
+}

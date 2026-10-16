@@ -1,3 +1,13 @@
+import { trainingIdentity } from '../lib/training-activity'
+import { closeTrainingLocally } from '../lib/training-close'
+import { setNumberAt } from '../lib/set-number'
+export { setNumberAt } from '../lib/set-number'
+import { prepareNativeCompletion, hasNativeRelativeLoad, nativeExtraRow } from '@opengym/core/native-relative-load'
+import { clientCapabilities } from '../lib/client-io'
+import { abortGuardedUpdate } from '../lib/guarded-update'
+import { NativeTarget } from '../components/NativeTarget'
+import { canCompleteNativeSet } from '@opengym/core/native-prescription'
+import Media, { WorkoutThumb } from '../components/Media'
 import { preserveWarmupMetadata } from '../../../core/src/workout-model'
 import ProgressionPrescription from '../components/ProgressionPrescription'
 import { entryPrescription } from '../lib/progression-display'
@@ -153,7 +163,12 @@ export function PlannedExerciseBlock({ entryIdx, compact, dense, editing, onTogg
     if (warm && converted !== e.sets) {
       // Keep future metadata while retaining the legacy clearing of known work-row fields.
       const row = converted.find((candidate: any) => !e.sets.includes(candidate))
-      Object.assign(row, preserveWarmupMetadata(source, row))
+      if(e.target?.nativePrescription && hasNativeRelativeLoad(e.target.nativePrescription)) {
+        // Phase is an athlete edit, not permission to erase/rebind authored authority
+        // or completed receipts. An empty actual load must remain unknown, not zero.
+        Object.assign(row,{...source,...row})
+        if(Object.hasOwn(source,'w'))row.w=source.w;else delete row.w
+      } else Object.assign(row, preserveWarmupMetadata(source, row))
     }
     e.sets = converted
   }, true)
@@ -361,7 +376,7 @@ export function PlannedExerciseBlock({ entryIdx, compact, dense, editing, onTogg
   const cell = (s: any, i: any, col: any, cls: any) : any => (
     <div className={'stp ' + cls + (wc.steppers ? '' : ' plain')}>
       {wc.steppers && <button aria-label={t('Decrease')} onClick={() : any => bump(s, i, col, -1)}><Icon name="minus" /></button>}
-      <span className="val"><NumberField decimal={col.dec} nullable={col.opt} value={viewOf(col, s[col.f]) ?? ''}
+      <span className="val"><NumberField decimal={col.dec} nullable={col.opt || !!s.nativeTarget && ['r','w'].includes(col.f)} value={viewOf(col, s[col.f]) ?? ''}
         onChange={(v: any ) : any => onField(i, col.f, col.store ? col.store(v) : v)} /></span>
       {wc.steppers && <button aria-label={t('Increase')} onClick={() : any => bump(s, i, col, 1)}><Icon name="plus" /></button>}
     </div>
@@ -592,6 +607,7 @@ export function PlannedExerciseBlock({ entryIdx, compact, dense, editing, onTogg
       {col2 && sideCell(sd, i, side, col2, 'r')}
       {col3 && sideEffortCell(sd, i, side, col3)}
       <Check checked={sd.done} label={t('Set {0} ({1}) done', setNumOf(s, i), side === 'L' ? t('Left') : t('Right'))} onChange={() : any => onToggleSide(i, side)} />
+      {s.nativeTarget && <NativeTarget row={s} entry={entry} />}
       {(s.target || s.repTarget) && <span className="set-target">{s.repTarget && `${s.repTarget.min}–${s.repTarget.max} · `}{targetLabel(s.target, t,effortOf(S))}</span>}
     </div>
   }
@@ -649,6 +665,7 @@ export function PlannedExerciseBlock({ entryIdx, compact, dense, editing, onTogg
       {timed && !editing && <button className="setgo" aria-label={t('Start set')} disabled={s.done || !!working}
         onClick={() : any => onStartTimed(i)}><Icon name="play" /></button>}
       <Check checked={s.done} label={sideTagOf(s) ? t('Set {0} ({1}) done', setNumOf(s, i), sideTagOf(s)) : t('Set {0} done', setNumOf(s, i))} onChange={() : any => onToggle(i)} />
+      {s.nativeTarget && <NativeTarget row={s} entry={entry} />}
       {(s.target || s.repTarget) && <span className="set-target">{s.repTarget && `${s.repTarget.min}–${s.repTarget.max} · `}{targetLabel(s.target, t,effortOf(S))}</span>}
     </div>
   )
@@ -675,7 +692,9 @@ export function PlannedExerciseBlock({ entryIdx, compact, dense, editing, onTogg
     </SwipeRow>
   }
   return <>
+    {!dense && S.gifSize !== 'mini' && <Media ex={ex} compact={compact} minimizable />}
     <div className={'row between exhd' + (compact || dense ? ' compact' : '')} style={{ marginBottom: 6 }}>
+      {!dense && S.gifSize === 'mini' && <WorkoutThumb ex={ex} onExpand={() => update(s => { s.gifSize = 'full' })} />}
       <div style={{ flex: 1, minWidth: 0, fontSize: (compact || dense) ? 17 : 20, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.2 }} className={'ex-name ' + exerciseNameClass(ex)}>{exerciseNameFor(ex)}</div>
       <div className="row" style={{ gap: 2, flex: 'none' }}>
         {entry.note && <button className="iconbtn" aria-label={t('Note')} title={t('Note')} style={{ color: 'var(--acc)' }}
@@ -840,15 +859,7 @@ const shiftRowRefs = (idx: any, from: any, by: any, before?: string) : any => {
   // Only these guarded copy/delete/Undo paths may rebind a running hold's moved occurrence.
   if (holdAt && holdAt.idx === idx) (holdAt.owner as { refresh?: (before?: string) => void } | undefined)?.refresh?.(before)
 }
-/** The number a set row shows: counted per phase (warm-ups and work sets each from 1), and a
- *  timed per-side L/R pair as one set. */
-export function setNumberAt(sets: any, i: any) : any {
-  const s = sets[i]
-  const warm = isWarmupRow(s)
-  const phaseNum = sets.slice(0, i + 1).filter((x: any ) : any => isWarmupRow(x) === warm).length
-  return s?.side ? Math.ceil(phaseNum / 2) : phaseNum
-}
-/** Timed workout callbacks use this moving owner while set operations shift rows. */
+/** W18's timed callback uses this moving owner while W17 set operations shift rows. */
 export function setWorkoutHoldOwner(owner: { owner?: unknown; idx: number; i: number } | null) { holdAt = owner }
 export function getWorkoutHoldOwner() { return holdAt }
 
@@ -869,7 +880,7 @@ export function deleteActiveSet(idx: number, i: number, { editing = false, targe
   if (!workoutTargetUpdate(target, s => {
     const en = s.active.entries[idx]
     before = JSON.stringify(en)
-    en.workoutRowIdentity = { scope: 'workout-row', id: identity,
+    en.workoutRowIdentity = { scope: 'W17', id: identity,
       ...(Object.hasOwn(en, 'workoutRowIdentity') ? { prior: en.workoutRowIdentity } : {}) }
     if (editing) en.sets.splice(start, count)
     else en.sets = removeRowAt(en.sets, i)
@@ -885,9 +896,9 @@ export function deleteActiveSet(idx: number, i: number, { editing = false, targe
 export interface UndoSetToken { target: WorkoutTarget; identity: string; entryId: string; entryTarget: string; i: number; rows: any[] }
 export function undoDeleteSet(token: UndoSetToken) {
   let at = -1, i = 0, before: string | undefined
-  const valid: WorkoutTarget = (s = useStore.getState().S) => token.target(s) && !!s.active?.entries?.some((e: any) => e.id === token.entryId && JSON.stringify(e.target) === token.entryTarget && e.workoutRowIdentity?.scope === 'workout-row' && e.workoutRowIdentity.id === token.identity)
+  const valid: WorkoutTarget = (s = useStore.getState().S) => token.target(s) && !!s.active?.entries?.some((e: any) => e.id === token.entryId && JSON.stringify(e.target) === token.entryTarget && e.workoutRowIdentity?.scope === 'W17' && e.workoutRowIdentity.id === token.identity)
   if (!workoutTargetUpdate(valid, s => {
-    at = s.active.entries.findIndex((e: any) => e.id === token.entryId && JSON.stringify(e.target) === token.entryTarget && e.workoutRowIdentity?.scope === 'workout-row' && e.workoutRowIdentity.id === token.identity)
+    at = s.active.entries.findIndex((e: any) => e.id === token.entryId && JSON.stringify(e.target) === token.entryTarget && e.workoutRowIdentity?.scope === 'W17' && e.workoutRowIdentity.id === token.identity)
     const en = s.active.entries[at]
     before = JSON.stringify(en)
     i = Math.min(token.i, en.sets.length)
@@ -906,7 +917,15 @@ export function copyActiveSet(idx: number, i: number, target = captureWorkoutRow
   if (!e?.sets?.[i]) return false
   const { start, end } = copySpanAt(e.sets, i)
   let before: string | undefined
-  if (!workoutTargetUpdate(target, s => { before = JSON.stringify(s.active.entries[idx]); s.active.entries[idx].sets = copyRowAt(s.active.entries[idx].sets, i) })) return false
+  if (!workoutTargetUpdate(target, s => {
+    const entry=s.active.entries[idx]
+    before = JSON.stringify(entry)
+    const span=copySpanAt(entry.sets,i),sets=copyRowAt(entry.sets,i)
+    if(entry.target?.nativePrescription && hasNativeRelativeLoad(entry.target.nativePrescription)) {
+      for(let at=span.end+1;at<=span.end+1+span.end-span.start;at++)sets[at]=nativeExtraRow(sets[at],clientCapabilities().randomId())
+    }
+    entry.sets=sets
+  })) return false
   shiftRowRefs(idx, end + 1, end - start + 1, before)
   setUI({ setFlash: { idx, i: end + 1, id: String(++flashSeq) } })
   useUI.getState().toast(t('Copied. One more like that one.'))
@@ -1281,16 +1300,21 @@ export function ActiveWorkout() {
     // hold put aside must not outrank what you just typed, or the field would read 45 and the ▶
     // would still hold the 30 the row was asking for before.
     if (field === 'sec') delete e.sets[i].planSec
+    if(field==='w' && e.sets[i].nativeRowIdentity) {
+      if(typeof v==='number' && Number.isFinite(v) && v>=0 && e.sets[i].done)e.sets[i].nativeActualLoad={value:v,unit:S.unit}
+      else delete e.sets[i].nativeActualLoad
+    }
     // Changing a work set's weight cascades to the following inherited work sets, so a correction
     // carries through without retyping every row while explicit manual exceptions stay put. A
     // warm-up edit stays on its own row, and the later rungs keep their ramp loads.
-    if (field === 'w') {
+    if (field === 'w' && !e.target?.nativePrescription) {
       e.sets[i].weightOrigin = WEIGHT_ORIGIN_MANUAL
       e.sets = cascadeWeight(e.sets, i, v, undefined, e.target?.backoffStep)
     }
   })
   const modeAt = (idx: any) => modeOf({ ...(A.entries[idx].target || {}), id: A.entries[idx].id }, currentIndex())
   const addSet = (idx: any) => mutEntry(idx, (e: any) => {
+    const count=e.sets.length
     const l = e.sets[e.sets.length - 1]
     const m = modeOf({ ...(e.target || {}), id: e.id }, currentIndex())
     if (m === 'cardio') e.sets.push({ min: l ? l.min : (e.target.min || 20), speed: l ? l.speed : (e.target.speed || 8), ...inclineFrom(l), done: false })
@@ -1313,6 +1337,9 @@ export function ActiveWorkout() {
           : makeSideSet(row))
         : row)
     }
+    if(e.target?.nativePrescription && hasNativeRelativeLoad(e.target.nativePrescription)) {
+      for(let at=count;at<e.sets.length;at++)e.sets[at]=nativeExtraRow(e.sets[at],clientCapabilities().randomId())
+    }
   })
   const removeSet = (idx: any) => deleteActiveSet(idx, A.entries[idx].sets.length - 1, { editing, target: actionTarget ?? renderTarget })
   const addWarmup = (idx: any) => {
@@ -1322,7 +1349,9 @@ export function ActiveWorkout() {
     const m = modeOf({ ...(e.target || {}), id: e.id }, currentIndex())
     // A warm-up of a dumbbell lift lands on a bell you own when the profile lists them (#376).
     const ramp = (m === 'reps' && ownedWeightsFor(S, { ...(e.target || {}), id: e.id }, currentIndex())) || defaultIncrement(e.id, S.unit, currentIndex())
+    const firstWork=e.sets.findIndex((row:any)=>!isWarmupRow(row)),at=firstWork<0?e.sets.length:firstWork
     e.sets = (insertWarmupRow as any)(e.sets, m, e.target || {}, ramp, barFloor(S, e.id, currentIndex(S)))
+    if(e.target?.nativePrescription && hasNativeRelativeLoad(e.target.nativePrescription))e.sets[at]=nativeExtraRow(e.sets[at],clientCapabilities().randomId())
     })
     if (applied) shiftRowRefs(idx, first < 0 ? count : first, useStore.getState().S.active.entries[idx].sets.length - count)
     return applied
@@ -1589,7 +1618,7 @@ export function ActiveWorkout() {
   // ⌄ that only leaves the screen (v1.3.11).
   const discardWorkout = () => { const durable = captureDurableWorkoutTarget(); const target = captureTarget(draft => durable(draft)); return confirmSheet({
     title: t('Discard workout?'), message: t('The sets you logged in this session will be lost.'), confirmText: t('Discard'), danger: true,
-    onConfirm: () => { if (!update((s: any) => { s.active = null }, true, target)) return; stopRest(); if (useUI.getState().work) stopWork(); nav('/home') },
+    onConfirm: () => { if (!closeTrainingLocally(target,s=>{s.active=null},'discarded',staleWorkoutToast)) return; stopRest(); if (useUI.getState().work) stopWork(); nav('/home') },
   }) }
   // The header ⋯, in groups: the settings you change at the gym first (their own sheet, the same
   // values as Settings), then what to add, what to change about this workout, and Discard last.
@@ -1819,12 +1848,18 @@ export function ActiveWorkout() {
     // button tap, and a focused input with its keyboard gone is what leaves the tab bar
     // mid-screen on iOS (lib/viewport-guard.js).
     if (!!ux().document) { const a = ux().document!.activeElement as HTMLElement | null; if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA')) a.blur?.() }
+    const current=useStore.getState().S.active?.entries[idx]?.sets[i]
+    if(current && !current.done && !canCompleteNativeSet(current)) { useUI.getState().toast(t('Enter actual reps and load before completing this set.')); return }
     const m = modeAt(idx)
     const cardioEntry = m === 'cardio'
     let exJustDone = false, workoutDone = false, checked = false, before: string | undefined
     if (!update((s: any) => {
       const e = s.active.entries[idx]
       before = JSON.stringify(e)
+      // Evaluate from this guarded draft, after owner/profile/editor/entry/row fences.
+      // A refused dependency never reaches stamps, persistence or pending writes.
+      try {prepareNativeCompletion(s,e,e.sets[i],!e.sets[i].done,currentIndex(s))}
+      catch(error) {useUI.getState().toast(error instanceof Error?error.message:'Relative load pending');abortGuardedUpdate()}
       // A per-side tick flips just that side; the row's own `done` (both sides) is then
       // recomputed by toggleSide, so every completion check below still reads a single boolean.
       if (side) e.sets[i] = toggleSide(e.sets[i], side)
@@ -2049,7 +2084,7 @@ export function ActiveWorkout() {
   // Live-presence heartbeat so the admin dashboard can show who's training now. Signed-in only —
   // guests have no server session. Reads fresh state each tick so progress stays current.
   useEffect(() => {
-    if (!useStore.getState().user || editing) return
+    if (!useStore.getState().user) return
     let stopped = false
     const ping = (active: any) => {
       const A2 = useStore.getState().S.active
@@ -2059,8 +2094,8 @@ export function ActiveWorkout() {
       const ui = u.findIndex((x: any) => x.includes(c))
       const tot = setUnitsTotal(A2.entries)
       api('/api/activity', { method: 'POST', body: JSON.stringify({
-        active, name: A2.name, exIdx: ui + 1, exTotal: u.length,
-        setsDone: setsDoneActive(A2), setsTotal: tot, startedAt: A2.start
+        active, ...trainingIdentity(A2), name: A2.name, exIdx: ui + 1, exTotal: u.length,
+        setsDone: setsDoneActive(A2), setsTotal: tot
       }) }).catch(() => {})
     }
     // The cleanup below runs on in-app navigation only. A closed tab, or a home-screen app swiped

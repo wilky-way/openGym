@@ -30,16 +30,16 @@ describe('browser Platform endpoint and transport', () => {
   it('reads persisted endpoints/tokens at each call and uses Bearer without cookies', async () => {
     const win = page(), platform = createBrowserPlatform()
     const fetch = vi.spyOn(win, 'fetch').mockResolvedValue(new Response('{}'))
-    configureBrowserServer(platform.kv, 'https://remote.example:19443/')
+    configureBrowserServer(platform.kv, 'https://remote.example:8443/')
     await platform.server.setDeviceToken('synthetic-device')
     const second = createBrowserPlatform()
-    expect(second.server.baseUrl()).toBe('https://remote.example:19443')
-    expect(second.kv.get(SERVER_URL_KEY)).toBe('https://remote.example:19443')
+    expect(second.server.baseUrl()).toBe('https://remote.example:8443')
+    expect(second.kv.get(SERVER_URL_KEY)).toBe('https://remote.example:8443')
     expect(await second.server.authHeader()).toEqual({ Authorization: 'Bearer synthetic-device' })
     const controller = new AbortController()
     await second.transport.fetch('/api/data', { method: 'PUT', body: '{"z":1,"a":2}', headers: [['x-custom', 'yes'], ['authorization', 'stale']], signal: controller.signal, credentials: 'include' })
     const [url, init] = fetch.mock.calls[0]!
-    expect(url).toBe('https://remote.example:19443/api/data')
+    expect(url).toBe('https://remote.example:8443/api/data')
     expect(init?.credentials).toBe('omit')
     expect(init?.method).toBe('PUT')
     expect(init?.body).toBe('{"z":1,"a":2}')
@@ -103,7 +103,7 @@ describe('browser Platform endpoint and transport', () => {
 })
 
 describe('browser Platform navigation and capabilities', () => {
-  it('supplies navigation readers with the actual sheet/history/hash contract', () => {
+  it('supplies K02 navigation readers with the actual sheet/history/hash contract', () => {
     const win = page(), navigate = vi.fn()
     setNav(navigate)
     setNavReaders(browserNavReaders(win))
@@ -117,7 +117,7 @@ describe('browser Platform navigation and capabilities', () => {
     navToWorkout()
     expect(navigate).toHaveBeenLastCalledWith('/workout')
   })
-  it('composes browser UX capabilities at platform boot', () => {
+  it('composes W04 browser UX at platform boot', () => {
     const win = page()
     const platform = createBrowserPlatform()
     expect(ux().window).toBe(win)

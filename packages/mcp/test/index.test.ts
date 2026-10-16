@@ -60,7 +60,7 @@ test('inert index edges retain AST forwarding with their explicit reason', () =>
   // Forced reps mode means policyFor never reaches modeOf/index.
   // exerciseOf resolves customs before exOr; fallback only resolves unchanged catalogue ids.
   // muscle_balance attaches each current custom as exercise metadata, preserving snapshots.
-  // Lifecycle output tests prove activation's validation aliases and unit conversion are inert.
+  // Agent activation's validation alias mapping and unit conversion are proven inert by K12.
   for (const [file, callee, count] of [['tools', 'policyFor', 6], ['tools', 'exOr', 1], ['tools', 'loadOfWorkouts', 1], ['programme-tools', 'applyProgrammeAgentAction', 1]] as const) {
     const ast = parse(readFileSync(new URL(`../src/${file}.ts`, import.meta.url), 'utf8'), { sourceType: 'module', plugins: ['typescript'] })
     const calls: any[] = []

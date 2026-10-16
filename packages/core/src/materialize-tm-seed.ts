@@ -17,7 +17,7 @@ function convertedSet(set: AnalyticsSet, from: 'lb'|'kg', to: 'lb'|'kg'): Analyt
 export function materializeTmSeed({state: inputState, definition, options, index = EXIDX}: {
   state: {workouts?: unknown[]; [key: string]: unknown}; definition: unknown; options: TmSeedOptions; index?: ExerciseIndex
 }): Readonly<Record<string, number>> {
-  // Persisted state permits nullable targets; the estimator tolerates them.
+  // Persisted state (W08) permits nullable targets; the estimator tolerates them.
   const state = inputState as AnalyticsState
   const d = definition as OpenGymProgrammeDefinition
   const cutoff=options.now ?? Date.now(), today=options.today ?? isoOf(new Date(cutoff))

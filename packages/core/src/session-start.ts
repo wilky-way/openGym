@@ -1,3 +1,4 @@
+import { buildNativeEntry } from './native-session'
 import { EXIDX, type ExerciseIndex } from './exercises'
 export interface BuiltEntry extends Entry { target: Config; plan: Plan; sets: Row[]; planned: Config }
 import type { Config, Row, Entry, Routine, State, ReadSession, Plan } from './session-types'
@@ -8,6 +9,7 @@ import type { Config, Row, Entry, Routine, State, ReadSession, Plan } from './se
 // either imports this file, so there is no cycle.
 import { setTargetAt } from '@opengym/core/programme-targets'
 import { programmeTMConfig } from '@opengym/core/programme-tm'
+import { programmeCommunityConfig } from './community-session'
 import { buildSets, barFloor, applyIntensifierPlan, modeOf } from '@opengym/core/history'
 import { isWarmupRow, isSideSet } from '@opengym/core/workout-model'
 import { nextPrescription, applyPrescription, defaultIncrement, weightIncrement, plannedOf, sessionsFor, snapWeight } from '@opengym/core/progression'
@@ -64,7 +66,8 @@ export function programmeInstanceFor(routines: Routine[] | null | undefined) {
  * `noProg` builds the routine's own numbers with no prescription, as an excluded routine does.
  */
 export function buildPlannedEntry(stored: State, cfg: Config, routine: Routine | null | undefined, { noProg = false }: { noProg?: boolean } = {}, index: ExerciseIndex = EXIDX): BuiltEntry {
-  // Evaluated slots retain their identity at zero volume without inventing a working row.
+  if (cfg.nativePrescription) return buildNativeEntry(stored,cfg,routine,index)
+  // P5 stores evaluated slots; zero volume keeps identity without inventing a working row.
   if (cfg.enginePrescription===true && cfg.sets===0) return {target:{...cfg},planned:{...cfg},plan:{policy:'off',kind:'off'},sets:[],
     ...(routine?.programme?.series ? {series:routine.programme.series,occurrenceId:routine.programme.instanceId,weekIndex:routine.programme.weekIndex} : {})}
   // What a dumbbell weight means for this exercise today (lib/dumbbells.js): the history it
@@ -73,6 +76,7 @@ export function buildPlannedEntry(stored: State, cfg: Config, routine: Routine |
   if (cfg.open && !cfg.id) return {target:{...cfg}, planned:{...cfg}, plan:{policy:'off',kind:'off'}, sets:[],
     ...(routine?.programme?.series ? {series:routine.programme.series, occurrenceId:routine.programme.instanceId, weekIndex:routine.programme.weekIndex} : {})}
   cfg = programmeTMConfig(stored, cfg, routine, index) as Config
+  if (!noProg) cfg = programmeCommunityConfig(stored, cfg, routine, index)
   const meaning = dbLoadFor(stored, cfg, index)
   const st = historyAs(stored, cfg.id, meaning, index) as State
   const planned = plannedOf(cfg, index) as Config

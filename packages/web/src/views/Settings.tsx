@@ -84,7 +84,7 @@ export default function Settings({page=null,find=null,via=null}: {page?:string|n
         openGym v{appVersion()} · {t('free & open source (AGPL v3)')}<br/>
         <a href={SOURCE_URL} target="_blank" rel="noopener">{t('Source code')}</a><br/>
         Exercise media © Aliaksandr Makatserchyk, <a href="https://gymvisual.com/" target="_blank" rel="noopener">Gym visual</a>, gymvisual.com.
-        Media licensed for use in openGym only; see <a href={SOURCE_URL + '/blob/main/NOTICE.md'} target="_blank" rel="noopener">NOTICE.md</a>
+        Media licensed for use in openGym only; see <a href={`${SOURCE_URL}/blob/main/NOTICE.md`} target="_blank" rel="noopener">NOTICE.md</a>
       </div>
     </>:<SettingsA page={page}/>}</div>
  return <SettingsRoot ctx={ctx} preview={preview} open={open} user={user} sync={sync} home={()=>nav('/home')} go={(hit:any)=>nav('/settings/'+hit.page,hit.isPage?undefined:{state:hit.via?{find:hit.title,via:hit.via}:{find:hit.title}})}/>

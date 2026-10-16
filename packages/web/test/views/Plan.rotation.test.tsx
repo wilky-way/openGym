@@ -267,7 +267,7 @@ describe('Plan — someone else’s queue, and a broken one', () => {
     expect(byLabel('Build a rotation instead')).toBeUndefined()
     expect(byLabel('Edit')).toBeUndefined()
     expect(byLabel('Add routine to the rotation')).toBeUndefined()
-    expect(rows()[0].querySelectorAll('button').length).toBe(1) // Read-only Preview is available on externally managed passes.
+    expect(rows()[0].querySelectorAll('button').length).toBe(1) // W24: read-only Preview is available on externally managed passes.
     expect(headings()).toContain('Also on fixed days')
     click(byLabel('Use this rotation'))
     expect(mocks.S.rotation).toBe(null)            // not adopted yet — waiting on the confirm

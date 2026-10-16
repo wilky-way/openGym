@@ -22,7 +22,7 @@ const routine: Routine = { id: 'r', ex: [{ id: 'custom-cardio', sets: 1, min: 7,
 const state: State = { unit: 'kg', workouts: [], routines: [routine] }
 const cardio: Session = { entries: [{ id: 'custom-cardio', target: { id: 'custom-cardio' }, sets: [{ done: true, min: 7, speed: 5, r: 9 }] }] }
 
-describe('custom-index output semantics without stubs', () => {
+describe('K14 custom-index output semantics without stubs', () => {
   it('classifies custom cardio in every session construction wrapper', () => {
     expect(buildPlannedEntry(state, routine.ex[0]!, routine, {}, index).sets).toEqual([{ min: 7, speed: 5, done: false }])
     expect(buildSessionEntries(state, routine, index)[0]?.sets).toEqual([{ min: 7, speed: 5, done: false }])

@@ -1,4 +1,4 @@
-// VACUUM INTO backups verify; a tampered backup must fail verification.
+// Extra gate (S02): `VACUUM INTO` backups verify, and a tampered backup does not.
 import { test, expect } from 'bun:test'
 import { Database } from 'bun:sqlite'
 import fs from 'node:fs'

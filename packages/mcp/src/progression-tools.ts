@@ -78,7 +78,7 @@ export function createProgressionTools(options: { env?: Environment; fetcher?: F
       const resolved = 'draft_id' in p.source ? { definition: draft(p.source.draft_id).definition } : p.source
       checkedJSON(resolved); if (p.hypothetical_logs) checkedJSON(p.hypothetical_logs)
       return remote(async () => {
-        // The progression lookup seam does not mount library storage.
+        // P5's installed-definition lookup seam does not mount S08 library storage.
         // Resolve library/historical sources over HTTP, then send the immutable JSON.
         let httpSource = resolved
         if ('definitionId' in resolved) {

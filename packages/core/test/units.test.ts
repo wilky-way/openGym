@@ -148,3 +148,13 @@ describe('convertStateUnit: plate inventories', () => {
     expect(back.plates.kg).toMatchObject({ 20: 1, _ts: 60 })
   })
 })
+
+it.each([['lb','kg',100,45.25],['kg','lb',40,88]] as const)('keeps explicit session units coherent across %s to %s conversion',(from,to,load,converted)=>{
+ const row={id:'0025',target:{weight:load},sets:[{w:load,r:5,done:true}]}
+ const state:Fixture={unit:from,workouts:[{id:'stamped',unit:from,entries:[row]},{id:'already-target',unit:to,entries:[{id:'0025',sets:[{w:load,r:5,done:true}]}]},{id:'unstamped',entries:[row]}],active:{id:'editing',unit:from,entries:[row]}}
+ const before=structuredClone(state),out:Fixture=convertStateUnit(state,to)
+ expect(out.workouts[0]).toMatchObject({unit:to,entries:[{target:{weight:converted},sets:[{w:converted}]}]})
+ expect(out.workouts[1]).toMatchObject({unit:to,entries:[{sets:[{w:load}]}]})
+ expect(out.workouts[2].entries[0].sets[0].w).toBe(converted);expect(out.workouts[2]).not.toHaveProperty('unit')
+ expect(out.active).toMatchObject({unit:to,entries:[{sets:[{w:converted}]}]});expect(state).toEqual(before)
+})

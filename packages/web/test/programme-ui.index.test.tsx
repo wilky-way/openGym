@@ -64,7 +64,7 @@ it('previews both custom start and switch through the actual UI',()=>{
  const host=mount(<Programs/>);act(()=>host.querySelector<HTMLButtonElement>('.program-card')!.click());click(host,'Start this program');expect(host.textContent).toContain('Next session: Synthetic D1')
  click(host,'Confirm load');click(host,'All programs');const own=[...host.querySelectorAll<HTMLButtonElement>('.program-card')].find(b=>b.textContent?.includes('Mine'))!;act(()=>own.click());click(host,'Switch to this program');expect(host.textContent).toContain('Confirm switch')
 })
-// Inert edges: a real created index retains every alias target; programme lifecycle conversion
+// Inert edges: a real created index retains every alias target; K12 conversion
 // passes only {unit,routines}, whose conversion never consults exercise metadata.
 it('proves canonical lookup inert for all real-index aliases and custom ids',()=>{
  const index=createExerciseIndex([custom]);for(const id of [...Object.keys(EXALIAS),custom.id])expect(canonicalExId(id,index)).toBe(canonicalExId(id))

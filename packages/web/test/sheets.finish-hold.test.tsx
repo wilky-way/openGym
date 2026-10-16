@@ -1,4 +1,4 @@
-// design safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
+// GM safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
 import './workout-sheet-environment'
 // @vitest-environment happy-dom
 // Finishing a workout while a timed hold counts down. Discard has stopped the hold since GL!59;

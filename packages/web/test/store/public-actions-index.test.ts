@@ -2,10 +2,10 @@ import { readFileSync } from 'node:fs'
 import { parse } from '@babel/parser'
 import { describe, it, expect } from 'vitest'
 
-// Native lifecycle index edges are inert: validation receives allExercises(S),
+// K12's native lifecycle index edges are inert: validation receives allExercises(S),
 // canonical alias targets exist in every real index, and routine-only conversion
 // does not read exercise metadata. Keep forwarding explicit and mutation-protected.
-describe('inert lifecycle forwarding edges', () => {
+describe('W08 inert lifecycle forwarding edges', () => {
   it.each(['startProgramme', 'switchProgramme'])('forwards a real index to %s', callee => {
     const ast = parse(readFileSync(new URL('../../src/store/public-actions.ts', import.meta.url), 'utf8'), { sourceType: 'module', plugins: ['typescript'] })
     const calls: any[] = []

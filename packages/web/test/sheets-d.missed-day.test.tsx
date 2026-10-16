@@ -1,4 +1,4 @@
-// design safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
+// GM safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
 import './workout-sheet-environment'
 // @vitest-environment happy-dom
 // #284: "I forgot to check in, so it appears later in the history as a missed day." A planned day

@@ -18,7 +18,7 @@ function logged(x: EngineInput, reps: number[], weight=100, target: Record<strin
 }
 const prescribed=(x: EngineInput, extensions: EngineExtensions={}, index?: ReturnType<typeof createExerciseIndex>)=>evaluate(x,extensions,index).weeks[0]!.slots[0]!.sets
 // HAND-COMPUTED before implementation; comments show the arithmetic behind literals.
-describe('hand-computed load goldens',()=>{
+describe('P2 r1 hand-computed load goldens',()=>{
   it('pyramid [8,6,4] overrides sets:1 in prescription and replay',()=>{
     const {slot,x}=fixture();slot.sets=1;slot.pyramid=[8,6,4]
     expect(prescribed(x).map(s=>s.reps)).toEqual([8,6,4])
@@ -110,7 +110,7 @@ describe('hand-computed load goldens',()=>{
     expect(roundLoad(65,'lb',{...grid,usePlates:true},p,{id:'0025'}).inputs.inventoryWarning).toBeUndefined() // delta10 equals10
   })
 })
-describe('custom-index output regressions',()=>{
+describe('P2 r1 custom-index output regressions',()=>{
   it('validation sees two muscle ramps affecting the same custom slot',()=>{
     const {d,slot,x}=fixture();slot.id='compound'
     const index=createExerciseIndex([{id:'compound',name:'Synthetic compound',eq:'barbell',primaries:['chest','triceps']}])
@@ -139,7 +139,7 @@ describe('custom-index output regressions',()=>{
     expect(roundLoad(55,'lb',{...grid,usePlates:true},{unit:'lb',plates:{lb:{5:1}}},{id:'bar'},index).load).toBe(55)
   })
 })
-describe('non-finite loads fail visibly',()=>{
+describe('P2 r1 non-finite loads fail visibly',()=>{
   it.each([Infinity,-Infinity,NaN,1e308])('logged kg load %s cannot become an lb prescription',weight=>{
     const {x}=fixture();logged(x,[5,5,5],weight);(x.logs[0] as any).unit='kg'
     expect(evaluate(x)).toMatchObject({weeks:[],tm:{},error:{code:'INVALID_LOAD'},warnings:[{code:'load.invalid'}]})

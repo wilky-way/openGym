@@ -1,3 +1,5 @@
+import { nativeTargetLabel } from './native-prescription'
+import type { NativeSetTarget } from '../../contract/domain/native-prescription'
 // Pure helpers over the state object S (ported 1:1 from the vanilla app).
 import type { ExerciseIndex } from '@opengym/core/exercises'
 import type { Legacy } from './legacy-shape'
@@ -225,6 +227,10 @@ const repsOf = (cfg: Legacy, fmt = (v: Legacy) => String(v)) => (hasRange(cfg) ?
 
 /** "2 × 10", "3 × 8–12", "2 × 0:45": what a plan asks for per set, without its load. */
 export function setsRepsOf(cfg?: Legacy, index?: ExerciseIndex) {
+  if(cfg?.nativePrescription) {
+    const rows=cfg.nativePrescription.sets as NativeSetTarget[],reps=rows.map(row=>nativeTargetLabel(row).split(' · ')[0])
+    return new Set(reps).size===1?`${rows.length} × ${reps[0]}`:`${rows.length} authored sets`
+  }
   const mode = modeOf(cfg, index)
   const n = cfg.sets || 1
   if (mode === 'cardio') return `${n} × ${cfg.min || 20} min`

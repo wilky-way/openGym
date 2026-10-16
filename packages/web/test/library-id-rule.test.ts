@@ -17,8 +17,8 @@ const serverRules = (source: string) => {
   visit(ast)
   return patterns
 }
-describe('library entry IDs use the server opaque namespace', () => {
-  it('mirrors both exact library patterns and checks the actual server source', () => {
+describe('library entry IDs follow S08 opaque namespace', () => {
+  it('mirrors both exact S08 patterns and checks the actual source once integrated', () => {
     const client = [LIBRARY_ID_PATTERN.source, LIBRARY_DOT_ID_PATTERN.source]
     expect(serverRules(readFileSync(pinned, 'utf8'))).toEqual(client)
     if (existsSync(integrated)) expect(serverRules(readFileSync(integrated, 'utf8')).slice(0, 2)).toEqual(client)

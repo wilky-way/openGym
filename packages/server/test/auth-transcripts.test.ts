@@ -3,7 +3,7 @@ import { createApp } from '../src/app'
 import { authServer, bearer, cookie } from './auth-helpers'
 import { getUser } from '../src/storage'
 
-// Deterministic HTTP transcripts cover every authentication route. Random token and device ids are
+// Deterministic HTTP transcript for every S03-owned route. Random token and device ids are
 // replaced with positional references; credential bytes never enter a durable fixture.
 test('auth route transcript: me, pairing, registry, logout and logout-all', async () => {
   const h = authServer({ DEVICE_TOKENS: '1', ORIGIN: 'https://gym.example' })

@@ -3,7 +3,7 @@ import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { stampPut, keepUnknown, highestStamp } from '../src/server-stamp';
 
-const state = (): SyncRecord => ({ workouts: [], programmes: { version: 1, fork: 'opengym/1', definitions: [{ id: 'synthetic' }], cycles: [{ id: 'c', occurrences: [{ instanceId: 'one', status: 'pending' }, { instanceId: 'two', status: 'pending' }] }] } });
+const state = (): SyncRecord => ({ workouts: [], programmes: { version: 1, fork: 'wilky/1', definitions: [{ id: 'synthetic' }], cycles: [{ id: 'c', occurrences: [{ instanceId: 'one', status: 'pending' }, { instanceId: 'two', status: 'pending' }] }] } });
 const os = (S: SyncRecord): SyncRecord[] => S.programmes.cycles[0].occurrences;
 test('older writer keeps program data without stamping unrelated occurrences', () => {
   const cur = state(), next: SyncRecord = { workouts: [], sound: false };

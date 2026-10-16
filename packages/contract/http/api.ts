@@ -1,15 +1,26 @@
 /**
- * openGym HTTP contract: routes exposed by the Bun + Hono server and used by the client.
- * JSON responses use application/json and no-store caching. Request bodies must
- * parse to objects; an empty body is treated as an empty object.
- * UNSURE marks historically tolerant fields; preserve their accepted shapes.
+ * openGym rewrite — frozen HTTP contract (v1, 2026-10-12).
+ *
+ * Source of truth for every route the Bun + Hono server exposes and the React client calls.
+ * Derived from the legacy server at df8bfa03 (api/server.js, api/media.js, api/openapi.yaml;
+ * inventory in ../sync/SYNC-CONTRACT.md and EXECUTION.md §2). Paths, status codes and body
+ * fields match legacy byte-for-byte unless a line says `CHANGED:` or `NEW:`.
+ *
+ * Rules for units building against this file:
+ *  - Do not edit it. A needed change goes to the integration owner as a contract-change request
+ *    (EXECUTION.md §2.6); the version below bumps and dependants re-run their gates.
+ *  - `UNSURE:` marks a field the inventory could not pin. Build it as written, keep a test named
+ *    `contract-unsure:<route>` that records the legacy behaviour from the parity recorder, and
+ *    raise it at integration rather than guessing a different shape.
+ *  - Every JSON response carries `Content-Type: application/json` and `Cache-Control: no-store`
+ *    (legacy server.js:687-691). Every request body must parse to a JSON object; empty body = {}.
  */
-import type { GetDataResponse, PutDataRequest, PutDataOk, ConflictResponse } from '../domain/state-doc'
+import type { GetDataResponse, PutDataRequest, PutDataOk, ConflictResponse, TrainingCloseProof } from '../domain/state-doc'
 export type { GetDataResponse, PutDataRequest, PutDataOk, ConflictResponse } from '../domain/state-doc'
 import type { ProgrammeDefinition } from '../domain/programme-model'
 import type { ProgressionValidateResult, EvaluateResult, ApplyRequest, ApplyResult } from '../domain/progression'
 
-export const CONTRACT_VERSION = '1.7.9' // Contract revision: inventory adjustment confirmation and returned warnings.
+export const CONTRACT_VERSION = '1.7.11' // W36 durable training activity/close envelopes.
 
 // ───────────────────────────── errors ─────────────────────────────
 
@@ -19,6 +30,8 @@ export interface ApiError {
   code?: ErrorCode
   /** 429 `locked` and media `busy`; mirrored in the `Retry-After` header (seconds). */
   retryAfter?: number
+  /** Atomic training refusal; unknown is loss of knowledge, never idle. */
+  guardStatus?: 'active' | 'unknown'
   /** media 413 extras */
   maxMB?: number; usedMB?: number; quotaMB?: number; maxSec?: number
 }
@@ -82,7 +95,12 @@ export const LIMITS = {
  * else no Origin → pass; else Origin must equal ORIGIN (trailing slash ignored). Exempt routes are
  * flagged `csrf: 'exempt'` below.
  * CHANGED: the Capacitor `APP_ORIGINS` list and the Private-Network-Access preflight header are
- * removed with the native shells. Bearer + pairing stay: the local host agent token is minted by pairing.
+ * removed with the native shells. Bearer + pairing stay for paired clients. Agent credentials are
+ * issued by the operator mint as kind:agent; paired credentials must not be used by agent launchers.
+ * Agent devices have an explicit server allowlist for identity/own renewal, health/config, profile
+ * data/revision/activity reads, programme library and progression. They cannot access auth bootstrap,
+ * pairing, passkeys, devices, invites/admin, logout, or browser push/presence (403 forbidden), even
+ * when their owner is an administrator. New routes require explicit agent capability admission.
  *
  * NEW — per-device tokens (DECISIONS "Native shell": pairing, no Tailscale dependency). Every session belongs
  * to a row in `devices` (kind browser | paired | agent | native). Token v2:
@@ -93,8 +111,8 @@ export const LIMITS = {
  * Renewal with DEVICE_TOKENS=1: `/api/me` on a legacy token returns a v2 token for a device row created at that
  * moment (stable did from then on) and records sha256(legacy token) as a predecessor of that device; revoking
  * the device rejects every predecessor hash. A device never gets a second id by renewing.
- * Minting v2 is behind `DEVICE_TOKENS=1`, OFF through cutover A so a rollback to the previous release keeps every
- * session valid; switched on after A is stable. Renewal via /api/me returns the same format
+ * Minting v2 is behind `DEVICE_TOKENS=1`, OFF through cutover A so a rollback to wilky-a2f2daca keeps every
+ * session valid; switched on after A is stable (EXECUTION §5). Renewal via /api/me returns the same format
  * the device already uses. Device ids: 16-char base64url. The server URL is never in the token.
  * Exposure beyond the tailnet (relay, later): `EXPOSURE=public` forces INVITE_ONLY, refuses `FIRST_USER_ADMIN`,
  * requires TLS at the edge, ignores proxy IP headers unless TRUST_PROXY, and tightens the auth-bootstrap
@@ -132,7 +150,7 @@ export type Routes = {
   'POST /api/logout': RouteSpec<void, { ok: true }>
   'POST /api/logout/all': RouteSpec<void, { ok: true } /* sv++, drops pairings + device links */>
 
-  // pairing (Bearer token for paired devices and the local host MCP agent)
+  // pairing (Bearer tokens for paired clients; agent devices cannot create or redeem codes)
   'POST /api/pair/create': RouteSpec<void, { code: string /* 8 chars A-Z2-9 minus O/0/I/1 */ }>
   'POST /api/pair/redeem': RouteSpec<{ code: string }, { token: string; user: User }>
 
@@ -150,10 +168,11 @@ export type Routes = {
   'POST /api/device-link/options': RouteSpec<{ code: string }, { cid: string; options: unknown; id: string; name: string }>
   'POST /api/device-link/verify': RouteSpec<{ code: string; cid: string; credential: unknown; name?: string }, { user: User }>
 
-  // Whole-document synchronization, including revision conflict responses.
+  // whole-doc sync — behaviour in ../sync/SYNC-CONTRACT.md §3–§5 (normative)
   'GET /api/data': RouteSpec<void, GetDataResponse>
   'GET /api/data/rev': RouteSpec<void, { rev: number; wid?: string }>
-  'PUT /api/data': RouteSpec<PutDataRequest, PutDataOk /* 409 ConflictResponse */>
+  'GET /api/data/activity': RouteSpec<void, TrainingActivityResponse>
+  'PUT /api/data': RouteSpec<PutDataRequest, PutDataOk /* 409 ConflictResponse; 423 TRAINING_NOW with guardStatus */>
 
   // push + presence
   'GET /api/push/public-key': RouteSpec<void, { key: string }>
@@ -177,7 +196,7 @@ export type Routes = {
   'GET /api/admin/audit': RouteSpec<void /* ?limit&before&cat */, AuditPage>
   'POST /api/admin/audit/clear': RouteSpec<void, { ok: true }>
 
-  // Programme library: definitions live outside the state document.
+  // NEW: programme library (definitions live outside the state doc; EXECUTION.md §1.3)
   'GET /api/programmes/library': RouteSpec<void, { items: LibrarySummary[]; etag: string }>
   'GET /api/programmes/library/:id': RouteSpec<void /* ?version=<n|versionId> */, LibraryEntry>
   'GET /api/programmes/library/:id/versions': RouteSpec<void, { versions: LibraryVersionSummary[] }>
@@ -249,7 +268,17 @@ export interface PasskeyState {
 
 export interface ActivityBody {
   active: boolean; name?: string; exIdx?: number; exTotal?: number; setsDone?: number; setsTotal?: number
-  startedAt?: number; reason?: 'hidden' | 'navigated' | 'closed'
+  startedAt?: number; reason?: 'hidden' | 'navigated' | 'closed' | 'discarded' | 'editor-closed'
+  /** Exact ordinary session id/start; owning-device close additionally binds profile. */
+  sessionId?: string; profileId?: string
+  /** Saved-workout identity plus the distinct editor incarnation; never rewrite saved id/start. */
+  editingWorkoutId?: string; editorInstanceId?: string
+}
+export interface TrainingActivityResponse {
+  status: 'active' | 'idle' | 'unknown'
+  /** Only trusted browser/paired devices see their own proof (null if none/corrupt).
+   * Agent/legacy carriers omit this property entirely; no workout or credential is exposed. */
+  own?: TrainingCloseProof | null
 }
 
 export interface MediaUsage { bytes: number; count: number; quotaBytes: number }
@@ -262,7 +291,7 @@ export const MEDIA_HEADERS = {
 export interface AdminUserRow {
   id: string; name: string; created: string; disabled: boolean; admin: boolean; invitedBy: string | null
   workouts: number; lastWorkout: string | null; lastSync: number | null; hasPush: boolean
-  /** presence snapshot or null (server.js:796, 2423). UNSURE: inner fields — preserve tolerant historical fields */
+  /** presence snapshot or null (server.js:796, 2423). UNSURE: inner fields — pin from F3 transcript */
   live: { [k: string]: unknown } | null
 }
 export interface AdminUserDetail {
@@ -296,14 +325,14 @@ export interface LibraryVersionSummary { n: number; versionId: string; parentVer
  * version-conflict; level >= minLevel else 422 not-ready (+ issues); an active|paused cycle on
  * this id → 409 active-definition; private:true → false refused (403 private-downgrade).
  * UNSURE: minLevel. Server default 'Valid' so the 83 existing definitions (0 Ready) can be
- * migrated; the MCP publish tool passes 'Ready' (PROGRAM-API). confirmation required.
+ * migrated; the MCP publish tool passes 'Ready' (PROGRAM-API). The runtime tool registry defines the supported surface.
  */
 export interface LibraryPutRequest { definition: ProgrammeDefinition; expectedVersionId: string | null; minLevel?: Level }
 
 export interface Issue { code: string; location: { path?: string; week?: number; day?: string; session?: string | number; slot?: string | number }; fix: string; requiredFor: Exclude<Level, 'Invalid'> }
 export interface ValidateResult { level: Level; nextLevel: Level | null; issues: Issue[]; counts: { byCode: Record<string, number>; byLevel: Record<string, number> } }
 
-// Route policy: executable definitions used to build HTTP and authentication middleware.
+// ───────────────────────────── route policy (executable; S01/S03 build middleware from this) ─────────────────────────────
 /**
  * auth/csrf/rate for every kept + new route. Values are legacy (server.js:651-655, 950-962, route table) except
  * NEW routes. Buckets: burst = AUTH_BURST 60/min/addr; fails:<kind> = ADDR_FAILS 20 free → 30 s doubling → 15 min,
@@ -337,6 +366,7 @@ export const ROUTE_POLICY = {
   'POST /api/account/devices/revoke': { auth: 'session', csrf: 'required', rate: ['burst'] }, // NEW; no proof: revoking is protective
   'GET /api/data': { auth: 'session', csrf: 'n/a' },
   'GET /api/data/rev': { auth: 'session', csrf: 'n/a' },
+  'GET /api/data/activity': { auth: 'session', csrf: 'n/a' },
   'PUT /api/data': { auth: 'session', csrf: 'required' },
   'GET /api/push/public-key': { auth: 'none', csrf: 'n/a' },
   'POST /api/push/subscribe': { auth: 'session', csrf: 'required' },
@@ -370,5 +400,5 @@ export const ROUTE_POLICY = {
  * schema) runs on the parsed object for a yes/no + error mapping; the handler keeps using the original object, so
  * key order and unknown fields survive. Legacy coercions and error precedence are per route and win over schema
  * strictness: e.g. PUT /api/data `baseRev: "4"` is NOT a 400 — it reaches the conflict check and 409s
- * (strict `!==`), and `text()` fields coerce numbers to strings. Route tests cover each field's precedence.
+ * (strict `!==`), and `text()` fields coerce numbers to strings. F3 transcripts pin each route's precedence.
  */

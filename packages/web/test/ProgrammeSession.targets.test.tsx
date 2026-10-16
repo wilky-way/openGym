@@ -36,8 +36,8 @@ it('updates all projected targets immediately when the profile changes, keeping 
  expect(host.textContent).toContain('Set 1 · 1 · 2 RIR · 75%');expect(JSON.stringify(useStore.getState().S.routines)).toBe(before)
 })
 
-// The composed shell exercises the rendered programme/workout-row Start path.
-it('pending session button cannot start before the program bound', () => {
+// Deferred legacy twin: integration owns this rendered W16/W17 Start path.
+it('F4 pending session button cannot start before the program bound', () => {
   const S: StoreDocument = {...structuredClone(DEF), unit:'lb', routines:[], workouts:[], sound:false, weighIn:false}
   const definition = {id:'synthetic',name:'synthetic',unit:'lb',weeks:[1,2].map(index=>({index,days:[{key:'d1',sessions:[{routineSnapshot:{name:'Day 1',ex:[{id:'0025',sets:3,reps:10,weight:100,prog:'off',open:true,label:'Synthetic pick',pyramid:[5,10,10]}]}}]}]}))}
   startProgramme(S, definition, {cycleId:'future',today:'2026-10-12',startsOn:'2026-10-19'})

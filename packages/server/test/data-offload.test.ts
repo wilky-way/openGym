@@ -1,7 +1,7 @@
 import { test, expect } from 'bun:test'
 import { dataServer, dataHeaders } from './data-helpers'
 
-const programmes = (definitions: any[] = [{ id: 'def-synthetic', name: 'Synthetic' }], extra: object = {}) => ({ version: 1, fork: 'opengym/1', definitions, cycles: [], ...extra })
+const programmes = (definitions: any[] = [{ id: 'def-synthetic', name: 'Synthetic' }], extra: object = {}) => ({ version: 1, fork: 'wilky/1', definitions, cycles: [], ...extra })
 const state = (p: object) => ({ workouts: [], routines: [], programmes: p })
 test('OFFLOAD exception: data-offload-bearer consumes manifests even with OFFLOAD_RULE off', async () => {
   const h = dataServer()

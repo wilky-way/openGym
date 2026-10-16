@@ -41,7 +41,8 @@ export function weekDate(input: EngineInput, week: number): string | undefined {
 }
 /** A current-week preview can observe events effective after that week's start. */
 export function evaluationDate(input: EngineInput, week: number): string | undefined {
-  const date = weekDate(input, week), cutoff = input.asOf ?? input.now
+  if (input.materializationDate) return input.materializationDate
+  const date = weekDate(input, week), cutoff = input.prescriptionAsOf ?? input.asOf ?? input.now
   return date && cutoff && week === input.cycle?.weekIndex && cutoff > date ? cutoff : date
 }
 /** Same precedence as resolveOccurrences: surviving entry IDs, then instance, then legacy routine. */

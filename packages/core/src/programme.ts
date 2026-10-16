@@ -1,3 +1,4 @@
+import { validateNativeDefinition } from './native-authority'
 import type { ExerciseIndex } from '../../contract/core-api/exercises'
 import { EXIDX } from '@opengym/core/exercises'
 import type { ProgrammeState, ActivationOptions, ProgrammeDefinition, ProgrammeWeek, ProgrammeCycle, ProgrammeOccurrence, ProgrammeDay, Routine, ProgrammeProjection } from './programme-engine-types'
@@ -14,6 +15,7 @@ const list = <T,>(v: T[] | null | undefined): T[] => Array.isArray(v) ? v : []
 
 /** One explicit week becomes ordinary routines. Exported for inserted weeks and future laps. */
 export function materializeWeek(definition: ProgrammeDefinition, week: ProgrammeWeek, cycle: Pick<ProgrammeCycle, 'id' | 'seriesId'>, { unit = definition.unit || 'kg' }: {unit?: 'kg' | 'lb'} = {}, index: ExerciseIndex = EXIDX) {
+  validateNativeDefinition({...definition,weeks:[week]},index)
   const routines: Routine[] = [], occurrences: ProgrammeOccurrence[] = []
   for (const [di, day] of list(week.days).entries()) {
     if (!day?.key) throw new Error('A programme day needs a key')
@@ -70,6 +72,7 @@ export function programmePreAppWeeks(definition: ProgrammeDefinition, weekIndex?
 export function activate(S: ProgrammeState, definition: ProgrammeDefinition, opts: ActivationOptions = {}, index: ExerciseIndex = EXIDX) {
   if (S.active) throw new Error('Finish the current workout before changing the program.')
   if (!definition?.id || !list(definition.weeks).length) throw new Error('A programme needs explicit weeks')
+  validateNativeDefinition(definition,index)
   const programmes = programmesOf(S) as import('../../contract/domain/state-doc').Programmes
   if (programmes.cycles.some(c => c.status === 'active' || c.status === 'paused')) throw new Error('A programme is already running')
   const weeks = clone(definition.weeks).sort((a, b) => a.index - b.index)

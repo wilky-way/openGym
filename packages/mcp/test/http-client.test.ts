@@ -18,14 +18,25 @@ test('agent token is minted in-process and test HTTP ignores every proxy variabl
   const client = new ApiClient(server.env)
   expect((await client.checkProfile()).id).toBe('test-uid')
   expect((await client.request('GET', '/api/data')).rev).toBe(7)
-  const devices = await client.request('GET', '/api/account/devices')
-  expect(devices.devices.some((d: any) => d.kind === 'agent')).toBe(true)
+  await expect(client.request('GET', '/api/account/devices')).rejects.toMatchObject({ code: 'API_REFUSED', status: 403 })
 })
 test('does not follow an HTTP redirect or expose invalid-response contents', async () => {
-  server = await target(null)
-  const client = new ApiClient(server.env)
-  await expect(client.request('GET', '/__m01_redirect')).rejects.toMatchObject({ code: 'API_REFUSED' })
-  await expect(client.request('GET', '/__m01_invalid')).rejects.toMatchObject({ code: 'API_UNAVAILABLE', message: 'The openGym API returned an invalid response.' })
+  server = await target(null, [], { transportFixture: true })
+  const statuses: number[] = []
+  const client = new ApiClient(server.env, async (url, init) => {
+    expect(init.redirect).toBe('error')
+    const response = await directFetch(url, init)
+    statuses.push(response.status)
+    return response
+  })
+  await expect(client.request('GET', '/__m01_redirect')).rejects.toMatchObject({ code: 'API_REFUSED', status: 302 })
+  const failure = await client.request('GET', '/__m01_invalid').catch(error => error)
+  expect(failure).toMatchObject({ code: 'API_UNAVAILABLE', message: 'The openGym API returned an invalid response.' })
+  for (const secret of [server.token, server.api, 'private invalid JSON'])
+    expect(JSON.stringify({ ...failure, message: failure.message })).not.toContain(secret)
+  expect(statuses).toEqual([302, 200])
+  const stats = await directFetch(server.api + '/__m01_stats', { method: 'GET' })
+  expect(await stats.json()).toEqual({ redirect: 1, invalid: 1, followed: 0 })
 })
 test('connection errors are sanitized without endpoint, token or underlying path details', async () => {
   const client = new ApiClient({ OPENGYM_URL: 'http://127.0.0.1:1234', OPENGYM_TOKEN: 'synthetic-private', OPENGYM_UID: 'test-uid' }, async () => { throw new Error('synthetic-private /private/data') })

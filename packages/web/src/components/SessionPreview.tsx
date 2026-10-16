@@ -1,3 +1,5 @@
+import { buildNativeEntry } from '@opengym/core/native-session'
+import { nativeTargetLabel } from '@opengym/core/native-prescription'
 import { useSyncExternalStore } from 'react'
 import { createExerciseIndex, exOr } from '@opengym/core/exercises'
 import { buildSets, effortOf, modeOf, isBw, supersetUnits } from '@opengym/core/history'
@@ -97,6 +99,10 @@ function reps(value: unknown, min?: number) {
 }
 function ExercisePreview({e: authored, routine, S, display, week, day, session, superset = false}: {e: any; routine: any; S: StoreDocument; display: PrescriptionDisplay | null; week?: number; day?: string; session?: string; superset?: boolean}) {
   const index = createExerciseIndex(S.customEx), scale = effortOf(S), mode = modeOf(authored, index)
+  if(authored.nativePrescription) {
+    const rows=buildNativeEntry(S,authored,routine,index).sets
+    return <div className="item session-preview-exercise"><div className="grow"><div className="tt">{authored.label || exerciseNameFor(exOr(authored.id,index))}</div><ol className="session-preview-sets">{rows.map((row,i)=><li key={i}>Set {i+1} · {nativeTargetLabel(row.nativeTarget!)} · {row.w==null?row.nativeLoadReason:`${row.w} ${S.unit}`}</li>)}</ol></div></div>
+  }
   const attached = !!authored.progression?.rules?.length
   const e = !attached && authored.tm ? programmeTMConfig(S, authored, routine, index) : authored
   const missingTM = !attached && e.tm && !(Number(S.programmes.cycles.find((c: any) => c.id === routine.programme?.cycleId)?.tm?.[e.tm.key || e.id]) > 0)

@@ -21,7 +21,7 @@ export function sameSettingsTarget(target: SettingsTarget, draft: StoreDocument)
     && target.server === (clientPlatform().kv.get('gym_server_url') ?? '') && target.instance === st.documentInstance
     && target.document === JSON.stringify(draft)
 }
-/** Throw before sync store stamps/persists; an authorization-only probe also never writes. */
+/** Throw before W07 stamps/persists; an authorization-only probe also never writes. */
 export function settingsUpdate(target: SettingsTarget, mutate?: (draft: StoreDocument) => void, extra: () => boolean = () => true): boolean {
   return guardedStoreUpdate(draft => sameSettingsTarget(target, draft) && extra(), mutate,
     {onStale: () => useUI.getState().toast('The account, profile or target changed. Open this action again.')})

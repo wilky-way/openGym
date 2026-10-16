@@ -1,11 +1,11 @@
-import { authenticate } from '../lib/auth-actions'
+import { authenticate } from '../lib/auth-transactions'
 import { useSheetContext } from '../lib/sheet-context'
 import { PairRedeemSheet } from './Devices'
 import { clientPlatform } from '../lib/client-io'
 import { safeLoginError } from './PasskeyProof'
 import type { ReactNode } from 'react'
 import type { StoreState } from '../store/useStore'
-export interface SyncViewState { status: string; lastError?: {code?: string; status?: number} | null; pending?: boolean; server?: string; lastSynced?: number }
+export interface SyncViewState { localDurability?: 'saved' | 'journal' | 'memory'; remoteRecovery?: 'pending' | 'unavailable' | 'confirmed'; status: string; lastError?: {code?: string; status?: number} | null; pending?: boolean; server?: string; lastSynced?: number }
 export interface ConnectionView { tone: 'ok' | 'wait' | 'off' | 'bad' | 'quiet'; icon: string; line: string; banner: string | null; action: 'retry' | 'signin' | null; label?: string | null }
 type LeaveKind = 'signout' | 'everywhere'
 export interface LeaveResult { owed?: boolean; stashed?: boolean; count?: number | null; [key: string]: unknown }
@@ -52,6 +52,7 @@ export function useOnline() {
 // Present connection status and a recovery action for this browser.
 export function connectionView(sync: SyncViewState | null | undefined, { online = isOnline() } = {}): ConnectionView | null {
   if (!sync) return null
+  if (sync.localDurability && sync.localDurability !== 'saved') return {tone:'bad', icon:'warning', line:t('Can’t save on this device'), banner:sync.localDurability === 'journal' ? t('Can’t save on this device. Workout recovery is saved separately; finish or export to keep it.') : t('Can’t save on this device. Workout kept in memory; keep this page open and finish or export.'), action:null}
   const err = sync.lastError || {}
   // A device that says it has no network is offline whatever the last request found: said the
   // moment it goes, not at the next sync attempt, which may be a poll away. Only the states that

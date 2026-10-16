@@ -32,7 +32,7 @@ test('the poll really is reading through the stat cache', async () => {
   expect(h.data.rev('u1').rev).toBe(put.body.rev)
 })
 test('the three hot-path state reads all go through readStateCached', () => {
-  // Presence tests cover push-language reads. Pin the same hot-path property on the data API's
+  // Push-language reads belong to S05. Pin the same hot-path property on S04's
   // stat-free rev cache, including uncached GET and conditional PUT.
   const source = fs.readFileSync(new URL('../src/data.ts', import.meta.url), 'utf8')
   const rev = source.slice(source.indexOf('  rev('), source.indexOf('  compareAndWrite('))

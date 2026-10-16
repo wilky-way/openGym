@@ -68,7 +68,7 @@ it('orders authored week and day numbers and rejects mixed, duplicate or invalid
  raw.weeks[0].n='3';delete raw.weeks[0].n;expect(()=>importProgramme(raw)).toThrow('numbering')
 })
 it('infers private provenance in native imports and excludes raw prescriptions from private imports',()=>{
- const raw: LegacyFixture=fixture();raw.id=[String.fromCharCode(98,98,109),'synthetic'].join('-')
+ const raw: LegacyFixture=fixture();raw.id=['bbm','synthetic'].join('-')
  const p: LegacyFixture=importProgramme(raw);expect(p.definition.source.private).toBe(true)
  expect(p.definition.weeks[0].days[0].sessions[0].routineSnapshot.ex[0].sourcePrescription).toBeUndefined()
  delete p.definition.source.private

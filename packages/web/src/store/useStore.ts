@@ -22,7 +22,7 @@ export const DEF: StoreDocument = {
   // Body measurements (#82): one check-in per day, values in cm whatever the weight unit
   // (lib/measurements.js); merged across devices like weigh-ins (lib/sync-merge.js).
   measurements: [], measurementEnabled: null, customMeasurements: [],
-  programmes: { version: 1, fork: 'opengym/1', definitions: [], cycles: [] },
+  programmes: { version: 1, fork: 'wilky/1', definitions: [], cycles: [] },
   queue: null,   // a planner's floating week (lib/queue.js) — via the API, or by this rotation feature (below)
   // The in-app rotation's reusable definition — { id, sequence, label } (lib/rotation.js). Never
   // a live queue: it only ever feeds `queue`, and `queue.rotationId` says the pass is managed here.
@@ -245,7 +245,7 @@ export interface InitialStoreState {
   config: Record<string, unknown> | null
   linkCode: unknown
 }
-/** Sync store composes sync metadata/actions around this initializer; no writes during hydration. */
+/** W07 composes sync metadata/actions around this initializer; no writes during hydration. */
 export function initialStoreState(kv: KeyValueStore): InitialStoreState {
   const S = loadState(kv)
   S.customEx = healCustomEx(S.customEx)
@@ -258,14 +258,15 @@ export interface StoreState extends InitialStoreState {
   documentInstance?: number
   beginAuthTransaction?: () => Promise<AuthTransaction>
   [key: string]: any
-  update(mut: (draft: StoreDocument) => void, push?: boolean): void
+  update(mut: (draft: StoreDocument) => void, push?: boolean, options?: {durable?: boolean}): unknown
 }
-// No browser I/O at import. The client injects the shell before rendering; sync replaces update
+// No browser I/O at import. W01 injects the shell before rendering; W07 replaces update
 // with its stamped persistence action through useStore.setState, preserving the public API.
 export const useStore = create<StoreState>((set, get) => ({
   S: freshState(), index: createExerciseIndex(), user: null, ready: false, config: null, linkCode: null,
   async beginAuthTransaction() { throw new Error('Sync engine has not been initialized') },
-  update(mut) {
+  update(mut, _push, options) {
+    if (options?.durable) throw new Error('Saved profile is not initialized')
     const S = clone(get().S)
     mut(S)
     S.customEx = healCustomEx(S.customEx)

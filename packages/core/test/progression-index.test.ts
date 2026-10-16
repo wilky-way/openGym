@@ -6,10 +6,10 @@ import { loadKindFor, baseWeightFor, dropGrid } from '../src/plates'
 import { nextPrescription, readSession, weightIncrement, policyFor, plannedOf, planChanged, sessionsFor } from '../src/progression'
 import type { Config, Entry, Profile } from '../src/progression'
 import { programmeTMConfig } from '../src/programme-tm'
-import { indexTrace } from './regression-index-trace'
-import calls from './regression-index-calls.json'
+import { indexTrace } from './k08-index-trace'
+import calls from './k08-index-calls.json'
 
-// Real catalogue, set-kind and history functions; no predicate or increment stubs.
+// Real K03/K05/K06 ports, no predicates or increments replaced by stubs.
 const index = createExerciseIndex([
   { id: 'customBar', eq: 'barbell', bp: 'back' },
   { id: 'customAssist', eq: 'leverage machine', assisted: true },
@@ -113,11 +113,11 @@ const regression: Scenario[] = [
   'incrementDrop', 'ownedTM', 'heavyTM',
 ]
 
-describe('real custom-index forwarding regressions', () => {
+describe('K08 real custom-index forwarding regressions', () => {
   it.each(calls.map((row, n) => ({ ...row, scenario: regression[n]! })))('$site — $scenario', ({ site, scenario }) => {
     const result = scenarios[scenario]()
     expect(result.actual).toEqual(result.expected)
-    if (process.env.PROGRESSION_OUTPUT_ONLY !== '1') {
+    if (process.env.K08_OUTPUT_ONLY !== '1') {
       const invoked = indexTrace.calls.filter(call => call.site === site)
       expect(invoked.length, `${site} must actually execute`).toBeGreaterThan(0)
       for (const call of invoked) expect(call.args.at(-1), `${site} must forward this caller's index`).toBe(index)
@@ -141,9 +141,9 @@ it('readSession derives custom cardio mode from the real caller index', () => {
   expect(readSession(cardio).mode).toBe('reps')
 })
 
-// Compatibility inert edges: nextPrescription supplies its resolved mode to policyFor.
+// GM-approved inert edges: nextPrescription supplies its resolved mode to policyFor.
 // loadKindFor hands usesBar the resolved exercise object, so usesBar needs no lookup.
-it('preserves the two provably inert progression index forwards', () => {
+it('preserves the two provably inert K08 index forwards', () => {
   const edges = new Map([
     ['progression.ts:nextPrescription:policyFor', 1],
     ['plates.ts:loadKindFor:usesBar', 1],

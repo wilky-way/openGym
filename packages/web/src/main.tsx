@@ -1,3 +1,5 @@
+import { startMediaPrefetch } from './platform/media-prefetch'
+import { useStore } from './store/useStore'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
@@ -18,3 +20,5 @@ const win=ux().window!, doc=ux().document!
 if ('scrollRestoration' in win.history) win.history.scrollRestoration='manual'
 createRoot(doc.getElementById('root')!).render(<StrictMode><App/></StrictMode>)
 if (platform.info.canServiceWorker) void platform.registerServiceWorker('sw.js').catch(()=>{})
+
+if (platform.info.canServiceWorker) startMediaPrefetch(useStore)

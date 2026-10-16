@@ -1,0 +1,552 @@
+{
+  "id": "generic-full-body-v1",
+  "name": "Full body linear",
+  "unit": "kg",
+  "version": 1,
+  "goal": "General resistance exercise practice",
+  "level": "Generic template",
+  "daysPerWeek": 3,
+  "lengthWeeks": 2,
+  "equipment": [
+    "barbell"
+  ],
+  "licence": "AGPL-3.0-or-later",
+  "source": {
+    "kind": "own",
+    "ref": "Originally authored generic seed v1",
+    "private": false
+  },
+  "end": "repeat",
+  "endPlan": {
+    "kind": "repeat",
+    "instructions": "After finishing all explicit sessions, review the log and choose Repeat to begin the same ordered block again. Repeating is an explicit athlete action."
+  },
+  "instructions": "Originally authored generic template, version 1. Choose each first actual working load in the workout; no starting weights or maxes are supplied. Working sets have a fixed illustrative 2 RIR target; effort does not calculate load. Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. Dates are projected by the selected cadence, not fixed weekdays. Review cadence and equipment before starting.",
+  "progressionRules": [
+    {
+      "id": "linear",
+      "kind": "linear",
+      "increment": 2.5,
+      "unit": "kg",
+      "rounding": {
+        "increment": 2.5,
+        "mode": "nearest",
+        "usePlates": false
+      },
+      "every": {
+        "sessions": 1
+      },
+      "success": "all-sets-all-reps"
+    },
+    {
+      "id": "stall-reset",
+      "kind": "stall",
+      "after": 3,
+      "action": {
+        "kind": "reset",
+        "pct": 0.9
+      },
+      "appliesTo": "load"
+    }
+  ],
+  "weeks": [
+    {
+      "index": 1,
+      "mode": "train",
+      "days": [
+        {
+          "key": "d1",
+          "ordinal": 1,
+          "sessions": [
+            {
+              "sessionTemplateId": "a",
+              "routineSnapshot": {
+                "name": "A",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "0043",
+                    "slotId": "lift-0043",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0043"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0025",
+                    "slotId": "lift-0025",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0025"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0027",
+                    "slotId": "lift-0027",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0027"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "key": "d2",
+          "ordinal": 2,
+          "sessions": [
+            {
+              "sessionTemplateId": "b",
+              "routineSnapshot": {
+                "name": "B",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "0032",
+                    "slotId": "lift-0032",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0032"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "1162",
+                    "slotId": "lift-1162",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-1162"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0027",
+                    "slotId": "lift-0027",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0027"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "key": "d3",
+          "ordinal": 3,
+          "sessions": [
+            {
+              "sessionTemplateId": "a",
+              "routineSnapshot": {
+                "name": "A",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "0043",
+                    "slotId": "lift-0043",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0043"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0025",
+                    "slotId": "lift-0025",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0025"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0027",
+                    "slotId": "lift-0027",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0027"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "train",
+      "days": [
+        {
+          "key": "d1",
+          "ordinal": 1,
+          "sessions": [
+            {
+              "sessionTemplateId": "b",
+              "routineSnapshot": {
+                "name": "B",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "0032",
+                    "slotId": "lift-0032",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0032"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "1162",
+                    "slotId": "lift-1162",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-1162"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0027",
+                    "slotId": "lift-0027",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0027"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "key": "d2",
+          "ordinal": 2,
+          "sessions": [
+            {
+              "sessionTemplateId": "a",
+              "routineSnapshot": {
+                "name": "A",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "0043",
+                    "slotId": "lift-0043",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0043"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0025",
+                    "slotId": "lift-0025",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0025"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0027",
+                    "slotId": "lift-0027",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0027"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "key": "d3",
+          "ordinal": 3,
+          "sessions": [
+            {
+              "sessionTemplateId": "b",
+              "routineSnapshot": {
+                "name": "B",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "0032",
+                    "slotId": "lift-0032",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0032"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "1162",
+                    "slotId": "lift-1162",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-1162"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  },
+                  {
+                    "id": "0027",
+                    "slotId": "lift-0027",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 6,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "linear",
+                      "instructions": "Add 2.5 kg after every completed exposure with every prescribed rep in every set; otherwise hold the load. After three consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day.",
+                      "parameters": {
+                        "continuityKey": "generic-full-body-v1:lift-0027"
+                      },
+                      "rules": [
+                        "linear"
+                      ],
+                      "onStall": "stall-reset"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -129,7 +129,7 @@ describe('history forwards caller-owned exercise indexes', () => {
   })
 })
 
-// Compatibility AST checks supplement real custom-index outputs where forwarding is inert:
+// GM-approved AST checks supplement real custom-index outputs where forwarding is inert:
 // isTimed/setsFromRows distinguish explicit time only; catalogue fallback is reps or cardio.
 // exLine's time branch already has explicit time, and its reps branch excludes catalogue cardio.
 // metricEntries' fallback has no completed work rows, so only the index-independent topW remains.

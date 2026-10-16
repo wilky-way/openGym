@@ -395,7 +395,7 @@ export function modeForEntry(entry: unknown, fallback: string | null = null) {
 
 const WORK_ONLY_KEYS = new Set(['sec', 'min', 'km', 'dist', 'speed', 'incline', 'rir', 'rpe', 'note',
   'type', 'drops', 'clusters', 'failure', 'sides', 'side', 'planSec', 'weightOrigin',
-  'target', 'repTarget', 'rmMax', 'mode', 'seconds', 'durationSec'])
+  'nativeTarget', 'nativeLoadReason', 'target', 'repTarget', 'rmMax', 'mode', 'seconds', 'durationSec'])
 /** Keep future metadata when converting a straight set to a warm-up, clearing work-only fields. */
 export function preserveWarmupMetadata(source: WorkoutRow, converted: WorkoutRow): WorkoutRow {
   const row = {...converted}

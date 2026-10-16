@@ -146,7 +146,7 @@ export function installPasskeys(app: GymApp, auth: AuthService, options: Passkey
   }
   function ownershipLive(p: OwnershipProof): boolean {
     const u = getUser(db, p.uid), cred = getCred(p.credentialId)
-    // Authentication atomically transfers a legacy token's device to its authenticated v2
+    // S03 atomically transfers a legacy token's device to its authenticated v2
     // successor during renewal. A revoked original row must never use this fallback.
     const successor = p.predecessorHash ? predecessorDevice(db, p.predecessorHash) : null
     const device = getDevice(db, p.deviceId) ?? (successor ? getDevice(db, successor) : null)

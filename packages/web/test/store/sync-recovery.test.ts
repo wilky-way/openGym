@@ -73,14 +73,14 @@ it('a delayed account A pull never persists or uploads under account B after Kee
  expect(JSON.parse(map.get(KEY)!).workouts.map((w:any)=>w.id)).toEqual(['private-B'])
  expect(uploads.flatMap(x=>x.state.workouts.map((w:any)=>w.id))).not.toContain('private-A')
 })
-it.each([null,undefined])('missing-peer %s 409 removes an offloaded definition',async peer=> {
+it.each([null,undefined])('K10 r1 missing-peer %s 409 removes an offloaded definition',async peer=> {
  const local={...copy(DEF),_ts:100,programmes:{version:1,definitions:[{id:'synthetic-offloaded',_ts:10}],cycles:[],offloaded:{'synthetic-offloaded':{versionId:'v',at:500}}}}
  const map=new Map([[KEY,JSON.stringify(local)],['gym_owner','old'],['gym_user',JSON.stringify({id:'old'})],['gym_sync',JSON.stringify({rev:3,ts:100})]])
  let puts=0;const h=make(map,()=>false,async()=>{if(++puts===1)throw Object.assign(new Error('409'),{status:409,data:{state:peer,rev:0}});return {ok:true,rev:1}})
  await h.get().pushState()
  expect(h.get().S.programmes.definitions.map((d:any)=>d.id)).not.toContain('synthetic-offloaded')
 })
-it('same-Reset 409 removes the obsolete offload marker',async()=> {
+it('K10 r1 same-Reset 409 removes the obsolete offload marker',async()=> {
  const local={...copy(DEF),_ts:200,resetAt:100,programmes:{version:1,definitions:[],cycles:[],offloaded:{'synthetic-offloaded':{versionId:'v',at:50}}}}
  const remote={...copy(DEF),_ts:300,resetAt:100,programmes:{version:1,definitions:[],cycles:[]}}
  const map=new Map([[KEY,JSON.stringify(local)],['gym_owner','old'],['gym_user',JSON.stringify({id:'old'})],['gym_sync',JSON.stringify({rev:1,ts:200})]])
@@ -232,7 +232,7 @@ it('a 409 retry goes through the public push hold guard even without a session c
  answer(false);await adopting
  expect(h.get().S.workouts.map((w:any)=>w.id)).toEqual(['remote']);expect(uploads).toHaveLength(1)
 })
-it.each([null,undefined])('consumes existing offload manifests through replay of a malformed stash peer %s',async peer=> {
+it.each([null,undefined])('K10 r1 consumes existing offload manifests through replay of a malformed stash peer %s',async peer=> {
  const local={...copy(DEF),_ts:100,workouts:[{id:'local',entries:[]}],programmes:{version:1,definitions:[{id:'offloaded',_ts:9999}],cycles:[],offloaded:{offloaded:{versionId:'v1',at:500}}}}
  const map=new Map([[KEY,JSON.stringify(local)],['gym_owner','A'],['gym_user',JSON.stringify({id:'A'})],['gym_stash',JSON.stringify({'https://synthetic.example|A':{uid:'A',server:'https://synthetic.example',state:peer}})]])
  const h=make(map,()=>false,async(path:string,o:any)=>path==='/api/config'?{}:path==='/api/me'?{user:{id:'A'}}:o?.method==='PUT'?{ok:true,rev:3}:{state:copy(local),rev:1})

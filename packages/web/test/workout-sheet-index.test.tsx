@@ -1,4 +1,4 @@
-// design safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
+// GM safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
 // @vitest-environment happy-dom
 import { workoutSheetPlatform } from './workout-sheet-environment'
 import React, { act } from 'react'

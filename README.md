@@ -9,11 +9,11 @@ The browser app uses React and an offline-capable Platform adapter. The server r
 ## Features
 
 - **Logging:** Focus, cards, list, and compact layouts; sets, reps, load, RIR/RPE, supersets, rest timers, notes, and past-workout editing. Browse history and repeat a session.
-- **Planning & programmes:** a calendar, fixed weeks or rotations, reusable routines, a private programme library, week-by-week prescriptions, and read-only session previews. Pause, switch, or repeat a block.
-- **Progression engine:** deterministic percentage, effort-based load, double progression, linear increments, training-max changes, stall responses, deloads, and volume ramps. Expand **Why** to inspect the inputs behind a prescription; your logged values remain yours to choose.
+- **Planning & programmes:** a calendar, fixed weeks or rotations, reusable routines, a private programme library, week-by-week prescriptions, and read-only session previews. Pause, switch, or repeat a block with reviewed max values. Six [original generic seed programmes](seeds/generic-v1/README.md) cover full body, dumbbells, machines, upper/lower, push/pull/legs, and simple 5×5. Import and review them manually; they supply no starting working loads.
+- **Progression engine:** deterministic percentage, effort-based load, double progression, linear increments, dated, audited training-max changes, native per-set targets and completed-set back-off loads, stall responses, deloads, and volume ramps. Expand **Why** to inspect the inputs behind a prescription; your logged values remain yours to choose.
 - **Stats & body:** activity, exercise progress, estimated 1RM, muscle volume, fatigue and strength maps, structural balance, bodyweight goals, circumference measurements, and a gym check-in card.
 - **Sync, offline & devices:** browser-local guest mode, offline-capable logging, profile sync, passkeys, one-time device pairing, and device revocation. JSON backup/export and imports help keep your records portable.
-- **MCP & agents:** 35 tools for authenticated reads, session previews, private programme drafts, progression validation and previews, conditional programme actions, and past-workout logging. `log_workout` previews by default; saving and the restricted `delete_workout` undo require an explicit write gate. See [the tool guide](docs/MCP.md).
+- **MCP & agents:** 44 tools for authenticated reads, session previews, private programme drafts, progression validation and previews, conditional programme actions, dated training-max decisions with compensating undo, routine/custom-exercise authoring, and past-workout logging. `log_workout` previews by default; saving and the restricted `delete_workout` undo require an explicit write gate. See [the tool guide](docs/MCP.md).
 - **Self-hosting:** Bun, SQLite, a compiled server or Docker Compose, invite-only registration, an admin dashboard, and configurable units, equipment, appearance, workout controls, and alerts.
 
 ## App tour
@@ -144,6 +144,6 @@ Read [self-hosting](docs/SELF_HOSTING.md) before exposing an instance. Compose p
 - [Exercise catalogue and media notice](catalogue/README.md)
 - [Third-party attribution](NOTICE.md)
 
-Development: `bun run --cwd packages/web dev` uses a loopback API target by default; set `API_TARGET` and `API_ORIGIN` to match your local server. Run `bun run test:core`, `bun run test:web`, `bun run test:mcp`, or `bun run test:server`. Server tests use isolated temporary data directories. The public source contains native tests; private rewrite oracle recordings and historical review evidence are excluded.
+Development: `bun run --cwd packages/web dev` uses a loopback API target by default; set `API_TARGET` and `API_ORIGIN` to match your local server. Run `bun run test:core`, `bun run test:web`, `bun run test:mcp`, or `bun run test:server`. Server tests use isolated temporary data directories. The public source includes native tests and a bounded independent oracle fixture; its manifest describes the exact scope. Historical private release evidence is excluded. See `bun run gate` for the public validation entry point.
 
 Report issues in the [project repository](https://github.com/wilky-way/openGym). Do not attach credentials, exports, or personal workout data.

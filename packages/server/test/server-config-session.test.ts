@@ -4,7 +4,7 @@ import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { start } from './helpers'
 
-// Deliberately injected verified-session hook; actual token verification belongs to authentication.
+// Deliberately injected verified-session hook; actual token verification belongs to S03.
 const cookie = { Cookie: 'gymsid=synthetic-valid-session' }
 const bearer = { Authorization: 'Bearer synthetic-valid-session' }
 function fixture(env: Record<string, string> = {}) {

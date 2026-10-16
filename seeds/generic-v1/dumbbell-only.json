@@ -1,0 +1,405 @@
+{
+  "id": "generic-dumbbell-only-v1",
+  "name": "Dumbbell only double progression",
+  "unit": "kg",
+  "version": 1,
+  "goal": "General resistance exercise practice",
+  "level": "Generic template",
+  "daysPerWeek": 3,
+  "lengthWeeks": 1,
+  "equipment": [
+    "dumbbell"
+  ],
+  "licence": "AGPL-3.0-or-later",
+  "source": {
+    "kind": "own",
+    "ref": "Originally authored generic seed v1",
+    "private": false
+  },
+  "end": "repeat",
+  "endPlan": {
+    "kind": "repeat",
+    "instructions": "After finishing all explicit sessions, review the log and choose Repeat to begin the same ordered block again. Repeating is an explicit athlete action."
+  },
+  "instructions": "Originally authored generic template, version 1. Choose each first actual working load in the workout; no starting weights or maxes are supplied. Working sets have a fixed illustrative 2 RIR target; effort does not calculate load. Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise. Dates are projected by the selected cadence, not fixed weekdays. Review cadence and equipment before starting.",
+  "progressionRules": [
+    {
+      "id": "double",
+      "kind": "double",
+      "increment": 2.5,
+      "unit": "kg",
+      "rounding": {
+        "increment": 2.5,
+        "mode": "nearest",
+        "usePlates": false
+      },
+      "repsLow": 8,
+      "repsHigh": 12,
+      "condition": "all-sets",
+      "afterIncrease": "reset-to-low"
+    },
+    {
+      "id": "stall-reset",
+      "kind": "stall",
+      "after": 6,
+      "action": {
+        "kind": "reset",
+        "pct": 0.9
+      },
+      "appliesTo": "load"
+    }
+  ],
+  "weeks": [
+    {
+      "index": 1,
+      "mode": "train",
+      "days": [
+        {
+          "key": "d1",
+          "ordinal": 1,
+          "sessions": [
+            {
+              "sessionTemplateId": "a",
+              "routineSnapshot": {
+                "name": "A",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "1760",
+                    "slotId": "lift-1760",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-1760",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "as"
+                  },
+                  {
+                    "id": "0289",
+                    "slotId": "lift-0289",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-0289",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  },
+                  {
+                    "id": "0293",
+                    "slotId": "lift-0293",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-0293",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  },
+                  {
+                    "id": "1459",
+                    "slotId": "lift-1459",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-1459",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "key": "d2",
+          "ordinal": 2,
+          "sessions": [
+            {
+              "sessionTemplateId": "b",
+              "routineSnapshot": {
+                "name": "B",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "1760",
+                    "slotId": "lift-1760",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-1760",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "as"
+                  },
+                  {
+                    "id": "0289",
+                    "slotId": "lift-0289",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-0289",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  },
+                  {
+                    "id": "0293",
+                    "slotId": "lift-0293",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-0293",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  },
+                  {
+                    "id": "1459",
+                    "slotId": "lift-1459",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-1459",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "key": "d3",
+          "ordinal": 3,
+          "sessions": [
+            {
+              "sessionTemplateId": "c",
+              "routineSnapshot": {
+                "name": "C",
+                "prog": "off",
+                "ex": [
+                  {
+                    "id": "1760",
+                    "slotId": "lift-1760",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-1760",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "as"
+                  },
+                  {
+                    "id": "0289",
+                    "slotId": "lift-0289",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-0289",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  },
+                  {
+                    "id": "0293",
+                    "slotId": "lift-0293",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-0293",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  },
+                  {
+                    "id": "1459",
+                    "slotId": "lift-1459",
+                    "role": "main",
+                    "sets": 3,
+                    "reps": 12,
+                    "mode": "reps",
+                    "target": {
+                      "rir": 2
+                    },
+                    "progression": {
+                      "kind": "double",
+                      "instructions": "Start at 8 reps. Keep the load and increase the target by one rep when all sets meet the current target; at 12 reps in every set add 2.5 kg and reset to 8 reps. After six consecutive exposures short of the load-rule success criterion, reset the last actual load to 90%, rounded to the nearest 2.5 kg, from the next day. For double progression, exposures below 12 reps count toward this counter even while reps rise.",
+                      "parameters": {
+                        "continuityKey": "generic-dumbbell-only-v1:lift-1459",
+                        "repProgression": "step"
+                      },
+                      "rules": [
+                        "double"
+                      ],
+                      "onStall": "stall-reset"
+                    },
+                    "repsMin": 8,
+                    "dbLoad": "each"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

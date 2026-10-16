@@ -1,4 +1,4 @@
-import './regression-environment'
+import './W23-environment'
 // @vitest-environment happy-dom
 // A coach week (S.queue) runs by order, not by weekday, so Home swaps the seven dots for a
 // progress row. Covered here: one chip per session in slot order with its state word, a tap on

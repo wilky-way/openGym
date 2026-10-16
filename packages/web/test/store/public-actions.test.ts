@@ -25,7 +25,7 @@ beforeEach(() => {
   services = { platform, toast: vi.fn() }; initializePublicActions(services)
 })
 afterEach(() => { dispose(); vi.useRealTimers() })
-describe('actions compose with the existing public store', () => {
+describe('W08 actions compose with the existing public store', () => {
   it.each([undefined, {}])('does not add a TM seed to a rule-free activation with tm=%j', async tm => {
     const resolver = vi.fn(() => ({ press: 120 }))
     initializePublicActions({ ...services, materializeTmSeed: resolver })
@@ -153,7 +153,7 @@ describe('actions compose with the existing public store', () => {
     useStore.getState().resumeProgramme(options.cycleId, options)
     expect(useStore.getState().S.programmes.cycles[0].tmSeed).toEqual({ press: 110 })
   })
-  it('fails closed for from-e1rm without progression API and freezes the injected result before programme lifecycle activation', () => {
+  it('fails closed for from-e1rm without P5 and freezes the injected result before K12 activation', () => {
     const d = { ...definition(), tmSeeds: { press: { fromE1rm: { pct: .9 } } } }
     const before = clone(useStore.getState().S)
     expect(() => useStore.getState().startProgramme(d, options)).toThrow('training max history')

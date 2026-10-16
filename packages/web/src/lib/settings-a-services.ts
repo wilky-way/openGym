@@ -3,7 +3,7 @@ export interface SettingsAServices {
   confirmSheet(options: { title: string; message: string; confirmText: string; danger?: boolean; onConfirm(): unknown }): unknown
   menuSheet(options: { title: string; subtitle?: string; items: { icon: string; label: string; danger?: boolean; onClick(): unknown }[] }): unknown
   download(text: string, filename: string): void | Promise<void>
-  /** The shell binds imports; captured targets travel through async and confirmation callbacks. */
+  /** W23 binds W11 imports; the captured target travels through their async/confirm callbacks. */
   importFromApp(file: File, target: SettingsTarget): unknown
   importFromHevy(target: SettingsTarget): unknown
 }

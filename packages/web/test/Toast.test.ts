@@ -31,7 +31,7 @@ describe('the toast', () => {
   })
 })
 
-// Toast fixtures cover the display and interaction states used by the application shell.
+// The W09 subset must include the display and interaction states W23 will later reconcile.
 describe('toast visibility and action rules', () => {
   it('shows live messages and enables the Undo surface', () => {
     expect(css).toMatch(/#toast\.show\{opacity:1;transform:translateX\(-50%\) translateY\(0\)\}/)

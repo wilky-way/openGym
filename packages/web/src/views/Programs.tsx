@@ -1,3 +1,6 @@
+import { nativeMaxLabel } from '@opengym/core/native-prescription'
+import { effectiveProgrammeMax, maxBasisLabel, programmeMaxKeys } from '@opengym/core/programme-max'
+import { adjustProgrammeMaxSheet } from '../components/ProgrammeMaxEditor'
 import { convertWeightPrecise } from '@opengym/core/progression-engine/units'
 import { sessionPreviewSheet, programmePreviewContent } from '../components/SessionPreview'
 import ProgressionPrescription from '../components/ProgressionPrescription'
@@ -169,11 +172,12 @@ function ProgramDetail({ definition: d, cycle, serverVersion, libraryItems }: {d
   const projection = cycle && projectCycle(cycle, S.workouts, todayISO(), S.queue)
   const weeks = d.weeks || []
   const prescriptions = progressionDisplay(S, d, cycle, weeks.map((w: any) => w.index), todayISO())
+  const exerciseIndex = createExerciseIndex(S.customEx)
   const currentId = cycle?.weekId || String(cycle?.weekIndex ?? weeks[0]?.index)
   const currentWeek = weeks.find((w: any) => (w.weekId || String(w.index)) === currentId)
   const preApp = cycle?.preApp?.weeks || []
   const timeline = [...preApp.filter((index: any) => !weeks.some((w: any) => w.index === index)).map((index: any) => ({ index, preApp: true })), ...weeks]
-  const tmKeys: string[] = [...new Set<string>([...Object.keys(d.tmSeeds ?? {}), ...Object.keys(cycle?.tmSeed ?? {}), ...Object.keys(cycle?.tm ?? {}), ...Object.keys(prescriptions?.result.tm ?? {}), ...weeks.flatMap((w: any) =>w.days.flatMap((day: any) =>day.sessions.flatMap((s: any) =>s.routineSnapshot.ex.filter((e: any) =>e.tm).map((e: any) =>e.tm.key || e.id))))])]
+  const tmKeys: string[] = [...new Set<string>([...programmeMaxKeys(d,cycle), ...Object.keys(d.tmSeeds ?? {}), ...Object.keys(cycle?.tmSeed ?? {}), ...Object.keys(cycle?.tm ?? {}), ...Object.keys(prescriptions?.result.tm ?? {}), ...weeks.flatMap((w: any) =>w.days.flatMap((day: any) =>day.sessions.flatMap((s: any) =>s.routineSnapshot.ex.filter((e: any) =>e.tm).map((e: any) =>e.tm.key || e.id))))])]
   const setRepeating = (value: any) => {
     setRepeat(value)
     update((s: any) => { requireProgrammeIdle(s); const record = cycle ? s.programmes.cycles.find((c: any) => c.id === cycle.id) : s.programmes.definitions.find((x: any) => x.id === d.id); if (record) record.end = value ? 'repeat' : 'next' })
@@ -238,19 +242,19 @@ function ProgramDetail({ definition: d, cycle, serverVersion, libraryItems }: {d
       })}
       {preApp.length > 0 && <details className="card program-pre-app"><summary>{preApp.map((index: any) => t('Week {0}', index)).join(' · ')}<span className="ss">{t('Pre-app')}</span><Icon name="chevronDown" /></summary><p className="sect-f">{t('Trained before openGym; no workout logs are created.')}</p></details>}
     </div>
-    {cycle && ['active','paused'].includes(cycle.status) && tmKeys.length > 0 && <section className="card training-maxes">
+    {cycle && tmKeys.length > 0 && <section className="card training-maxes">
       {tmKeys.map(key => {
         const point = prescriptions?.result.tm[key]?.filter(p => p.at === 'seed' || p.at <= todayISO()).at(-1)
         const frozen = Object.hasOwn(cycle.tmSeed ?? {}, key) ? cycle.tmSeed[key] : undefined
-        const cached = Object.hasOwn(cycle.tm ?? {}, key) ? cycle.tm[key] : undefined
-        const value = point?.value ?? frozen ?? cached
-        const from = point || typeof frozen === 'number' ? d.unit : cycle.tmUnit === 'kg' || cycle.tmUnit === 'lb' ? cycle.tmUnit : S.unit
-        const source = point && point.at !== 'seed' ? t('Engine') : typeof frozen === 'number' || point ? t('Seed') : t('Program cache')
-        const effective = typeof value === 'number' && value > 0 && !prescriptions?.result.error ? convertWeightPrecise(value, from, S.unit) : null
-        return <div className="row between" key={key}><span>{t('Training max: {0}', key)}</span>
+        const manual = cycle.maxAdjustments?.filter((event: any)=>event.lift===key && event.effectiveOn<=todayISO()).at(-1)
+        const source = point?.why.inputs.source === 'manual-max' || !point && manual ? t('Manual') : point && point.at !== 'seed' ? t('Engine') : typeof frozen === 'number' || point ? t('Seed') : cycle.maxAdjustments?.some((event: any)=>event.lift===key) ? t('Prior max') : t('Program cache')
+        let effective: number | null = null
+        try { effective = effectiveProgrammeMax({...S,routines:S.routines}, cycle, key, todayISO(), S.unit, exerciseIndex) } catch { /* Invalid rules remain unavailable. */ }
+        return <div className="row between" key={key}><span>{maxBasisLabel(d)}: {nativeMaxLabel(d,key)}</span>
           <output aria-label={t('Effective training max: {0}', key)}>{effective == null ? t('Unavailable') : `${Math.round(effective * 100) / 100} ${S.unit}`} · {source}</output></div>
       })}
-      <p className="sect-f">{t('Training maxes change through the program’s progression and repeats.')}</p>
+      <p>{maxBasisLabel(d)}</p>{['active','paused'].includes(cycle.status) && <Button onClick={()=>adjustProgrammeMaxSheet(cycle.id,detailTarget)}>Adjust max</Button>}
+      {!!cycle.maxAdjustments?.length && <details><summary>Max adjustment history</summary>{cycle.maxAdjustments.map((event: any)=><p key={event.id}>{event.effectiveOn} · {event.lift}: {event.previous ?? 'Unavailable'} → {event.value} {event.unit}{event.basis ? ` (${event.basis})` : ''}{event.reason ? ` · ${event.reason}` : ''}</p>)}</details>}
     </section>}
     <section className="card program-after">
       {cycle?.startsOn && <p className="ss">{t('Started {0}', fmtDate(cycle.startsOn, true))}</p>}
@@ -279,7 +283,7 @@ function LoadPreview({ definition: d, repeat, switchCycle, onClose, serverVersio
   const [tm,setTM] = useState<Record<string,number>>({})
   const tmUnit = S.unit === 'kg' ? 'kg' as const : 'lb' as const
   const [startDate, setStartDate] = useState(todayISO())
-  const tmKeys: string[] = [...new Set<string>(d.weeks.flatMap((w: any) =>w.days.flatMap((day: any) =>day.sessions.flatMap((s: any) =>s.routineSnapshot.ex.filter((e: any) =>e.tm).map((e: any) =>e.tm.key || e.id)))))]
+  const tmKeys = programmeMaxKeys(d)
   const week = d.weeks.find((w: any) => w.index === weekIndex)
   const canAdopt = !switchCycle && week.days.every((day: any) => day.sessions?.length === 1)
   const count = d.weeks.filter((w: any) => w.index >= weekIndex).flatMap((w: any) => w.days.flatMap((day: any) => day.sessions || [])).length
@@ -318,7 +322,7 @@ function LoadPreview({ definition: d, repeat, switchCycle, onClose, serverVersio
     {canAdopt && <div className="row between"><span>{t('Adopt existing routines for this week')}</span><Switch aria-label={t('Adopt existing routines for this week')} checked={adopting} onChange={(value) => { setAdopting(value); if (value) { const picks: Record<string,string> = {}; for (const day of week.days) { const name = dayName(d, day).toLowerCase(); const matches = S.routines.filter((r: any) => !r.programme && (r.name?.toLowerCase() === name || r.id === day.key)); if (matches.length === 1) picks[day.key] = matches[0].id }; if (new Set(Object.values(picks)).size === Object.values(picks).length) setMapping(picks) } }} /></div>}
     {adopting && week.days.map((day: any) => <label key={day.key}><SelectRow title={dayName(d, day)} value={mapping[day.key] || ''} onChange={(id: any) => setMapping({ ...mapping, [day.key]: id })} options={[{ value: '', label: t('Choose routine') }, ...S.routines.filter((r: any) => !r.programme).map((r: any) => ({ value: r.id, label: r.name }))]} /></label>)}
     {adopting && <p className="sect-f">{t('Selected routines keep their prescriptions, ids and logged progress. Later weeks are added.')}</p>}
-    {tmKeys.map((key: any) => { const value = tm[key]; return <label key={key}>{t('Training max: {0} ({1})',key,S.unit)}<input type="number" min="0" step="any" value={tm[key] || ''} onChange={(e) =>setTM({...tm,[key]:Number(e.target.value)})}/>
+    {tmKeys.map((key: any) => { const value = tm[key]; return <label key={key}>{`${maxBasisLabel(d)}: ${nativeMaxLabel(d,key)} (${S.unit})`}<input type="number" min="0" step="any" value={tm[key] || ''} onChange={(e) =>setTM({...tm,[key]:Number(e.target.value)})}/>
       {typeof value === 'number' && Number.isFinite(value) && value > 0 && <output aria-label={t('Program training max: {0}', key)}>{Math.round(convertWeightPrecise(value, tmUnit, d.unit) * 100) / 100} {d.unit}</output>}
     </label>})}
     {(error || previewError) && <p role="alert">{error || previewError}</p>}

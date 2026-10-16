@@ -1,0 +1,268 @@
+{
+  "scope": "Synthetic checker input only; never measured integration receipts",
+  "evidence": {
+    "timed-cutovers.json": [
+      {
+        "name": "boot-before-reconcile-refused",
+        "seconds": 1,
+        "result": {
+          "refused": true
+        }
+      },
+      {
+        "name": "second-boot-before-reconcile-refused",
+        "seconds": 1,
+        "result": {
+          "refused": true
+        }
+      },
+      {
+        "name": "cutover-A-third-time",
+        "seconds": 1,
+        "result": {
+          "legacyWorkoutCount": 2
+        }
+      },
+      {
+        "name": "second-legacy-workout",
+        "seconds": 1,
+        "result": {
+          "workouts": 2,
+          "synced": true
+        }
+      },
+      {
+        "name": "rollback-A",
+        "seconds": 1,
+        "result": {
+          "verified": true,
+          "legacyBooted": true,
+          "workerComplete": true
+        }
+      },
+      {
+        "name": "code-rollback-after-B",
+        "seconds": 1,
+        "result": {
+          "verified": true,
+          "legacyBooted": true,
+          "workerComplete": true
+        }
+      },
+      {
+        "name": "legacy-workout-after-rollback",
+        "seconds": 1,
+        "result": {
+          "workouts": 1,
+          "synced": true
+        }
+      },
+      {
+        "name": "cutover-B",
+        "seconds": 1,
+        "result": {
+          "moved": 82
+        }
+      },
+      {
+        "name": "rollback-B",
+        "seconds": 1,
+        "result": {
+          "definitionsEqual": true,
+          "newWorkoutPreserved": true
+        }
+      },
+      {
+        "name": "v2-agent-renewal",
+        "seconds": 1,
+        "result": {
+          "legacyBearerAccepted": true,
+          "v2Issued": true
+        }
+      },
+      {
+        "name": "new-agent-repair",
+        "seconds": 1,
+        "result": {
+          "paired": true,
+          "readStatus": 200,
+          "v2": true
+        }
+      }
+    ],
+    "timed-sw.json": [
+      {
+        "name": "partial-install",
+        "seconds": 1,
+        "result": {
+          "legacyShellPreserved": true,
+          "failedNewInstall": true
+        }
+      },
+      {
+        "name": "upgrade-old-tab-lazy-chunks",
+        "seconds": 1,
+        "result": {
+          "onlineQrFirstUse": true,
+          "offlineMediaFirstUse": true
+        }
+      },
+      {
+        "name": "second-upgrade-two-generations",
+        "seconds": 1,
+        "result": {
+          "generations": [
+            "synthetic-prior",
+            "synthetic-current"
+          ],
+          "priorRewriteLazyOffline": true
+        }
+      },
+      {
+        "name": "second-reload-prunes-previous",
+        "seconds": 1,
+        "result": {
+          "previousPruned": true
+        }
+      },
+      {
+        "name": "reload-handshake-prunes-previous",
+        "seconds": 1,
+        "result": {
+          "previousPruned": true,
+          "unrelatedCachePreserved": true
+        }
+      },
+      {
+        "name": "return-to-shipped-image",
+        "seconds": 1,
+        "result": {
+          "shippedBuildRestored": true
+        }
+      }
+    ],
+    "timed-auth.json": [
+      {
+        "name": "register-recovery-passkey",
+        "seconds": 1,
+        "result": {
+          "registered": true
+        }
+      },
+      {
+        "name": "auth-cutover-A",
+        "seconds": 1,
+        "result": {
+          "passkeyLogin": true,
+          "v2": true
+        }
+      },
+      {
+        "name": "auth-rollback-A",
+        "seconds": 1,
+        "result": {
+          "passkeyLogin": true,
+          "v2": false
+        }
+      },
+      {
+        "name": "v2-carrier-refused-by-legacy",
+        "seconds": 1,
+        "result": {
+          "legacyRefusesV2": true,
+          "status": 401
+        }
+      },
+      {
+        "name": "legacy-agent-repair",
+        "seconds": 1,
+        "result": {
+          "paired": true,
+          "v2": false,
+          "readStatus": 200
+        }
+      },
+      {
+        "name": "auth-boot-before-reconcile-refused",
+        "seconds": 1,
+        "result": {
+          "refused": true
+        }
+      },
+      {
+        "name": "auth-re-upgrade",
+        "seconds": 1,
+        "result": {
+          "reconciled": true,
+          "integrity": "ok"
+        }
+      },
+      {
+        "name": "auth-phone-re-login",
+        "seconds": 1,
+        "result": {
+          "passkeyLogin": true,
+          "v2": true
+        }
+      },
+      {
+        "name": "v2-agent-renewal",
+        "seconds": 1,
+        "result": {
+          "legacyBearerAccepted": true,
+          "v2Issued": true
+        }
+      }
+    ],
+    "renewal-read.json": {
+      "renewedReadStatus": 200
+    },
+    "get-comparison.json": {
+      "byteEqual": true
+    },
+    "week-comparison.json": {
+      "byteEqualAfterWriterIdNormalization": true
+    },
+    "cold-reopen.json": {
+      "data": {
+        "result": {
+          "offlineColdOpen": true,
+          "controlled": true,
+          "unknownFieldPreserved": true,
+          "workouts": 2,
+          "buildCaches": [
+            "synthetic-current"
+          ]
+        }
+      }
+    },
+    "scratch-guards.json": {
+      "symlinkRefused": true,
+      "hardlinkRefused": true,
+      "outsideBytesUnchanged": true
+    },
+    "container-smoke.json": {
+      "status": "PASS",
+      "healthchecks": true,
+      "runtimePayloadPublic": true,
+      "compiledExecutableOnly": true,
+      "proxySecurityHeaders": true,
+      "apiNoopPut": {
+        "putStatus": 200,
+        "revisionAdvanced": true
+      },
+      "integrity": {
+        "mirrorsEqual": true,
+        "integrity": "ok"
+      }
+    },
+    "redirected-shell.json": {
+      "data": {
+        "result": {
+          "workingShellPreserved": true,
+          "redirected": true
+        }
+      }
+    }
+  }
+}

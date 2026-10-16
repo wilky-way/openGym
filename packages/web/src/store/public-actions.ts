@@ -1,3 +1,5 @@
+import { programmeMaxKeys, setTrainingMax, type SetTrainingMaxOptions } from '@opengym/core/programme-max'
+import type { RepeatMax, FinishBlockOptions } from '../../../core/src/programme-rollover'
 import { convertWeightPrecise } from '@opengym/core/progression-engine/units'
 import { captureProgrammeTarget, updateProgramme, type ProgrammeTarget } from '../lib/programme-target'
 import type { Platform } from '@opengym/contract/platform/adapters'
@@ -25,10 +27,10 @@ export interface SeedInput {
 export interface PublicActionServices {
   platform: Platform
   toast(message: string): void
-  /** Shared activation-time resolver: prior history only, never a live-cycle refresh. */
+  /** P5 supplies the shared activation-time resolver; prior history only, never a live-cycle refresh. */
   materializeTmSeed?(input: SeedInput): Record<string, number>
 }
-/** Compose around sync store's existing update; this module never creates another persistence engine. */
+/** Compose around W07's existing update; this module never creates another persistence engine. */
 export function createPublicActions(get: () => StoreState, services: PublicActionServices) {
   const library = createProgrammeLibrary(services.platform, () => get().user?.id ?? null, undefined, services.toast)
   const target = () => captureProgrammeTarget(services.platform, get)
@@ -90,10 +92,14 @@ export function createPublicActions(get: () => StoreState, services: PublicActio
     return result!
   }
   // A new lap is an activation: rematerialize history-derived seeds before the
-  // Lifecycle draft transition, while fixed/manual seeds carry the athlete's current TM.
-  const prepareRepeat = (draft: StoreDocument, cycleId: string, options: ActivationOptions) => {
+  // K12 draft transition, while fixed/manual seeds carry the athlete's current TM.
+  const prepareRepeat = (draft: StoreDocument, cycleId: string, options: ActivationOptions, reviewed?: RepeatMax) => {
     const cycle = draft.programmes?.cycles.find((c: ProgrammeCycle) => c.id === cycleId) as ProgrammeCycle | undefined
     if (!cycle) throw new Error('The program changed. Review your choice again.')
+    if (reviewed) {
+      const keys = programmeMaxKeys(cycle.snapshot,cycle)
+      if (!['kg','lb'].includes(reviewed.unit) || Object.keys(reviewed.values).length !== keys.length || Object.entries(reviewed.values).some(([key,value])=>!keys.includes(key) || typeof value !== 'number' || !Number.isFinite(value) || value<=0)) throw new Error('Review a positive finite max for every lift before repeating.')
+    }
     const definition = clone(cycle.snapshot)
     definition.weeks = definition.weeks.filter(w => !w.weekId)
     const seeds = (definition as ProgrammeDefinition & DefinitionProgression).tmSeeds
@@ -102,7 +108,7 @@ export function createPublicActions(get: () => StoreState, services: PublicActio
     const cacheUnit = cycle.tmUnit === 'kg' || cycle.tmUnit === 'lb' ? cycle.tmUnit : profileUnit
     const fixed = inUnit(Object.fromEntries(Object.entries(cycle.tm ?? {}).filter(([lift]) => !seeds?.[lift] || !('fromE1rm' in seeds[lift]!))), cacheUnit, definition.unit)
     const index = createExerciseIndex(draft.customEx)
-    const tmSeed = seed(draft as ProgrammeState, definition, { ...options, tmUnit: definition.unit, ...(Object.keys(fixed).length ? {tm:fixed} : {}) }, index)
+    const tmSeed = reviewed ? inUnit(reviewed.values,reviewed.unit,definition.unit) : seed(draft as ProgrammeState, definition, { ...options, tmUnit: definition.unit, ...(Object.keys(fixed).length ? {tm:fixed} : {}) }, index)
     const priorTm = cycle.tm === undefined ? undefined : clone(cycle.tm)
     if (tmSeed) cycle.tm = inUnit(tmSeed, definition.unit, profileUnit)
     const restorePrior = () => {
@@ -113,6 +119,12 @@ export function createPublicActions(get: () => StoreState, services: PublicActio
     return { index, seeded: tmSeed !== undefined, restorePrior }
   }
   return {
+    setTrainingMax(cycleId: string, options: SetTrainingMaxOptions, valid = target()) {
+      let result: ReturnType<typeof setTrainingMax> | undefined
+      try { update(draft => {result = setTrainingMax(draft as ProgrammeState,cycleId,options,createExerciseIndex(draft.customEx))},valid) }
+      catch (error) { return report(error) }
+      return result!
+    },
     repeatProgrammeWeek(cycleId: string, today: string, options: {weekId?: string} = {}, valid = target()) {
       let result: ReturnType<typeof repeatWeek> | undefined
       try { update(draft => {
@@ -127,10 +139,10 @@ export function createPublicActions(get: () => StoreState, services: PublicActio
       }, valid) } catch (error) { return report(error) }
       return result!
     },
-    finishProgrammeBlock(cycleId: string, choice: string, options: {today?: string} = {}, valid = target()) {
+    finishProgrammeBlock(cycleId: string, choice: string, options: FinishBlockOptions = {}, valid = target()) {
       let result: ReturnType<typeof finishBlock> | undefined
       try { update(draft => {
-        const { index, seeded, restorePrior } = choice === 'repeat' ? prepareRepeat(draft, cycleId, options) : {index:createExerciseIndex(draft.customEx),seeded:false,restorePrior:()=>{}}
+        const { index, seeded, restorePrior } = choice === 'repeat' ? prepareRepeat(draft, cycleId, options, options.repeatMax) : {index:createExerciseIndex(draft.customEx),seeded:false,restorePrior:()=>{}}
         result = finishBlock(draft, cycleId, choice, options, index)
         restorePrior()
         if (result && seeded) {

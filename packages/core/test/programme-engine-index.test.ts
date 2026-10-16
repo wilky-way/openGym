@@ -113,7 +113,7 @@ it('starts and switches custom lifecycles atomically, retaining the archived rou
  expect(S.queue!.ids).toEqual(['new-w1d1'])
 })
 it('activates a saved custom definition through the agent with intact ids and converted prescriptions',()=>{
- const S=state();S.programmes={version:1,fork:'opengym/1',definitions:[definition()],cycles:[]}
+ const S=state();S.programmes={version:1,fork:'wilky/1',definitions:[definition()],cycles:[]}
  const cycle=applyProgrammeAgentAction(S,'activate',{programmeId:'synthetic'},'2026-10-12',index)
  expect(cycle).toBeTruthy()
  retained(S.routines[0]!.ex[0]!)
@@ -130,7 +130,7 @@ it('refreshes custom source files and state-only repairs with retained ids, effo
  expect(imported.report.conformance[0]!.after).not.toBe('Invalid')
  expect(S).toEqual(before)
  const stored=state();const incomplete=definition();delete incomplete.equipment;delete incomplete.lengthWeeks
- stored.programmes={version:1,fork:'opengym/1',definitions:[incomplete],cycles:[]}
+ stored.programmes={version:1,fork:'wilky/1',definitions:[incomplete],cycles:[]}
  const repaired=refreshProgrammeDefinitions(stored,[],{repair:true},index)
  expect(repaired.report.updated).toEqual(['synthetic'])
  expect(repaired.report.conformance[0]!.after).toBe('Ready')
@@ -176,7 +176,7 @@ it('keeps built-in equipment distinct from custom alias-shadow equipment during 
  const shadow={id:'1019',n:'Synthetic alias shadow',eq:'leverage machine',custom:true as const}
  const shadowIndex=createExerciseIndex([shadow]),d=definition()
  slot(d).id='3841';delete d.equipment
- const S=state();S.customEx=[shadow];S.programmes={version:1,fork:'opengym/1',definitions:[d],cycles:[]}
+ const S=state();S.customEx=[shadow];S.programmes={version:1,fork:'wilky/1',definitions:[d],cycles:[]}
  const repaired=refreshProgrammeDefinitions(S,[],{repair:true},shadowIndex)
  expect(repaired.report.needsReview).toEqual([])
  expect(repaired.report.updated).toEqual(['synthetic'])
@@ -188,7 +188,7 @@ it('proves the routine-only conversion payload is index inert even while convers
  const input={unit:'lb',routines:[{ex:[prescription()]}]}
  const withIndex=convertStateUnit(input,'kg',index),withoutIndex=convertStateUnit(input,'kg')
  expect(withIndex).toEqual(withoutIndex);expect(withIndex.routines[0].ex[0].weight).toBe(45.25)
- // Unit conversion reads metadata only for bar weights and workout volume; lifecycle passes neither.
+ // units accesses exercise metadata only for barWeights/workout volume; K12 passes neither.
  expect(Object.keys(input).sort()).toEqual(['routines','unit'])
 })
 
@@ -224,7 +224,7 @@ it('rejects a retired custom alias through parsed import, standalone save and re
  expect(()=>importProgramme(JSON.stringify(d),{},retiredIndex)).toThrow('Resolve unknown exercises')
  const S=state();S.customEx=[]
  expect(()=>saveImportedProgramme(S,{definition:d,unknown:[]},{},retiredIndex)).toThrow('Resolve unknown exercises')
- S.programmes={version:1,fork:'opengym/1',definitions:[d],cycles:[]}
+ S.programmes={version:1,fork:'wilky/1',definitions:[d],cycles:[]}
  const refreshed=refreshProgrammeDefinitions(S,[],{},retiredIndex)
  expect(refreshed.report.conformance[0]).toMatchObject({before:'Invalid',after:'Invalid'})
  expect(refreshed.state.programmes!.definitions[0]).toEqual(d)
@@ -248,7 +248,7 @@ it('rejects a retired custom alias atomically through start, switch and agent ac
  const running=structuredClone(S)
  expect(()=>switchProgramme(S,'old',d,{cycleId:'new',today:'2026-10-13'},retiredIndex)).toThrow('Resolve unknown exercises')
  expect(S).toEqual(running)
- const T=state();T.customEx=[];T.programmes={version:1,fork:'opengym/1',definitions:[d],cycles:[]}
+ const T=state();T.customEx=[];T.programmes={version:1,fork:'wilky/1',definitions:[d],cycles:[]}
  expect(()=>applyProgrammeAgentAction(T,'activate',{programmeId:'synthetic'},'2026-10-12',retiredIndex)).toThrow('Resolve unknown exercises')
  expect(T.programmes!.cycles).toEqual([])
 })

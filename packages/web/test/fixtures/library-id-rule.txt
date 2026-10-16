@@ -1,4 +1,4 @@
-// Library ID validation used by the server.
+// Exact S08 library ID rule at fb36a7ac1bf9d382b0ab695813f6dbe7700ad482.
 export function assertLibraryId(id: string): string {
   if (!/^[A-Za-z0-9._-]{1,128}$/.test(id) || /^\.+$/.test(id)) throw new ApiError(400, 'bad request', { code: 'bad-request' })
   return id

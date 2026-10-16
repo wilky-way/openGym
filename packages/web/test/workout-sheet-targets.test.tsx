@@ -1,6 +1,6 @@
 import './workout-sheet-environment'
 // @vitest-environment happy-dom
-// design safety exception: frozen legacy callbacks can act on a replacement workout.
+// GM safety exception: frozen legacy callbacks can act on a replacement workout.
 // These regressions use the real store, edit helpers, updater and durable Platform KV.
 import React, { act } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -42,6 +42,11 @@ function editor(id: string, empty = false) {
     editCompletedSession(s as any, id)
     s.active.entries[0].sets[0] = { w: 55, r: 5, done: !empty }
   })
+}
+// Old persisted editors can lack identity even though new persists now stamp it.
+// Seed that legacy shape directly so these tests still exercise bootstrap races.
+function legacyEditorIdentity() {
+  delete state().active.editBase.sheetInstanceId
 }
 function refused(before: any, bytes?: string | null) {
   if (bytes != null) expect(workoutSheetPlatform.kv.get(KEY)).toBe(bytes)
@@ -282,7 +287,7 @@ describe('sheet target safety with the real store', () => {
       expect(durable().workouts.map((w: any) => w.id)).toEqual(['B'])
     })
 
-  // Identical sessions must not keep an earlier account/profile decision alive.
+  // W14 D1 integration: identical sessions do not keep an earlier account/profile decision alive.
   it.each(['finish empty', 'finish early', 'finish menu', 'finish discard', 'save exit', 'discard exit'] as const)(
     '%s refuses a document profileId replacement', kind => {
       useStore.getState().setUser({ id: 'account-a', profileId: 'profile-a' })
@@ -317,7 +322,7 @@ describe('sheet target safety with the real store', () => {
     expect(JSON.stringify(state())).toBe(before); expect(workoutSheetPlatform.kv.get(KEY)).toBe(bytes)
     expect(useUI.getState().toastMsg).toContain('changed')
   })
-  it.each(['finish menu', 'discard exit'] as const)('%s rechecks profileId inside the real sync store producer without stamping replacement data', kind => {
+  it.each(['finish menu', 'discard exit'] as const)('%s rechecks profileId inside the real W07 producer without stamping replacement data', kind => {
     const old = openAction(kind), realUpdate = useStore.getState().update
     let before!: string, bytes: string | null = null
     vi.spyOn(useStore.getState(), 'update').mockImplementationOnce((mut, push) => {
@@ -389,7 +394,7 @@ describe('sheet target safety with the real store', () => {
 
 
   it.each(['delete', 'save exit', 'exercise note', 'set note'] as const)('%s identity bootstrap cannot stamp or bind replacement B', kind => {
-    install(null, [saved('A'), saved('B')]); editor('A', kind === 'delete')
+    install(null, [saved('A'), saved('B')]); editor('A', kind === 'delete'); legacyEditorIdentity()
     const realUpdate = useStore.getState().update
     let before: any; let bytes: string | null = null
     vi.spyOn(useStore.getState(), 'update').mockImplementationOnce((mut, push) => {
@@ -405,7 +410,7 @@ describe('sheet target safety with the real store', () => {
   })
 
   it('editor bootstrap refuses a reopened instance of the same saved id', () => {
-    install(null, [saved('A')]); editor('A', true)
+    install(null, [saved('A')]); editor('A', true); legacyEditorIdentity()
     const realUpdate = useStore.getState().update
     let before: any; let bytes: string | null = null
     vi.spyOn(useStore.getState(), 'update').mockImplementationOnce((mut, push) => {

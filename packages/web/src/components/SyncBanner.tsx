@@ -43,7 +43,8 @@ function useConnection() {
   const view = connectionView(sync, { online })
   // Signed out on the web, the sign-in screen is the whole app: it hears only that the server
   // ended the session, and that the changes are still here.
-  const show = !!view?.banner && (!!user || guest || status === 'auth') && (status !== 'pending' || waited)
+  const degraded = sync?.localDurability && sync.localDurability !== 'saved'
+  const show = !!view?.banner && (degraded || !!user || guest || status === 'auth') && (degraded || status !== 'pending' || waited)
   return { view, show, user, status }
 }
 
@@ -75,7 +76,8 @@ export default function SyncBanner() {
   const conn = useConnection()
   const { view, user, status } = conn
   const quiet = view?.tone === 'quiet'
-  const show = conn.show && on && (!quiet || local)
+  const degraded = useStore(s => s.sync?.localDurability && s.sync.localDurability !== 'saved')
+  const show = conn.show && (on || degraded) && (!quiet || local)
   const row = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {

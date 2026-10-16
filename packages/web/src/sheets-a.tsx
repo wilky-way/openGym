@@ -30,7 +30,7 @@ interface SheetRoutine { id: string; name: string; ex: { id: string }[] }
 interface WeightWeek { key: string; avg: number; n: number; delta: number | null; entries: WeighIn[] }
 type HevyPayload = Awaited<ReturnType<typeof importHevyData>>
 const S = () => useStore.getState().S
-// Shared sentinel boundary aborts before sync store stamps or saves.
+// Shared sentinel boundary aborts before W07 stamps or saves.
 const update = (mutate: (draft: StoreDocument) => void, valid: SheetTarget = captureSheetTarget()) =>
   guardedStoreUpdate(draft => valid(draft), mutate)
 

@@ -86,7 +86,7 @@ afterEach(() => { act(() => { mounted.splice(0).forEach(({ root, host }: any) =>
 
 const asked: any = (path: any) => mocks.api.mock.calls.filter(([p]: any) => p === path).length
 
-vi.mock('../src/lib/auth-actions',()=>({authenticate:async(exchange:any,valid:any)=>valid()?exchange():null}))
+vi.mock('../src/lib/auth-transactions',()=>({authenticate:async(exchange:any,valid:any)=>valid()?exchange():null}))
 describe('Settings with password sign-in',()=>{
  it('a signed-in browser gets a Password row in Account — and none on an instance without it',async()=>{
   const page=mount(<Settings page="account"/>);await settle();expect(titles(section(page,'Account'))).not.toContain('Password');expect(asked('/api/account/password')).toBe(0)

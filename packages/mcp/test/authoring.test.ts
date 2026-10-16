@@ -18,7 +18,7 @@ const call=(name:string,p:any={})=>tools.find(t=>t.name===name)!.handler(p)
 const create=()=>call('create_program_draft',{from:'scratch',definition:syntheticProgramme()})
 const full=(draft:any)=>call('get_program_draft',{draft_id:draft.draft_id,full:true})
 const patch=(d:any,ops:any[])=>call('patch_program_draft',{draft_id:d.draft_id,expected_rev:d.rev,ops})
-beforeEach(()=>{root=mkdtempSync(join(tmpdir(),'draft-authoring-synthetic-'));env={OPENGYM_AUTHORING_DIR:join(root,'authoring'),OPENGYM_ENABLE_PROGRAMME_AUTHORING:'1'};tools=createAuthoringTools({env,now:()=> '2026-10-13T00:00:00.000Z'})})
+beforeEach(()=>{root=mkdtempSync(join(tmpdir(),'m02-synthetic-'));env={OPENGYM_AUTHORING_DIR:join(root,'authoring'),OPENGYM_ENABLE_PROGRAMME_AUTHORING:'1'};tools=createAuthoringTools({env,now:()=> '2026-10-13T00:00:00.000Z'})})
 afterEach(()=>rmSync(root,{recursive:true,force:true}))
 test('phase 0 validates, creates, summarizes, lists and deletes with no API config',async()=>{
   expect((await call('validate_program',{definition:syntheticProgramme()})).level).toBe('Ready')

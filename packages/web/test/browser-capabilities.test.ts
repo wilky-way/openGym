@@ -74,7 +74,7 @@ describe('web scanning capability',()=>{
  })
  it('renders actual QR pixels onto a caller-supplied canvas',async()=>{
   const putImageData=vi.fn(),canvas:any={width:0,height:0,getContext:()=>({createImageData:(w:number,h:number)=>({data:new Uint8ClampedArray(w*h*4),width:w,height:h}),putImageData})}
-  const size=await renderQrToCanvas(canvas,'BROWSER-SYNTHETIC')
+  const size=await renderQrToCanvas(canvas,'W01-SYNTHETIC')
   expect(size).toBeGreaterThan(0);expect(canvas.width).toBe(size+4)
   expect(putImageData).toHaveBeenCalled()
   expect(await renderQrToCanvas(null,'')).toBe(0)

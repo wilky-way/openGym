@@ -46,3 +46,16 @@ it('retains a renewed token across actions and resets it when configured credent
  expect(seen.at(-1)).toBe('Bearer replacement-config')
  expect(process.env.OPENGYM_TOKEN).not.toBe('renewal-current')
 })
+
+it('set_training_max validates finite positive values and explicit units at the MCP boundary',()=>{
+ const tool=PROGRAMME_TOOLS.find(t=>t.name==='set_training_max')!,schema=z.object(tool.schema)
+ const p={cycle_id:'c',lift:'bench',value:100,unit:'kg',expected_rev:7,expected_wid:'epoch'}
+ expect(schema.safeParse(p).success).toBe(true)
+ for(const value of [0,-1,Infinity,NaN,'100'])expect(schema.safeParse({...p,value}).success).toBe(false)
+ expect(schema.safeParse({...p,unit:undefined}).success).toBe(false)
+})
+it('the legacy mutation helper cannot bypass the new max preview contract',async()=>{
+ const api=fakeApi()
+ await expect(mutateProgramme('set_training_max',{cycleId:'c',lift:'bench',value:220,unit:'lb',expectedRev:7,expectedWid:'epoch'},{env,fetcher:api.fetcher})).rejects.toMatchObject({code:'PREVIEW_REQUIRED'})
+ expect(api.calls).toHaveLength(0)
+})

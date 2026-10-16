@@ -6,7 +6,7 @@ const notDisabled = (value: string | undefined) => !/^(0|false|no|off)$/i.test(v
 const number = (value: string | undefined, fallback: number, min: number) => Math.max(min, +(value || fallback) || fallback)
 
 export interface ServerConfig {
-  port: number; host: string; dataDir: string; staticDir?: string
+  port: number; host: string; dataDir: string; staticDir?: string; basePath: string
   rpId: string; origin: string; rpName: string; secure: boolean
   setupToken?: string; adminUids: readonly string[]; inviteOnly: boolean; firstUserAdmin: boolean; allowGuest: boolean
   defaultLang: string; trustProxy: boolean; sessionDays: number
@@ -34,10 +34,13 @@ export function loadConfig(env: Environment = process.env, args: readonly string
   const port = +(flags.port ?? (env.PORT || 3000))
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('PORT must be an integer between 0 and 65535')
   const origin = env.ORIGIN || 'http://localhost:8080'
+  const basePath = env.BASE_PATH || ''
+  if (basePath && (!/^\/(?:[A-Za-z0-9_+.-]+\/)*[A-Za-z0-9_+.-]+$/.test(basePath) || basePath.split('/').some(part => part === '.' || part === '..'))) throw new Error('BASE_PATH must be an absolute path without escapes, dot segments or trailing slash')
   const exposure = env.EXPOSURE || 'private'
   if (exposure !== 'private' && exposure !== 'public') throw new Error('EXPOSURE must be private or public')
   const firstUserAdmin = enabled(env.FIRST_USER_ADMIN)
   const deviceTokens = enabled(env.DEVICE_TOKENS ?? '1')
+  if (env.OFFLOAD_RULE !== undefined && !/^(0|1|true|false|yes|no|on|off)$/i.test(env.OFFLOAD_RULE)) throw new Error('OFFLOAD_RULE must be copied from the existing installation as an explicit boolean value')
   if (exposure === 'public') {
     if (!deviceTokens) throw new Error('EXPOSURE=public requires DEVICE_TOKENS enabled')
     if (firstUserAdmin) throw new Error('FIRST_USER_ADMIN is forbidden with EXPOSURE=public')
@@ -50,7 +53,7 @@ export function loadConfig(env: Environment = process.env, args: readonly string
   if (language && !validLanguage) warn('DEFAULT_LANG is not a valid language tag — ignored')
   return {
     port, host: flags.host || env.HOST || '0.0.0.0', dataDir: flags['data-dir'] || env.DATA_DIR || '/data',
-    staticDir: flags['static-dir'] || env.STATIC_DIR || undefined,
+    basePath, staticDir: flags['static-dir'] || env.STATIC_DIR || undefined,
     rpId: env.RP_ID || 'localhost', origin, rpName: env.RP_NAME || 'openGym', secure: /^https:\/\//i.test(origin),
     adminUids: (env.ADMIN_UIDS || '').split(',').map(value => value.trim()).filter(Boolean),
     setupToken: setupToken || undefined,

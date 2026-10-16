@@ -30,14 +30,14 @@ beforeEach(() => {
   configurePlanSheetBindings('synthetic-version'); useUI.setState({ sheets: [], toastMsg: '' })
 })
 afterEach(() => { act(() => roots.splice(0).forEach(root => root.unmount())); document.body.innerHTML = ''; dispose(); vi.useRealTimers() })
-it.each(['edit', 'delete', 'repeat'])('real sheet bindings target the first history id on %s', kind => {
+it.each(['edit', 'delete', 'repeat'])('W20 real sheet bindings target the first history id on %s', kind => {
   workoutDetailSheet(useStore.getState().S.workouts[0]); const host = top(), history = JSON.stringify(useStore.getState().S.workouts)
   click(host, kind === 'edit' ? 'Edit workout' : kind === 'delete' ? 'Delete workout' : 'Repeat today')
   if (kind === 'delete') { click(top(), 'Delete'); expect(useStore.getState().S.workouts.map((w: any) => w.id)).toEqual(['second']) }
   else if (kind === 'edit') { expect(useStore.getState().S.active.editingWorkoutId).toBe('first'); expect(JSON.stringify(useStore.getState().S.workouts)).toBe(history) }
   else { expect(useStore.getState().S.active.entries[0].sets[0].w).toBe(20); expect(JSON.stringify(useStore.getState().S.workouts)).toBe(history) }
 })
-it.each(['edit', 'delete', 'repeat'])('composed %s refuses B’s colliding history ids', kind => {
+it.each(['edit', 'delete', 'repeat'])('W20 composed %s refuses B’s colliding history ids', kind => {
   workoutDetailSheet(useStore.getState().S.workouts[0]); const host = top()
   if (kind === 'delete') click(host, 'Delete workout')
   act(() => { useStore.getState().setUser({ id: 'B' }); useStore.getState().replaceState(doc(), false) })

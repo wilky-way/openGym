@@ -1,0 +1,21 @@
+{
+  "name": "gym-api",
+  "version": "1.4.1",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "start": "bun server.js",
+    "test": "bun scripts/test.mjs",
+    "test:node": "node --test --test-concurrency=4 test/*.test.js"
+  },
+  "dependencies": {
+    "@simplewebauthn/server": "^13.1.1",
+    "web-push": "^3.6.7"
+  },
+  "engines": {
+    "bun": ">=1.4.1",
+    "node": ">=26.8.1"
+  }
+}

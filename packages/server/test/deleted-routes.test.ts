@@ -12,7 +12,7 @@ test('every deleted route remains JSON 404, including attempts to remount it', a
     expect(await response.text()).toBe('{"error":"not found"}')
     expect(response.headers.get('content-type')).toBe('application/json')
     expect(response.headers.get('cache-control')).toBe('no-store')
-    expect(response.headers.get('access-control-allow-origin')).toBeNull() // Release regressions configured-origin allowlist
+    expect(response.headers.get('access-control-allow-origin')).toBeNull() // I03 configured-origin allowlist
   }
   expect((await fetch(`${h.api}/api/health`, { method: 'HEAD' })).status).toBe(404)
   expect((await fetch(`${h.api}/api/health/`)).status).toBe(404)

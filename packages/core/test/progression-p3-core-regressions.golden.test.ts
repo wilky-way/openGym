@@ -8,7 +8,7 @@ import { parse } from '@babel/parser'
 const linear: LinearRule = { id: 'linear', kind: 'linear', increment: 5, unit: 'lb', every: { sessions: 1 }, success: 'all-sets-all-reps', rounding }
 const loads = (x: ReturnType<typeof p3Input>, index?: ReturnType<typeof createExerciseIndex>) => evaluate(x, {}, index).weeks[0]!.slots[0]!.sets.map(s => s.load)
 
-describe('adaptive handler goldens against corrected load replay semantics', () => {
+describe('P3 handler goldens against corrected P2 replay semantics', () => {
   it('inert dbLoadFor index edge is forwarded in the AST (helper reads explicit mode only)', () => {
     const ast = parse(readFileSync(new URL('../src/progression-engine/adaptive-load.ts', import.meta.url), 'utf8'), { sourceType: 'module', plugins: ['typescript'] })
     const calls: any[] = []

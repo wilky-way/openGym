@@ -19,7 +19,7 @@ const cborText = (s: string) => Buffer.concat([cborHead(3, Buffer.byteLength(s))
 const cborBytes = (b: Buffer) => Buffer.concat([cborHead(2, b.length), b])
 let keyNumber = 0
 /** Fixed seeds derive synthetic P-256 keys; none of this material is a real credential. */
-export function softPasskey(seed = `passkeys-software-authenticator-${++keyNumber}`) {
+export function softPasskey(seed = `S13-software-authenticator-${++keyNumber}`) {
   const d = sha(seed), ecdh = crypto.createECDH('prime256v1')
   ecdh.setPrivateKey(d)
   const point = ecdh.getPublicKey(), x = point.subarray(1, 33), y = point.subarray(33)

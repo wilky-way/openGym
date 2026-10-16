@@ -106,7 +106,7 @@ export function installProgression(app: GymApp, data: DataService, auth?: AuthSe
     // Apply has no client cutoff. A declared preview cutoff can look backward,
     // but neither persisted nor hypothetical future logs can move today's load.
     const serverToday=today(), asOf=action==='preview' && typeof body.asOf==='string' && body.asOf<serverToday ? body.asOf : serverToday
-    const result=(action==='preview' ? preview : evaluate)({definition,cycle:cycle as EngineInput['cycle'],logs:accepted.logs,profile:profile(state),weeks,asOf,now:serverToday}, {}, index)
+    const result=(action==='preview' ? preview : evaluate)({definition,cycle:cycle as EngineInput['cycle'],historyCycles:records(programmes.cycles),logs:accepted.logs,profile:profile(state),weeks,asOf,now:serverToday}, {}, index)
     const warnings=new Map([...result.warnings,...accepted.warnings].map(w=>[JSON.stringify(w),w]))
     result.warnings=[...warnings].sort(([a],[b])=>a<b ? -1 : a>b ? 1 : 0).map(([,w])=>w)
     engineOk(result)
@@ -148,7 +148,7 @@ export function installProgression(app: GymApp, data: DataService, auth?: AuthSe
     if (slots.length && Object.keys(engineTm).length && JSON.stringify(record(cycle!.tm))!==JSON.stringify(tm)) update(cycle!,'tm',tm,slots[0]!.ref,[])
     if (body.dryRun===true || !changed.length) return json(200,{stateRev:rev,wid:state._wid ?? null,changed,warnings:result.warnings})
     try {
-      data.compareAndWrite(uid,{state,baseRev:body.expectedRev,baseWid:body.expectedWid,stamped:true})
+      data.compareAndWrite(uid,{state,baseRev:body.expectedRev,baseWid:body.expectedWid,stamped:true},session)
     } catch(error) {if(error instanceof ApiError && error.status===409) throw new ApiError(409,'conflict',{...error.extra,code:'REV_CONFLICT'});throw error}
     const committed=data.rev(uid)
     return json(200,{stateRev:committed.rev,wid:committed.wid,changed,warnings:result.warnings})

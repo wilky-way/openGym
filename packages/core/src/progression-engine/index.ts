@@ -15,10 +15,11 @@ import type { Profile } from '../progression'
 import { rpeLoad } from './rpe'
 import { adaptiveTimeline } from './adaptive-tm'
 import { applyStall } from './stall'
+import { continuityExposures, compatibleLoadContinuity } from './continuity'
 export { rpeLoad } from './rpe'
 export { adaptiveTimeline } from './adaptive-tm'
 export { applyStall, stallEvents } from './stall'
-/** Volume/deload extensions coexist with the built-in adaptive load handlers. */
+/** P4 can add volume/deload phases while the built-in P3 handlers remain installed. */
 export const p3Extensions: EngineExtensions = { load: rpeLoad, timeline: adaptiveTimeline, stall: applyStall }
 import { volumeSetCount } from './volume'
 import { scheduledDeload, progressionExposures } from './deload'
@@ -33,7 +34,7 @@ export { rampSlots, distributeSets, missedRepFloor, slotKey, volumeSetCount } fr
 export { scheduledDeload, progressionExposures } from './deload'
 export { preview, type PreviewInput } from './preview'
 
-/** Pure evaluation: extensions supply adaptive/volume phases; each load rounds exactly once, last. */
+/** Pure evaluation; extensions implement P3/P4 phases, every load rounds exactly once last. */
 export function evaluate(input: EngineInput, extensions: EngineExtensions = {}, index: ExerciseIndex = EXIDX): EngineResult {
   extensions={...p3Extensions,...extensions}
   try { return evaluateChecked(input,extensions,index) } catch (error) {
@@ -66,6 +67,7 @@ function evaluateChecked(input: EngineInput, extensions: EngineExtensions, index
   result.tm=buildTmTimeline(input,slots,exposures,result.warnings)
   if (extensions.timeline) result.tm=extensions.timeline(timelineInput,slots,exposures,result.tm,index)
   else if ((timelineInput.definition as OpenGymProgrammeDefinition).progressionRules?.some(r=>r.kind==='amrap-tm' || r.kind==='stall' && r.appliesTo==='tm')) result.warnings.push({code:'rule.unsupported',message:'Install the TM timeline evaluator before applying AMRAP or TM stall rules.'})
+  let liveHistory: {input: EngineInput; exposures: typeof exposures; warnings: EngineResult['warnings']} | undefined
   for (const week of [...new Set(input.weeks)].sort((a,b)=>a-b)) {
     const out: EvaluateResult['weeks'][number]={index:week,slots:[]}
     for (const authored of slots.filter(s=>s.ref.week===week)) {
@@ -81,8 +83,18 @@ function evaluateChecked(input: EngineInput, extensions: EngineExtensions, index
         (result.slotErrors ??= []).push({code:'UNSUPPORTED_REPS',slot:authored.ref})
         continue
       }
-      const prior=exposures.filter(e=>sameSeries(e.ref,authored.ref) && (!date || week >= (input.cycle?.weekIndex ?? week) || e.date<date))
-      const context=(rule:ProgressionRule): RuleContext=>({input,definition:d,authored,rule,exposures:prior,allExposures:exposures,tm:result.tm,index,warnings:result.warnings})
+      // W29's separate prescriptionAsOf remains on the spread input. Only the
+      // opted-in compatible load context gets the wider exposure date; shared TM
+      // replay and ordinary slots retain the historical preview cutoff.
+      const live=input.communityPreviewHistory && week===input.cycle?.weekIndex && compatibleLoadContinuity(d,authored)
+      if (live && !liveHistory) {
+        const widerInput={...input,...input.communityPreviewHistory}, warnings: EngineResult['warnings']=[]
+        liveHistory={input:widerInput,exposures:progressionExposures(d,replayExposures(widerInput,slots,warnings)),warnings}
+      }
+      const historyInput=live ? liveHistory!.input : input, historyExposures=live ? liveHistory!.exposures : exposures
+      if (live) result.warnings.push(...liveHistory!.warnings.filter(w=>w.ref && w.ref.week===authored.ref.week && sameSeries(w.ref,authored.ref)))
+      const prior=continuityExposures(historyInput,authored,historyExposures).filter(e=>(!date || week >= (input.cycle?.weekIndex ?? week) || e.date<date))
+      const context=(rule:ProgressionRule): RuleContext=>({input:historyInput,definition:d,authored,rule,exposures:prior,allExposures:historyExposures,tm:result.tm,index,warnings:result.warnings})
       let count=authoredCount(authored)
       const slotWhy: EvaluateResult['weeks'][number]['slots'][number]['why']=[]
       for (const r of attached.filter(r=>r.kind==='volume-ramp' || r.kind==='scheduled-deload')) {
@@ -120,7 +132,7 @@ function evaluateChecked(input: EngineInput, extensions: EngineExtensions, index
   assertFinite(result)
   return canonical(result) as EngineResult
 }
-/** Rule handlers return ordinary-direction loads; replay reflects their deltas for assistance. */
+/** P3/P4 return ordinary-direction loads; P2 reflects their deltas for assistance. */
 function extensionLoads(context: RuleContext, sets: PrescribedSet[], handler: NonNullable<EngineExtensions['stall']>): PrescribedSet[] {
   const before=sets.map(s=>s.load)
   const changed=handler(context,sets)

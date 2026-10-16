@@ -12,7 +12,7 @@ import { rpeRule } from '../../core/test/fixtures/synthetic-p3'
 const apply='/api/progression/apply', preview='/api/progression/preview'
 const linear={id:'linear',kind:'linear',increment:5,unit:'lb',every:{sessions:1},success:'all-sets-all-reps',rounding:{increment:5,mode:'nearest',usePlates:false}}
 const rows=(state:any)=>buildSessionEntries(state,state.routines[1],createExerciseIndex(state.customEx))[0]!.sets
-describe('hand-computed wire goldens',()=> {
+describe('P5 r1 hand-computed wire goldens',()=> {
   test('rule-free percentage cycle is byte-exact, with or without frozen seeds',async()=> {
     for(const seeded of [false,true]) {
       const h=progressionServer(),s=fixture(),c=s.programmes.cycles[0],d=c.snapshot

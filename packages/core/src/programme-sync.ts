@@ -41,7 +41,7 @@ const records = <T extends Row>(v: unknown, key = 'id'): T[] => {
 export function normaliseProgrammes(raw: unknown): NormalProgrammes {
   const p = map(raw) ? raw : {}
   return {
-    version: 1, fork: 'opengym/1', ...p,
+    version: 1, fork: 'wilky/1', ...p,
     definitions: records<Definition>(p.definitions),
     cycles: records<Cycle>(p.cycles).map(c => ({ ...c, occurrences: records<Occurrence>(c.occurrences, 'instanceId') })),
   }
@@ -106,6 +106,11 @@ export function mergeProgrammes(a: unknown, b: unknown, workouts: Log[], mergeEn
       merged.status = terminal.activationConflict ? 'archived' : terminal.status
       if (terminal.activationConflict) merged.activationConflict = terminal.activationConflict
       merged._f = { ...merged._f, status: Math.max(Number(merged._f?.status) || 0, Number(terminal._f?.status) || 0) }
+    }
+    // Audit events are immutable identities: a concurrent append must never be LWW'd away.
+    if (Array.isArray(c.maxAdjustments) || Array.isArray(d.maxAdjustments)) {
+      merged.maxAdjustments = pairs<Row>(c.maxAdjustments,d.maxAdjustments,'id',(a,b)=>JSON.stringify(a) < JSON.stringify(b) ? clone(a) : clone(b))
+        .sort((a,b)=>String(a.effectiveOn).localeCompare(String(b.effectiveOn)) || Number(a.recordedAt)-Number(b.recordedAt) || String(a.id).localeCompare(String(b.id)))
     }
     merged.occurrences = pairs<Occurrence>(c.occurrences, d.occurrences, 'instanceId', mergeEntry)
     return merged

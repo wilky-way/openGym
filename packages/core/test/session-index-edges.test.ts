@@ -3,12 +3,16 @@ import { parse } from '@babel/parser'
 import { describe, expect, it } from 'vitest'
 
 // Semantically inert edges keep the explicit forwarding contract. Their output-equivalence
-// Exercise each index forwarding edge with output assertions and deletion probes.
+// proofs and deletion probes are recorded per site in K14-RESULT's mutation table.
 const inert: [string, string, number][] = [
-  ['session-start', 'dbLoadFor', 76],
+  ['session-start', 'dbLoadFor', 80],
   ['session-routines', 'setsFromRows', 76],
   ['session-routines', 'defaultConfig', 76],
-  ['session-repeat', 'setsFromRows', 39],
+  ['session-repeat', 'setsFromRows', 45],
+  // Community whitelist has no muscle-scope rules; its catalogue is supplied explicitly.
+  // These two trailing-index arguments are inert for this admitted subset.
+  ['community-conversion', 'validateProgression', 231],
+  ['community-conversion', 'validateProgrammeDefinition', 233],
 ]
 interface Call { name: string; line: number; last: unknown }
 function calls(value: unknown, found: Call[] = []): Call[] {
@@ -24,7 +28,7 @@ function calls(value: unknown, found: Call[] = []): Call[] {
   for (const [key, child] of Object.entries(node)) if (!['loc', 'start', 'end', 'extra'].includes(key)) calls(child, found)
   return found
 }
-describe('inert index forwarding edges', () => {
+describe('K14 inert index forwarding edges', () => {
   it.each(inert)('%s %s at line %i retains its explicit index', (module, name, line) => {
     const source = readFileSync(new URL(`../src/${module}.ts`, import.meta.url), 'utf8')
     const found = calls(parse(source, { sourceType: 'module', plugins: ['typescript'] }))

@@ -6,7 +6,7 @@ import { workoutFitMessages, workoutFit, encodeFit, MSG, CATEGORY } from '../src
 import { workoutText } from '../src/workout-text'
 import { workoutCardModel } from '../src/workout-card'
 
-// All custom-index assertions use native exercise catalogue/set kinds/history/analytics outputs.
+// All custom-index assertions use native K03/K05/K06/K09 outputs.
 const customs = [
   { id: 'cx-assist', n: 'Synthetic assisted pullup', bp: 'back', eq: 'leverage machine', assisted: true, custom: true },
   { id: 'cx-body', n: 'Synthetic hold', bp: 'chest', eq: 'body weight', custom: true },
@@ -25,7 +25,7 @@ const w: ExportWorkout = { id: 'synthetic', d: '2026-10-09', start: 179156520000
 beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(new Date('2026-10-09T12:00:00Z')) })
 afterEach(() => vi.useRealTimers())
 
-describe('custom exercise index at every dependency call site', () => {
+describe('K16 custom exercise index at every dependency call site', () => {
   it('buildPlanBundle forwards cleanEx mode lookup and uses custom bodyweight equipment', () => {
     const s = source(), b = buildPlanBundle(s, 'Synthetic', index)
     expect(b.routines[0]!.ex[1]).not.toHaveProperty('bodyweight')

@@ -76,7 +76,7 @@ describe('bounded export readers (intentional legacy safety exception)', () => {
   })
 })
 
-// Security regression: valid records never authorize a partial/malformed export.
+// I03: valid records never authorize a partial/malformed export.
 it.each(['<', '<Record', 'trailing garbage', '<Second/>', '<!--', '</Wrong>', '<?broken'])('rejects malformed Health XML trailing input %s', async suffix => {
   configureExportFileReader({readChunks: async function* () {const encoder = new TextEncoder(); yield encoder.encode(`<HealthData>${weight('2026-01-01', 80)}</HealthData>`); yield encoder.encode(suffix)}, readText: async () => ''})
   await expect(readImportExport(new File([], 'export.xml'), {}, index)).rejects.toThrow(/XML/)

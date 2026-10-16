@@ -5,9 +5,10 @@ import { sameSeries, finite, weekDate, cmp } from './replay'
 import { addDays, stallEvents } from './stall'
 import { buildWhy } from './why'
 import { tmAt } from './tm'
-import { convertWeightPrecise } from './units'
+import { isProgrammeDate } from '../programme-calendar'
+import { InvalidLoadError, convertWeightPrecise } from './units'
 
-interface Event { at: string; order: number; lift: string; change: 'delta' | 'factor' | 'repeat'; amount: number; why: Why; restoreAt?: string }
+interface Event { at: string; order: number; lift: string; change: 'delta' | 'factor' | 'repeat' | 'set'; amount: number; why: Why; restoreAt?: string; restore?: boolean }
 export function adaptiveTimeline(input: EngineInput, slots: AuthoredSlot[], exposures: Exposure[], seed: TmTimeline): TmTimeline {
   const definition = input.definition as OpenGymProgrammeDefinition
   const rules = new Map<string, ProgressionRule>((definition.progressionRules ?? []).map(r => [r.id, r as ProgressionRule]))
@@ -44,16 +45,27 @@ export function adaptiveTimeline(input: EngineInput, slots: AuthoredSlot[], expo
       ...(action.kind === 'deload' ? { restoreAt: addDays(event.at, action.weeks * 7) } : {}),
       why: buildWhy(event.rule.id, 'stall', { lift, failures: event.failures, after: event.rule.after, action: action.kind, appliesTo: 'tm', at: event.at, pct: action.kind === 'reset' ? action.pct : null, loadFactor: action.kind === 'deload' ? action.loadFactor : null, weeks: action.kind === 'deload' ? action.weeks : null }) })
   }
+  const adjustments = input.cycle?.maxAdjustments ?? []
+  if (!Array.isArray(adjustments) || adjustments.some(event=>!event || typeof event.id!=='string' || !event.id || typeof event.lift!=='string' || !event.lift || !isProgrammeDate(event.effectiveOn) || !Number.isSafeInteger(event.recordedAt) || event.recordedAt<0 || typeof event.value!=='number' || !Number.isFinite(event.value) || event.value<=0 || !['lb','kg'].includes(event.unit))) throw new InvalidLoadError()
+  for (const [order, event] of [...adjustments].sort((a,b)=>a.recordedAt-b.recordedAt || cmp(a.id,b.id)).entries()) {
+    events.push({at:event.effectiveOn, order:Number.MAX_SAFE_INTEGER, lift:event.lift, change:'set', amount:convertWeightPrecise(event.value,event.unit,definition.unit),
+      why:buildWhy(event.id,'authored',{source:'manual-max',recordedAt:event.recordedAt,sequence:order,reason:event.reason,unit:event.unit})})
+  }
   const out = structuredClone(seed)
   // Dynamic restores carry the original reduction, so later bumps survive unchanged.
   while (events.length) {
-    events.sort((a, b) => cmp(a.at, b.at) || a.order - b.order || cmp(a.why.ruleId, b.why.ruleId))
+    events.sort((a, b) => cmp(a.at, b.at) || a.order - b.order || Number(a.why.inputs.sequence ?? 0) - Number(b.why.inputs.sequence ?? 0) || cmp(a.why.ruleId, b.why.ruleId))
     const event = events.shift()!, before = tmAt(out, event.lift, event.at)
-    if (before === null) continue
-    const value = event.change === 'factor' ? before * event.amount : event.change === 'delta' ? before + event.amount : before
-    out[event.lift]!.push({ value, at: event.at, why: buildWhy(event.why.ruleId, event.why.kind, { ...event.why.inputs, before, value }) })
-    if (event.restoreAt) events.push({ at: event.restoreAt, order: -1, lift: event.lift, change: 'delta', amount: before - value,
-      why: buildWhy(event.why.ruleId, 'stall', { ...event.why.inputs, action: 'restore', at: event.restoreAt, restored: before - value }) })
+    let cancelledRestores = 0
+    if (event.change === 'set') for (let i=events.length-1;i>=0;i--) {
+      if (events[i]!.restore && events[i]!.lift === event.lift) { events.splice(i,1);cancelledRestores++ }
+    }
+    if (before === null && event.change !== 'set') continue
+    const value = event.change === 'set' ? event.amount : event.change === 'factor' ? before! * event.amount : event.change === 'delta' ? before! + event.amount : before!
+    if (!Object.hasOwn(out,event.lift)) Object.defineProperty(out,event.lift,{value:[],enumerable:true,writable:true,configurable:true})
+    out[event.lift]!.push({ value, at: event.at, why: buildWhy(event.why.ruleId, event.why.kind, { ...event.why.inputs, before, value, ...(cancelledRestores ? {cancelledRestores} : {}) }) })
+    if (event.restoreAt) events.push({ at: event.restoreAt, order: -1, lift: event.lift, change: 'delta', amount: before! - value, restore: true,
+      why: buildWhy(event.why.ruleId, 'stall', { ...event.why.inputs, action: 'restore', at: event.restoreAt, restored: before! - value }) })
   }
   return out
 }

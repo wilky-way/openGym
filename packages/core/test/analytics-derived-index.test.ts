@@ -15,7 +15,7 @@ const customs = [
 const index = createExerciseIndex(customs)
 const w: AnalyticsWorkout = { start: NOW, bw: 80, entries: [{ id: 'ix-assisted', sets: [{ done: true, w: 20, r: 5 }] }, { id: 'ix-load', sets: Array.from({ length: 8 }, () => ({ done: true, w: 100, r: 5 })) }] }
 
-describe('caller-owned exercise indexes', () => {
+describe('K11 caller-owned exercise indexes', () => {
   it('forwards custom assistance into session anchors and custom metadata into both recovery scans', () => {
     const anchors = anchorsByWorkout([w], {}, index).get(w)!
     expect(anchors.has('ix-assisted')).toBe(false)

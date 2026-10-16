@@ -1,4 +1,4 @@
-// design safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
+// GM safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
 import './workout-sheet-environment'
 // @vitest-environment happy-dom
 // The note sheet is new JSX and nothing else mounts it, so a bad hook order, a missing import or

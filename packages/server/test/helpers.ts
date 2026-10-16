@@ -10,7 +10,7 @@ import type { AppServices } from '../src/app'
 const resources: (() => void | Promise<void>)[] = []
 afterEach(async () => { for (const dispose of resources.splice(0).reverse()) await dispose() })
 export function start(env: Environment = {}, services: AppServices = {}) {
-  const dataDir = mkdtempSync(join(tmpdir(), 'gym-http-'))
+  const dataDir = mkdtempSync(join(tmpdir(), 'gym-s01-'))
   const log: string[] = []
   const config = loadConfig({ PORT: '0', HOST: '127.0.0.1', DATA_DIR: dataDir, ORIGIN: 'http://localhost:8080', INVITE_ONLY: '0', ...env }, [], line => log.push(line))
   const server = startServer(config, { log: line => log.push(line), ...services }, line => log.push(line))
@@ -39,7 +39,7 @@ const dirs: string[] = []
 
 /** A fresh temporary data directory, removed after the test. */
 export function scratchDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'opengym-storage-'))
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'opengym-s02-'))
   dirs.push(dir)
   return dir
 }

@@ -92,9 +92,9 @@ test('repository IDs are opaque SQL keys and reject decoded separators or dot-on
       expect(() => h.publish(definition(id))).toThrow('bad request')
     }
     expect(assertLibraryId('__proto__')).toBe('__proto__')
-    expect(privateDefinition(definition([String.fromCharCode(98,98,109), 'synthetic'].join('-')))).toBe(true)
-    expect(privateDefinition(definition([String.fromCharCode(115,98,115), 'synthetic'].join('-')))).toBe(true)
-    expect(privateDefinition(definition([String.fromCharCode(115,98,115), 'synthetic'].join('-')))).toBe(true)
+    expect(privateDefinition(definition(['bbm', 'synthetic'].join('-')))).toBe(true)
+    expect(privateDefinition(definition(['sbs', 'synthetic'].join('-')))).toBe(true)
+    expect(privateDefinition(definition(['SBS', 'synthetic'].join('-')))).toBe(true)
     expect(listLibrary(h.db, 'p').items).toEqual([])
   } finally { h.db.close() }
 })

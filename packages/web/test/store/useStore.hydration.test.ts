@@ -54,7 +54,7 @@ describe('legacy gym_state_v1 hydration', () => {
     expect(isAssisted('custom-assisted', initialStoreState(memoryKV()).index)).toBe(false)
     expect(kv.get('gym_state_v1')).toContain('custom-assisted')
   })
-  it('refreshes the owned index on the initializer update seam and permits sync store action replacement', () => {
+  it('refreshes the owned index on the initializer update seam and permits W07 action replacement', () => {
     initializeStore({ kv } as unknown as Platform)
     useStore.getState().update(S => { S.customEx.push({ id: 'custom-assisted', n: 'New', assisted: true }) }, false)
     expect(isAssisted('custom-assisted', useStore.getState().index)).toBe(true)

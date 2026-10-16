@@ -68,7 +68,7 @@ test('written files keep the owner-only mode after a rewrite', () => {
 
 // Rewritten from legacy's "server.js and media.js write through it" (PORTING-RULES R4: a source-text assertion
 // rewritten against the new path). The storage writers are in this package; server.js and media.js arrive with
-// Authentication and data transport tests carry their own copy of this assertion.
+// S03/S04 and carry their own copy of this assertion there.
 test('storage writers write through atomicWrite, never a bare writeFileSync', () => {
   const src = path.join(import.meta.dir, '..', 'src', 'storage')
   for (const name of ['mirror.ts', 'state.ts', 'backup.ts']) {

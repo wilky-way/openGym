@@ -46,7 +46,7 @@ beforeEach(()=>{
  Object.assign(globalThis,{IS_REACT_ACT_ENVIRONMENT:true});vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-12T12:00:00-05:00'))
  roots=[];hosts=[];locks=[];requests=[];holdUser=false;document.body.innerHTML='';setNav(()=>{})
  const initial={...clone(DEF),weighIn:false,sound:false,routines:[routine()],workouts:[saved()],activeEquipId:'profile',gymCards:[{id:'card',label:'Gym',value:'synthetic',fmt:'qrcode'}]}
- map=new Map([[KEY,JSON.stringify(initial)],['gym_owner','A'],['gym_user',JSON.stringify({id:'A',name:'the operator',admin:true})]])
+ map=new Map([[KEY,JSON.stringify(initial)],['gym_owner','A'],['gym_user',JSON.stringify({id:'A',name:'Alex',admin:true})]])
  const kv={get:(key:string)=>map.get(key)??null,set:(key:string,value:string)=>{map.set(key,value)},remove:(key:string)=>{map.delete(key)},subscribe:()=>()=>{}}
  const browser=createBrowserPlatform({buildSha:'synthetic-W23-sha'})
  Object.defineProperty(navigator,'locks',{configurable:true,value:{request:async(name:string,options:any,callback:any)=>{locks.push([name,options]);return callback({name})}}})
@@ -94,11 +94,11 @@ it('keeps the logged-today tick after a program session is finished',()=>{
 it('keeps active workout Resume in the stock row even while the program is paused',()=>{
  useStore.getState().update(s=>{activate(s,definition,{cycleId:'c',today:'2026-10-12'});s.active={id:'flight',name:'D3 active',start:Date.now(),entries:[]};pause(s,'c','2026-10-12')});const host=mount(<Home/>);expect(host.querySelector('.today-row .ttl')!.textContent).toContain('D3 active');expect(host.querySelector('.today-row .tag')!.textContent).toBe('Resume');expect(host.querySelector('.program-today')!.textContent).toContain('Pick up at week 1')
 })
-it('pending session button cannot start before the program bound',()=>{
+it('F4 pending session button cannot start before the program bound',()=>{
  useStore.getState().update(s=>{startProgramme(s,definition,{cycleId:'future',today:'2026-10-12',startsOn:'2026-10-19'})});programmeSessionSheet(useStore.getState().S.programmes.cycles[0].occurrences[0]);click(top(),'Start');expect(useStore.getState().S.active).toBeNull();expect(useUI.getState().toastMsg).toContain('2026-10-19')
 })
 
-for(const transition of ['account','late account','late replace','replace','unit','profile','server','away and back']) for(const action of ['delete','finish','skip','card'])it(`${action}: ${transition} leaves real sync store bytes and index unchanged`,()=>{
+for(const transition of ['account','late account','late replace','replace','unit','profile','server','away and back']) for(const action of ['delete','finish','skip','card'])it(`${action}: ${transition} leaves real W07 bytes and index unchanged`,()=>{
  if(action==='delete')useStore.getState().update(s=>{editCompletedSession(s,s.workouts[0]);s.active.entries[0].sets[0].done=false})
  if(action==='finish')useStore.getState().update(s=>{s.active=active()})
  if(action==='skip')useStore.getState().update(s=>{s.weighIn=true;s.active=null})
@@ -110,7 +110,7 @@ for(const transition of ['account','late account','late replace','replace','unit
  let before:ReturnType<typeof snapshot>,late:(()=>ReturnType<typeof snapshot>)|undefined
  if(transition==='late account')late=interceptSwitch()
  else if(transition==='late replace')late=interceptSwitch(replace)
- else {if(transition==='account')switchB();if(transition==='replace')replace();if(transition==='unit')useStore.getState().update(s=>{s.unit='lb'},false);if(transition==='profile')useStore.getState().update(s=>{s.activeEquipId='other'},false);if(transition==='server')map.set('gym_server_url','https://synthetic.example');if(transition==='away and back'){const S=clone(useStore.getState().S);switchB();useStore.getState().setUser({id:'A',name:'the operator'},{adopt:{alwaysAsk:true}});useStore.getState().replaceState(S,false)}}
+ else {if(transition==='account')switchB();if(transition==='replace')replace();if(transition==='unit')useStore.getState().update(s=>{s.unit='lb'},false);if(transition==='profile')useStore.getState().update(s=>{s.activeEquipId='other'},false);if(transition==='server')map.set('gym_server_url','https://synthetic.example');if(transition==='away and back'){const S=clone(useStore.getState().S);switchB();useStore.getState().setUser({id:'A',name:'Alex'},{adopt:{alwaysAsk:true}});useStore.getState().replaceState(S,false)}}
  before=snapshot();click(host,text);unchanged(late?late():before)
 })
 for(const action of ['delete','finish','skip','card'])it(`${action}: a same-account ordinary settings edit permits the real action`,()=>{
@@ -121,14 +121,14 @@ for(const action of ['delete','finish','skip','card'])it(`${action}: a same-acco
  const host=top();useStore.getState().update(s=>{s.restSec=105},false);click(host,action==='delete'?'Delete workout':action==='finish'?'Finish and save':action==='skip'?'Start without weighing in':'Save card')
  const S=useStore.getState().S;expect(S.restSec).toBe(105);expect(map.get(KEY)).toBe(JSON.stringify(S));if(action==='delete')expect(S.workouts).toEqual([]);if(action==='finish')expect(S.active).toBeNull();if(action==='skip')expect(S.active.routineIds).toEqual(['r']);if(action==='card')expect(useUI.getState().toastMsg).toBe('Card updated')
 })
-for(const kind of ['confirm','menu'])it(`${kind} receives its original captured target at the final producer`,()=>{
+for(const kind of ['confirm','menu'])it(`W11 ${kind} receives its original captured target at the final producer`,()=>{
  let callbackTarget:any;sheets[kind==='confirm'?'confirmSheet':'menuSheet'](kind==='confirm'?{onConfirm:valid=>{callbackTarget=valid;createSheetUpdater(valid!)(s=>{s.unknown='written'})}}:{items:[{label:'Write',onClick:valid=>{callbackTarget=valid;createSheetUpdater(valid!)(s=>{s.unknown='written'})}}]});const host=top(),late=interceptSwitch();click(host,kind==='confirm'?'Confirm':'Write');expect(typeof callbackTarget).toBe('function');unchanged(late())
 })
-it('editor target refuses a reopened history editor of the same saved workout',()=>{
+it('W11 editor target refuses a reopened K15 editor of the same saved workout',()=>{
  sheets.workoutDetailSheet(useStore.getState().S.workouts[0]);click(top(),'Edit workout');const first=useStore.getState().S.active.editBase.sheetInstanceId,target=captureSheetTarget()
  useStore.getState().update(s=>{s.active=null},false);sheets.workoutDetailSheet(useStore.getState().S.workouts[0]);click(top(),'Edit workout');expect(useStore.getState().S.active.editBase.sheetInstanceId).not.toBe(first);const before=snapshot();expect(createSheetUpdater(target)(s=>{s.active=null})).toBe(false);unchanged(before)
 })
-it('retained Today direct Start cannot dispatch A’s routine after switching to B',()=>{
+it('F7 retained Today direct Start cannot dispatch A’s routine after switching to B',()=>{
  useStore.getState().update(s=>{activate(s,definition,{cycleId:'c',today:'2026-10-12'});s.active=null;s.weighIn=false});const host=mount(<ProgrammeToday/>),el=button(host,'Start'),props=(el as any)[Object.keys(el).find(k=>k.startsWith('__reactProps'))!],start=props.onClick
  switchB();const before=snapshot();act(()=>start());unchanged(before);expect(useUI.getState().sheets).toEqual([])
 })
@@ -141,8 +141,8 @@ it('documentInstance survives hydration, changes on replacement, and stays on up
 it('boot binds exclusive auth and shared sync leases to the same browser carrier',async()=>{
  const transaction=await useStore.getState().beginAuthTransaction!();transaction.cancel();await useStore.getState().pullState();expect(locks.map(x=>x[1].mode)).toContain('exclusive');expect(locks.map(x=>x[1].mode)).toContain('shared');expect(new Set(locks.map(x=>x[0])).size).toBe(1)
 })
-it('boot binds real authentication dialogs',()=>{expect(()=>authUiServices().menuSheet({title:'Account',items:[{icon:'info',label:'Inspect',onClick(){}}]})).not.toThrow();expect(top().textContent).toContain('Account')})
-it('shell print uses the plan sharing script-disabled sandbox',()=>{printWholePlan();const iframe=document.querySelector('iframe')!;expect(iframe).toBeTruthy();expect(iframe.getAttribute('sandbox')).toBe('allow-same-origin allow-modals');expect(iframe.getAttribute('sandbox')).not.toContain('allow-scripts')})
+it('boot binds W21’s real authentication dialogs',()=>{expect(()=>authUiServices().menuSheet({title:'Account',items:[{icon:'info',label:'Inspect',onClick(){}}]})).not.toThrow();expect(top().textContent).toContain('Account')})
+it('shell print uses the W13 script-disabled sandbox',()=>{printWholePlan();const iframe=document.querySelector('iframe')!;expect(iframe).toBeTruthy();expect(iframe.getAttribute('sandbox')).toBe('allow-same-origin allow-modals');expect(iframe.getAttribute('sandbox')).not.toContain('allow-scripts')})
 for(const path of ['/home','/checkin','/plan','/plan/r/r','/workout','/stats','/history','/library','/muscles','/structural-balance','/measurements','/settings',...['workout','advanced','alerts','units','equipment','look','plan','data','about','account','reminders'].map(p=>'/settings/'+p),'/admin'])it(`the real shell reaches ${path} without an unbound service`,async()=>{
  if(path==='/workout')useStore.getState().update(s=>{s.active=active()});const host=mount(<Shell/>,path);await act(async()=>{for(let i=0;i<8;i++)await Promise.resolve()});expect(host.textContent).not.toMatch(/Something went wrong|services.*configured|Try again/);expect(host.textContent!.length).toBeGreaterThan(5);if(path==='/settings/about')expect(host.textContent).toContain('synthetic-W23-sha')
 })

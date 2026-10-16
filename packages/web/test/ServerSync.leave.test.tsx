@@ -70,8 +70,8 @@ describe('the sheet that offers going ahead anyway, when that fails', () => {
   })
 })
 
-// UI twins isolate the seam; store/auth-action.test.ts verifies real carrier and upload fencing.
-vi.mock('../src/lib/auth-actions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
+// UI twins isolate the seam; store/auth-transaction.test.ts verifies real carrier and upload fencing.
+vi.mock('../src/lib/auth-transactions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
   if (!valid()) return null
   const user = await exchange()
   if (!valid()) return null

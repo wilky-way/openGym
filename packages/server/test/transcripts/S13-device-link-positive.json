@@ -1,0 +1,123 @@
+[
+  {
+    "method": "POST",
+    "route": "/api/login/options",
+    "status": 200,
+    "body": {
+      "cid": "$cid1",
+      "options": {
+        "rpId": "localhost",
+        "challenge": "$challenge1",
+        "allowCredentials": [],
+        "timeout": 60000,
+        "userVerification": "preferred"
+      }
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/account/device-link",
+    "status": 200,
+    "body": {
+      "code": "$link1",
+      "expires": 1791840600000
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/device-link/options",
+    "status": 200,
+    "body": {
+      "cid": "$cid2",
+      "options": {
+        "challenge": "$challenge2",
+        "rp": {
+          "name": "openGym",
+          "id": "localhost"
+        },
+        "user": {
+          "id": "$handle1",
+          "name": "Synthetic athlete",
+          "displayName": "Synthetic athlete"
+        },
+        "pubKeyCredParams": [
+          {
+            "alg": -8,
+            "type": "public-key"
+          },
+          {
+            "alg": -7,
+            "type": "public-key"
+          },
+          {
+            "alg": -257,
+            "type": "public-key"
+          }
+        ],
+        "timeout": 60000,
+        "attestation": "none",
+        "excludeCredentials": [
+          {
+            "id": "6YgwLgrFUlp0YGv_2jhnQw",
+            "transports": [
+              "internal"
+            ],
+            "type": "public-key"
+          }
+        ],
+        "authenticatorSelection": {
+          "residentKey": "required",
+          "userVerification": "preferred",
+          "requireResidentKey": true
+        },
+        "extensions": {
+          "credProps": true
+        },
+        "hints": []
+      },
+      "id": "u1",
+      "name": "Synthetic athlete"
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/device-link/verify",
+    "status": 200,
+    "body": {
+      "user": {
+        "id": "$uid1",
+        "name": "Synthetic athlete",
+        "admin": false
+      }
+    },
+    "cookies": [
+      "gymsid=$session; Path=/; Max-Age=7776000; HttpOnly; SameSite=Lax"
+    ]
+  },
+  {
+    "method": "GET",
+    "route": "/api/me",
+    "status": 200,
+    "body": {
+      "user": {
+        "id": "$uid1",
+        "name": "Synthetic athlete",
+        "admin": false
+      }
+    },
+    "cookies": []
+  },
+  {
+    "method": "POST",
+    "route": "/api/device-link/options",
+    "status": 400,
+    "body": {
+      "error": "that code is wrong, used or expired",
+      "code": "link-invalid"
+    },
+    "cookies": []
+  }
+]

@@ -7,11 +7,11 @@ test('committed registration and device-link redemption return sessions despite 
   let fail = true
   const log: string[]=[]
   const owner=softPasskey(),phone=softPasskey()
-  const h=await startServer(undefined,{env:{DEVICE_TOKENS:'1',INVITE_ONLY:'1'},invites:[{code:'SYNTHETIC-INVITE'}],passkeys:{
+  const h=await startServer(undefined,{env:{DEVICE_TOKENS:'1',INVITE_ONLY:'1'},invites:[{code:'S13-SYNTHETIC'}],passkeys:{
     mirror:(...args)=>{if(fail)throw new Error('synthetic mirror fault');return writeAccountsMirror(...args)},
     log:line=>log.push(line),
   }})
-  const opt=(await h.req('POST','/api/register/options',{body:{name:'Synthetic',code:'SYNTHETIC-INVITE'}})).body
+  const opt=(await h.req('POST','/api/register/options',{body:{name:'Synthetic',code:'S13-SYNTHETIC'}})).body
   const done=await h.req('POST','/api/register/verify',{body:{cid:opt.cid,credential:owner.attestation(opt.options.challenge)}})
   assert.equal(done.status,200)
   assert.ok(done.cookie)

@@ -1,5 +1,6 @@
-// Validation is separate from programme import so lifecycle operations can reuse it.
-// These helpers retain raw source preflight behavior so programme lifecycle can share the same limits.
+import { validateNativeDefinition } from './native-authority'
+// Validation is split from programme-import by the coordinator-approved K12/K13 boundary.
+// These helpers retain raw source preflight behavior so K12 can share the same limits.
 import type { ProgrammeDefinition } from '../../contract/domain/programme-model'
 import type { ExerciseIndex } from '@opengym/core/exercises'
 import { CATALOGUE, EXIDX, canonicalExId } from '@opengym/core/exercises'
@@ -74,7 +75,7 @@ export function programmePreflight(value: unknown, prescriptions: Record<string,
           if (Array.isArray(e.sets)) {
             if (e.sets.length > 100) throw new Error('Invalid program prescription')
             const manual = prescriptions[importExerciseKey(e)]
-            const open=e.open === true || new RegExp('^' + String.fromCharCode(115,98,115) + '-', 'i').test(raw.id || '') && /accessory/i.test(e.name || e.role || '')
+            const open=e.open === true || /^sbs-/i.test(raw.id || '') && /accessory/i.test(e.name || e.role || '')
             let count = e.sets.length ? 0 : Number(manual?.sets ?? (open ? 3 : 1))
             if (!positive(count || 1) || !Number.isInteger(count) || count > 100) throw new Error('Invalid program prescription')
             for (const row of e.sets) {
@@ -103,6 +104,7 @@ export function validateProgrammeDefinition<T>(value: T, catalogue: CatalogueEnt
   if (!d || typeof d.id !== 'string' || !d.id || typeof d.name !== 'string' || !d.name || !['kg','lb'].includes(d.unit)) throw new Error('Invalid program definition')
   if (!Array.isArray(d.weeks) || !d.weeks.length || d.weeks.length > 64) throw new Error('A program needs between one and 64 explicit weeks.')
   if (d.days != null && !Array.isArray(d.days)) throw new Error('Invalid program day')
+  validateNativeDefinition(d,index)
   const indexes = new Set(), ids = new Set(catalogue.map(e=>e.id))
   for (const w of d.weeks) {
     if (!Number.isInteger(w.index) || w.index < 1 || indexes.has(w.index) || !Array.isArray(w.days) || !w.days.length) throw new Error('Programme week indexes must be unique positive integers')
@@ -117,6 +119,9 @@ export function validateProgrammeDefinition<T>(value: T, catalogue: CatalogueEnt
         for (const e of ex) {
           if(e.importNeedsPrescription) throw new Error('Enter sets and reps for unprescribed slots before saving.')
           if (!(e.open === true && !e.id) && !ids.has(canonicalExId(e.id,index))) throw new Error('Resolve unknown exercises before saving the program.')
+          if (e.nativePrescription!==undefined) {
+            continue
+          }
           // Progression-scoped extension: legacy instruction-only slots keep
           // their exact rep validation. Engine rules can consume AMRAP notation
           // and double progression consumes an explicit authored rep range.

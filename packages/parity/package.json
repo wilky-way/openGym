@@ -1,0 +1,22 @@
+{
+  "name": "@opengym/parity",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "bun --bun vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@simplewebauthn/server": "13.3.2",
+    "jsqr": "1.4.0",
+    "lean-qr": "^2.7.4",
+    "web-push": "3.6.7",
+    "zod": "3.25.76"
+  }
+}

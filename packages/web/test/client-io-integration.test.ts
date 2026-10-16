@@ -81,26 +81,26 @@ describe('Hevy request policy', () => {
   })
   it('forwards the real custom index to both workout and routine parsers', async () => {
     const map = HEVY_ID_MAP as Record<string,string>
-    const previous = map.BROWSER_SYNTHETIC
-    map.BROWSER_SYNTHETIC = 'custom-hevy'
+    const previous = map.W01_SYNTHETIC
+    map.W01_SYNTHETIC = 'custom-hevy'
     try {
       const custom = {id:'custom-hevy',n:'synthetic assisted lift',eq:'assisted',bp:'back',tg:'lats',custom:true}
       const index = createExerciseIndex([custom])
-      const exercise = {exercise_template_id:'BROWSER_SYNTHETIC',title:'Synthetic',sets:[{weight_kg:5,reps:3}]}
+      const exercise = {exercise_template_id:'W01_SYNTHETIC',title:'Synthetic',sets:[{weight_kg:5,reps:3}]}
       vi.stubGlobal('fetch',vi.fn(async (url: string) => {
         const key = new URL(url).pathname.split('/').at(-1)!
-        const pages: Record<string,unknown> = {exercise_templates:[{id:'BROWSER_SYNTHETIC',title:'Synthetic'}], workouts:[{id:'w',start_time:'2026-01-02T12:00:00Z',exercises:[exercise]}],routines:[{id:'r',title:'Synthetic',exercises:[exercise]}],body_measurements:[]}
+        const pages: Record<string,unknown> = {exercise_templates:[{id:'W01_SYNTHETIC',title:'Synthetic'}], workouts:[{id:'w',start_time:'2026-01-02T12:00:00Z',exercises:[exercise]}],routines:[{id:'r',title:'Synthetic',exercises:[exercise]}],body_measurements:[]}
         return json({page_count:1,[key]:pages[key]})
       }))
       const result = await importHevyData('k',{},index)
       expect(result.workouts.workouts[0]!.entries![0]!.id).toBe('custom-hevy')
       expect(result.routines.routines[0]!.ex[0]!.id).toBe('custom-hevy')
-    } finally {if(previous === undefined) delete map.BROWSER_SYNTHETIC; else map.BROWSER_SYNTHETIC = previous}
+    } finally {if(previous === undefined) delete map.W01_SYNTHETIC; else map.W01_SYNTHETIC = previous}
   })
 })
 
 describe('browser capability integration', () => {
-  it('uses hashing native SHA options and returns the known vector', async () => {
+  it('uses K01 native SHA options and returns the known vector', async () => {
     const original = Object.getOwnPropertyDescriptor(window,'crypto')
     const digest = vi.fn(async () => Uint8Array.from({length:32},()=>0xab).buffer)
     Object.defineProperty(window,'crypto',{configurable:true,value:{subtle:{digest}}})

@@ -20,7 +20,7 @@ test('network-path targets dispatch on the parsed legacy URL pathname', async ()
   }
   assert.match(await raw(h.server.port!, '//other/api/%68ealth'), /^HTTP\/1\.1 404 /)
   assert.match(await raw(h.server.port!, '//other/api/health/'), /^HTTP\/1\.1 404 /)
-  // Compatibility runtime waiver: Bun loses the authority/parent bytes before fetch.
+  // GM-approved runtime waiver: Bun loses the authority/parent bytes before fetch.
   assert.match(await raw(h.server.port!, '//other/../api/health'), /^HTTP\/1\.1 404 /)
   assert.match(await raw(h.server.port!, '//other//'), /^HTTP\/1\.1 404 /)
   assert.match(await raw(h.server.port!, '//other//?query=1'), /^HTTP\/1\.1 404 /)

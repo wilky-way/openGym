@@ -13,7 +13,10 @@ import { sanitizeAccent } from '../lib/accent'
 import { ux } from '../platform/ux'
 import { documentGeneration } from './document-generation'
 import { sha256HexJs } from '@opengym/core/sha256'
+import { workoutJournal, journalSession, sameJournalSession, type WorkoutJournalStorage, type WorkoutJournalRecord } from './workout-journal'
 import { claimBrowserRecoveryReload } from '../platform/reload-guard'
+
+export interface PersistResult { accepted: boolean; localDurability: 'saved' | 'journal' | 'memory'; remoteRecovery: 'pending' | 'unavailable' | 'confirmed' }
 
 export type ApiClient = (path: string, options?: RequestInit) => Promise<any>
 export type AdoptionPrompt = (extras: NonNullable<ReturnType<typeof localExtras>>) => boolean | Promise<boolean>
@@ -25,7 +28,7 @@ export interface AuthTransaction {
 export type AcquireAuthLock = () => Promise<(() => void) | null>
 export interface LeaveOptions { force?: boolean; valid?(): boolean }
 export interface SyncServices {
-  platform: Platform
+  platform: Platform & {workoutJournal?: WorkoutJournalStorage}
   acquireAuthLock?: AcquireAuthLock
   acquireSyncLock?: AcquireAuthLock
   claimReload?(fingerprint: string): boolean
@@ -210,7 +213,7 @@ export function createSyncEngine(set: (patch: Partial<StoreState>) => void, get:
     target?.addEventListener(event, handler)
     listeners.push(() => target?.removeEventListener(event, handler))
   }
-  // A corrupt load must stay recoverable before the first replacing write (design safety exception).
+  // A corrupt load must stay recoverable before the first replacing write (GM safety exception).
   let unreadableRaw: string | null = null
   let unresolvedRead = true
   const readRecoverySource = () => {
@@ -569,6 +572,110 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
   // Until a write lands again the marker is left out (a restart merges, its first-sync path) and
   // the copy stays owed.
   let storeLag = false
+  const primaryWorkoutContext = (S: any) => JSON.stringify([S?.profileId ?? null,S?.resetAt ?? null,S?.unit ?? null,S?.activeEquipId ?? null,S?.active ? journalSession(S.active) : null])
+  let lagPrimaryContext: string | undefined
+  const journal = workoutJournal(services.platform.workoutJournal)
+  // Recovery follows the committed generation, not the per-boot callback epoch.
+  // A legacy primary with no published generation can still start under quota;
+  // a successful replacement publishes its reserved generation before its body.
+  const journalScope = (S = get().S) => JSON.stringify([serverBase(), readOwner(), get().user?.id ?? null, storedInstance() ?? 'legacy-unversioned', S.profileId ?? null, S.resetAt ?? null, S.unit])
+  const journalBaseline = (session?: any) => {
+    const saved=readFence()
+    if (!session) return fingerprintOf(saved) // compatibility with earlier journal records
+    const primary=JSON.parse(saved.record || 'null')
+    return sha256HexJs(new TextEncoder().encode(JSON.stringify([primary?.active ?? null,primary?.workouts?.find((w: any)=>w.id===session.id && w.start===session.start) ?? null])))
+  }
+  let journalVersion = 0
+  const saveWorkoutJournal = (S: StoreDocument, previous: StoreDocument, saved: boolean) => {
+    const version = ++journalVersion
+    const active = S.active
+    let scope: string, baseline: string
+    try { scope=journalScope(S); baseline=journalBaseline() } catch { return } // invalid endpoint recovery must still work
+    const same = sameJournalSession
+    const sameWorkout = (a: any,b: any) => !!a && !!b && a.id === b.id && a.start === b.start
+    const finished = !active && previous.active && S.workouts?.find((w: any) => sameWorkout(w,previous.active))
+    const close = (session: any, deletedAt?: number) => {
+      if (saved) return journal.remove(scope,session)
+      const closed = {...journalSession(session),...(deletedAt ? {deletedAt} : {})}
+      return journal.write({scope,baseline,at:Date.now(),active:null,finished:null,closed,ts:S._ts || 0})
+    }
+    // Explicit discard/delete consumes its recovery payload. Under quota a small
+    // receipt remains until the primary copy can no longer reopen that session.
+    if (previous.active && !same(active,previous.active) && !finished) void close(previous.active).catch(() => {})
+    for (const removed of previous.workouts || []) {
+      if (!S.workouts?.some((w: any) => sameWorkout(w,removed))) void close(removed,Number(S.deleted?.workouts?.[entryKey('workouts',removed)]) || undefined).catch(() => {})
+    }
+    if (saved) void journal.pruneClosed(scope,clone(S)).catch(() => {})
+    if (!active && !finished) return
+    const before = finished && previous.workouts?.find((w: any) => sameWorkout(w,finished))
+    let sessionBaseline: string
+    try { sessionBaseline=journalBaseline(active || previous.active) } catch { return }
+    const record: WorkoutJournalRecord = {scope, at:Date.now(), active:clone(active || null), finished:clone(finished || null), ts:S._ts || 0,
+      baseline:sessionBaseline,baselineKind:'session-v1',session:journalSession(active || previous.active),...(before ? {previousFinished:sha256HexJs(new TextEncoder().encode(JSON.stringify(before)))} : {})}
+    void journal.write(record).then(() => {
+      if (!disposed && version === journalVersion && !saved && record.scope === journalScope()) setSync({localDurability:'journal'})
+    }).catch(() => {
+      if (!disposed && version === journalVersion && !saved && record.scope === journalScope()) setSync({localDurability:'memory'})
+    })
+  }
+  const restoreWorkoutJournal = async () => {
+    try {
+      assertDurableOwner()
+      const scope = journalScope(), baseline = journalBaseline(), original = get().S
+      const records = await journal.records()
+      assertDurableOwner()
+      if (scope !== journalScope() || baseline !== journalBaseline() || get().S !== original) return
+      const S = clone(original)
+      let restored = false
+      for (const [, record] of records) {
+        if (record.scope !== scope) continue
+        const session = record.session || record.active || record.finished || record.closed
+        if (!session) continue
+        const key = entryKey('workouts',session), deletedAt = Number(S.deleted?.workouts?.[key]) || 0
+        if (deletedAt > 0 && !record.closed) {
+          void journal.remove(scope,session).catch(() => {})
+          continue
+        }
+        if (record.closed) {
+          const closed = record.closed
+          if (closed.deletedAt && deletedAt <= 0) {
+            // A later explicit add-back defeats an older deletion receipt.
+            if (deletedAt < 0 && Math.abs(deletedAt) > closed.deletedAt) continue
+            S.deleted ??= {}; S.deleted.workouts ??= {}
+            S.deleted.workouts[closed.key] = closed.deletedAt
+            S.workouts = S.workouts.filter((w: any) => entryKey('workouts',w) !== closed.key)
+            restored = true
+          }
+          if (sameJournalSession(S.active,closed) || closed.deletedAt && S.active?.id === closed.id && S.active?.start === closed.start) { S.active = null; restored = true }
+          continue
+        }
+        // Completed history has its own identity/preimage and deletion guards;
+        // unrelated settings or a different active session cannot erase it.
+        if (record.finished) {
+          let changed=false
+          const existing=S.workouts.findIndex((w: any) => w.id === record.finished.id)
+          if (existing < 0) { S.workouts.push(record.finished); changed=true }
+          else if (record.previousFinished && JSON.stringify(S.workouts[existing]) !== JSON.stringify(record.finished) && sha256HexJs(new TextEncoder().encode(JSON.stringify(S.workouts[existing]))) === record.previousFinished) { S.workouts[existing]=record.finished; changed=true }
+          if (sameJournalSession(S.active,record.session || record.finished)) { S.active=null; changed=true }
+          if (!changed) continue
+        } else if (record.active) {
+          const currentBaseline=record.baselineKind === 'session-v1' ? journalBaseline(record.session || record.active) : baseline
+          if (record.baseline !== currentBaseline) continue
+          if (JSON.stringify(S.active) === JSON.stringify(record.active)) continue
+          S.active = record.active
+        }
+        S._ts = Math.max(S._ts || 0, record.ts)
+        restored = true
+      }
+      if (restored) {
+        meta.set(S, {...metaOf(), owed:true})
+        lagPrimaryContext=primaryWorkoutContext(original)
+        storeLag = true
+        set({S})
+        setSync({localDurability:'journal', remoteRecovery:get().user && !S.active ? 'pending' : 'unavailable', pending:!!get().user})
+      }
+    } catch { /* journal failure never prevents boot or overwrites the local copy */ }
+  }
   const saveMarker = (base: any) => {
     try {
       if (!base || storeLag) { storage.remove(SYNC_KEY); return }
@@ -600,7 +707,7 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
   const statusOf = (x: any, user: any) => x.auth ? 'auth' : !user ? 'local' : x.offline ? 'offline' : x.lastError ? 'error' : x.held ? 'held' : x.pending ? 'pending' : 'ok'
   const sameError = (a: any, b: any) => (a && b ? a.status === b.status && a.code === b.code : a === b)
   const setSync = (patch: any) => {
-    const cur = get().sync
+    const cur = get().sync || {}
     const next = { ...cur, ...patch }
     next.status = statusOf(next, get().user)
     if (Object.keys(next).some((k: any) => (k === 'lastError' ? !sameError(next[k], cur[k]) : next[k] !== cur[k]))) set({ sync: next })
@@ -717,10 +824,13 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
     return true
   }
   const persist = (S: any, push: any = true, stamp: any = true, durable = false,
-    { afterPrimary, replacement = false }: { afterPrimary?: () => void; replacement?: boolean } = {}) => {
+    { afterPrimary, replacement = false }: { afterPrimary?: () => void; replacement?: boolean } = {}): PersistResult => {
     assertDurableOwner()
     if (durable && handedOver) throw new Error('The account changed; replacement was refused')
-    if (refuseStale(S)) return false
+    if (refuseStale(S)) return {accepted:false, localDurability:'memory', remoteRecovery:'unavailable'} satisfies PersistResult
+    // A history editor is a new incarnation of the same workout id/start. Its
+    // recovery writes must not reuse the original session's terminal decision.
+    if (S.active?.editingWorkoutId && !S.active.editBase?.sheetInstanceId) S.active.editBase={...S.active.editBase,sheetInstanceId:Date.now().toString(36)+Math.random().toString(36).slice(2)}
     const { base, owed } = metaOf()   // the copy being replaced; the new one stands where it stood
     const joined = joinSaved(S, get()?.S)
     if (joined) S = joined
@@ -755,7 +865,7 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
       seenWid = wid
       seenOwner = readOwner()
       toldNoRoom = false
-      if (storeLag) { storeLag = false; saveMarker(base) }   // the saved copy is this one again
+      if (storeLag) { storeLag = false; lagPrimaryContext=undefined; saveMarker(base) }   // the saved copy is this one again
     } catch (e: any) {
       if (e === staleDurableOwner) throw e
       // Opt-in destructive replacements are never made current or uploaded if the atomic
@@ -763,29 +873,33 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
       if (!primarySaved) generation?.rollback()
       if (!primarySaved && (durable || (replacement && !generation))) {
         notify('Could not save the replacement. Your previous data is kept.')
-        throw new Error('Replacement could not be saved', {cause:e})
+        throw Object.assign(new Error('Replacement could not be saved', {cause:e}), {code:'LOCAL_DURABILITY_REQUIRED'})
       }
       saved = false
+      if (!storeLag) lagPrimaryContext=primaryWorkoutContext(readSaved())
       storeLag = true
       try { storage.remove(SYNC_KEY) } catch { /* nothing to take back */ }
       if (!toldNoRoom) {
         toldNoRoom = true
-        notify(t('This device is out of storage: the change is not saved on it. Signed in, it still goes to the server.'))
+        notify(t('This device is out of storage. Keep this page open; finish or export your workout.'))
       }
     }
     if (durable || replacement) { saved = primarySaved; set({ index: createExerciseIndex(S.customEx) }) }
     meta.set(S, { base, owed: owed || !saved || (!!joined && storedOwed()) })
     if (!saved) saveOwed(true)
+    const previous = get().S
+    setSync({localDurability: saved ? 'saved' : 'memory', remoteRecovery: get().user && !S.active ? 'pending' : 'unavailable'})
+    saveWorkoutJournal(S, previous, saved)
     set({ S, ...(generation ? {documentInstance:generation.documentInstance} : {}) })
 
     if (push && get().user) {
       // Before boot has pulled, the copy in hand may be older than the server's: a push now
       // would carry it with a stale (or no) baseRev. It waits for finishBoot.
-      if (!get().ready) { pushPending = true; return saved }
+      if (!get().ready) { pushPending = true; return {accepted:true, localDurability:saved ? 'saved' : 'memory', remoteRecovery:S.active ? 'unavailable' : 'pending'} }
       clearTimeout(pushTm ?? undefined)
       pushTm = setTimeout(() => get().pushState(), 1500)
     }
-    return saved
+    return {accepted:true, localDurability:saved ? 'saved' : 'memory', remoteRecovery:get().user && !S.active ? 'pending' : 'unavailable'}
   }
   // Boot's last step: from here on changes push, and one made during boot goes now.
   const finishBoot = (extra: any = {}) => {
@@ -934,6 +1048,10 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
       markOwed(changedWhileSending)
       toldTooLarge = false
       confirmed(S)
+      setSync({remoteRecovery:get().S.active ? 'unavailable' : changedWhileSending ? 'pending' : 'confirmed'})
+      let primary: StoreDocument | null = null
+      try { primary = JSON.parse(durableStorage.get(KEY) || 'null') } catch { /* retain a closure receipt when primary durability is unknown */ }
+      void journal.acknowledge(journalScope(), S, primary).catch(() => {})
       if (changedWhileSending) { pushAgain = true; setSync({pending:true}) }
       // Back from offline with changes that were waiting: say so once — the banner that promised
       // "syncs when you're back online" has just kept its word.
@@ -1096,7 +1214,7 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
   // no save, and another tab waited on one (takeSaved).
   const claimSaved = () => {
     const u = get().user
-    if (u && readOwner() === u.id && readWidOwner() !== u.id) return persist(get().S, false, false)
+    if (u && readOwner() === u.id && readWidOwner() !== u.id) return persist(get().S, false, false).localDurability === 'saved'
     return !storeLag
   }
   const syncFromSaved = () => {
@@ -1312,7 +1430,7 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
     markOwed(true)
     await get().pushState()
     // A PUT omits active. Even a successful PUT cannot replace its durable local stash.
-    if (!saved || !currentSession(started)) return
+    if (saved.localDurability !== 'saved' || !currentSession(started)) return
     for (const k of keys) delete all[k]
     await writeStashes(all)
   }
@@ -1519,7 +1637,10 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
     user: user0,
     ready: false,
     // The connection as the screens show it — see statusOf above for every field.
-    sync: sync0,
+    sync: {...sync0, localDurability:'saved', remoteRecovery:'unavailable'},
+    validateWorkoutOwner() { assertDurableOwner(); return true },
+    validateWorkoutBaseline() { assertDurableOwner(); return storeLag && lagPrimaryContext !== undefined && lagPrimaryContext === primaryWorkoutContext(readSaved()) },
+    flushWorkoutJournal: () => journal.flush(),
 
     // Capabilities offered by the current server.
     config: null,
@@ -1528,7 +1649,7 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
 
     // Mutate a draft of S via producer fn, then persist + schedule sync. Every routine the change
     // touched carries the time of it, for a conflict to keep the version edited last.
-    update(mut: any, push: any = true) {
+    update(mut: any, push: any = true, {durable = false}: {durable?: boolean} = {}) {
       if (get().sync?.recovery) return false
       assertDurableOwner()
       const previousFrame = writeFrame
@@ -1544,7 +1665,8 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
       // keeps a removal and the edit made last, even from a device whose clock runs behind
       // (lib/sync-merge.js stampChange).
       S._ts = stampChange(prev, S, Date.now())
-      persist(S, push)
+      const result = persist(S, push, true, durable)
+      return result.accepted ? result : false
       } finally { writeFrame = previousFrame }
     },
     // Timer records share the same owner fence and producer context as workouts.
@@ -1591,7 +1713,10 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
       if ((S0.unit || 'kg') === to) return null
       const S = clone(convert ? convertStateUnit(S0, to, createExerciseIndex(S0.customEx)) : { ...S0, unit: to })
       S.unitSet = { at: Math.max(Date.now(), highestStamp(S0) + 1), convert }
-      persist(S, true)
+      // Unit changes cannot split an in-memory session from its durable/journal
+      // context. Refuse the switch if the primary write cannot commit.
+      try { persist(S, true, true, true) }
+      catch(error) { if ((error as {code?:string})?.code === 'LOCAL_DURABILITY_REQUIRED') return false; throw error }
       return convert && get().ready ? get().pushState() : null
     },
     // Settings → Reset everything: a new profile (restartedState), stamped with when (`resetAt`).
@@ -2149,6 +2274,7 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
 
     // Boot: ask the server who we are, then pull.
     async boot() {
+      await restoreWorkoutJournal()
       if (get().sync?.recovery) { finishBoot(); return }
       if (authBlocked()) { quarantineAuth(); finishBoot(); return }
       let started = session()
@@ -2198,7 +2324,16 @@ const POLL_MS = 30000        // while the app is open and signed in, ask the ser
         const unclaimed = hasData(get().S) && (!owner || (savedOwner !== null && savedOwner !== me.user.id))
         const mark = readAdopt()
         const needsAdoption = unclaimed && (!mark || (!mark.incomplete && mark.uid !== me.user.id))
-        try { get().setUser(me.user, needsAdoption ? { adopt: { alwaysAsk: true } } : {}) }
+        // A verified returning account needs no ownership transition. Rewriting its
+        // unchanged metadata under quota would revoke the very session whose journal
+        // we just recovered. New accounts/adoptions still use the full durable commit.
+        const sameAccount = !needsAdoption && !mark && !adoptWritePending &&
+          get().user?.id === me.user.id && owner === me.user.id &&
+          (savedOwner === null || savedOwner === me.user.id)
+        try {
+          if (sameAccount) set({user:me.user})
+          else get().setUser(me.user, needsAdoption ? { adopt: { alwaysAsk: true } } : {})
+        }
         catch { finishBoot(); return } // this boot's own refused initialization is a settled local state
         started = session()
         // Re-stamp the reminder's timezone on every load — keeps it correct if you're travelling,

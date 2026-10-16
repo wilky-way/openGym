@@ -85,8 +85,8 @@ it('offers pairing only for a remote server', () => {
   expect(buttons(page)).not.toContain('Use a code from your other device')
 })
 
-// UI twins isolate the seam; store/auth-action.test.ts verifies real carrier and upload fencing.
-vi.mock('../src/lib/auth-actions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
+// UI twins isolate the seam; store/auth-transaction.test.ts verifies real carrier and upload fencing.
+vi.mock('../src/lib/auth-transactions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
   if (!valid()) return null
   const user = await exchange()
   if (!valid()) return null

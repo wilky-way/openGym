@@ -264,7 +264,7 @@ describe('web sign-in: nothing syncs while the question is open', () => {
   })
 })
 
-// Review of the compatibility baseline: the hold could outlive the session, and it held back more than the question.
+// Review of 771184c9: the hold could outlive the session, and it held back more than the question.
 describe('the sign-in hold: never stuck, and only about what the device had', () => {
 
   it('a sign-in whose adoption never started (the pairing failed on the way) runs it on the next check', async () => {

@@ -3,7 +3,7 @@ import './workout-sheet-environment'
 import React, { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, describe, expect, it } from 'vitest'
-import Workout from './regression-harness'
+import Workout from './W17-harness'
 import { clone, DEF, useStore } from '../src/store/useStore'
 let root: Root, container: HTMLDivElement
 const exercise = (id: string, sets: boolean[], extra = {}) => ({ id, target: { mode: 'reps', reps: 5, weight: 60, bodyweight: false }, sets: sets.map(done => ({ w: 60, r: 5, done })), ...extra })

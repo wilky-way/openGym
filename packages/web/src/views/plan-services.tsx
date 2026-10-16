@@ -3,7 +3,7 @@ import { confirmSheet, menuSheet, bwSheet } from '../sheets-a'
 import { configureWorkoutSheets, repeatWorkout, logPastWorkoutSheet } from '../sheets-d'
 import { configurePlanHistorySheets } from '../sheets-plan-history'
 import { exerciseHistorySheet } from '../sheets/sheets-exercises'
-/** The shell binds programme panels when composing the application. */
+/** W16 owns the programme panels; W23 binds them when composing the shell. */
 export interface PlanViewServices {
   ProgrammeCalendar: ComponentType
   Programs: ComponentType

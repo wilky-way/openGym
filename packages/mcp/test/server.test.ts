@@ -16,12 +16,15 @@ test('actual MCP server lists legacy and authoring tools, serves authenticated J
   const server = createMcpServer(), client = new Client({ name: 'synthetic-client', version: '1' }), [a, b] = InMemoryTransport.createLinkedPair()
   try {
     await server.connect(a); await client.connect(b)
-    expect((await client.listTools()).tools).toHaveLength(35)
+    const listed = (await client.listTools()).tools
+    expect(listed).toHaveLength(44); expect(listed.map(t=>t.name)).toContain('set_training_max'); expect(listed.map(t=>t.name)).toContain('create_routine')
     const answer: any = await client.callTool({ name: 'list_routines', arguments: {} })
     expect(JSON.parse(answer.content[0].text).routines[0].name).toBe('Synthetic')
     vi.stubEnv('OPENGYM_ENABLE_PROGRAMME_WRITES', '0')
     const refusal: any = await client.callTool({ name: 'shift_programme', arguments: { cycle_id: 'c', expected_rev: 7, expected_wid: 'epoch' } })
     expect(refusal.isError).toBe(true); expect(refusal.content[0].text).toMatch(/^WRITES_DISABLED:/)
+    const maxRefusal: any = await client.callTool({name:'set_training_max',arguments:{cycle_id:'c',lift:'bench',value:100,unit:'lb',expected_rev:7,expected_wid:'epoch'}})
+    expect(maxRefusal.isError).toBe(true);expect(maxRefusal.content[0].text).toMatch(/^NO_STATE:/)
   } finally { await client.close(); await server.close() }
 })
 

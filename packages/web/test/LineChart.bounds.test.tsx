@@ -5,7 +5,7 @@ import LineChart, { type ChartPoint } from '../src/components/LineChart'
 
 const points: ChartPoint[] = [{ t: Date.UTC(2026, 0, 1), y: 70 }, { t: Date.UTC(2026, 0, 2), y: 71 }]
 const render = (props: React.ComponentProps<typeof LineChart>) => renderToStaticMarkup(<LineChart {...props} />)
-describe('chart bounds integration regressions', () => {
+describe('W09 chart bounds integration regressions', () => {
   it.each([
     { points: [] },
     { points: [{ ...points[0]!, y: NaN }] },

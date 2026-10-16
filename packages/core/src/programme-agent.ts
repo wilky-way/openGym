@@ -9,6 +9,7 @@ import { programmesOf, programmePreAppWeeks, activate, shiftNotToday, skip } fro
 import { projectCycle, isProgrammeDate } from '@opengym/core/programme-calendar'
 import { validateProgrammeDefinition } from './programme-import'
 import { CATALOGUE } from '@opengym/core/exercises'
+import { setTrainingMax, type SetTrainingMaxOptions } from './programme-max'
 import { missingProgrammeTMs } from '@opengym/core/programme-tm'
 
 export function programmePosition(S: ProgrammeState, today: string, cycleId?: string) {
@@ -40,8 +41,9 @@ export function getProgramme(S: ProgrammeState, {cycleId,programmeId}: {cycleId?
 }
 
 /** Mutates only a caller-owned draft. Transport handles auth and conditional persistence. */
-export function applyProgrammeAgentAction(S: ProgrammeState, action: string, params: ActivationOptions & {programmeId?: string; cycleId?: string; instanceId?: string; reason?: string}, today: string, index: ExerciseIndex = EXIDX) {
+export function applyProgrammeAgentAction(S: ProgrammeState, action: string, params: ActivationOptions & {programmeId?: string; cycleId?: string; instanceId?: string; reason?: string; lift?: string; value?: number; unit?: 'lb' | 'kg'}, today: string, index: ExerciseIndex = EXIDX) {
   if(!isProgrammeDate(today))throw new Error('A programme action needs a calendar date')
+  if(action==='set_training_max') return setTrainingMax(S,params.cycleId!,{lift:params.lift,value:params.value,unit:params.unit,today,reason:params.reason} as SetTrainingMaxOptions,index)
   if(action==='activate') {
     const d=(programmesOf(S).definitions as ProgrammeDefinition[]).find(d=>d.id===params.programmeId)
     if(!d)throw new Error('The program definition does not exist')

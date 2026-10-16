@@ -62,11 +62,11 @@ const mount: any = () => act(() => root.render(<Plan />))
 const day: any = (name: any) => host.querySelector(`.plan-day[aria-label="${name}"]`)
 
 describe('Plan — the weekday rows', () => {
-  it('a planned day keeps its picker tap and offers a read-only preview', () => {
+  it('a planned day keeps its picker tap and offers a read-only preview (W24)', () => {
     mount()
     const monday: any = day('Monday')
     expect(monday.querySelector('.tt').textContent).toBe('Push')
-    expect(monday.querySelectorAll('button').length).toBe(1) // The view offers the read-only Preview action.
+    expect(monday.querySelectorAll('button').length).toBe(1) // W24 deliberately adds the read-only Preview action.
     act(() => monday.click())
     expect(dayAssignSheet).toHaveBeenCalledWith(1)
   })

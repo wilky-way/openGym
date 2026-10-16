@@ -6,7 +6,7 @@ import './sync-clock'
    back. The reset now carries its time (`resetAt`) and the names of what it wiped (`resetIds`); a
    merge with a copy that has not seen it drops exactly those (lib/sync-merge.js). And the stamp
    only moves forward: a backup restored after the reset is not wiped again by the devices that
-   saw it (review of the compatibility baseline). */
+   saw it (review of 771184c9). */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('./sync-api', () => ({ api: vi.fn(), setRemoteAuth: vi.fn() }))

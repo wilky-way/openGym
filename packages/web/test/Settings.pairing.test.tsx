@@ -11,7 +11,7 @@ import { spawn, type ChildProcess } from 'node:child_process'
 import { request } from 'node:http'
 import { api, pairRedeem, configureApiConnection } from '../src/lib/api'
 import { apiConnection } from '../src/lib/api-connection'
-import { authenticate } from '../src/lib/auth-actions'
+import { authenticate } from '../src/lib/auth-transactions'
 import { configureClientIO } from '../src/lib/client-io'
 import { createBrowserPlatform } from '../src/platform/browser'
 import { createSyncEngine } from '../src/store/sync-engine'
@@ -34,7 +34,7 @@ beforeAll(async()=>{
  nonce=randomBytes(16).toString('hex');const secret=randomBytes(32).toString('hex');dir=mkdtempSync(join(tmpdir(),'opengym-W21-pair-'))
  writeFileSync(join(dir,'secret'),secret,{mode:0o600})
  const payload=`${user.id}:${Date.now()+86400000}:0`;cookie=`gymsid=${payload}.${createHmac('sha256',secret).update(payload).digest('base64url')}`
- // Real native authentication pairing/auth server on synthetic SQLite data, loopback and an OS-assigned port.
+ // Real native S03 pairing/auth server on synthetic SQLite data, loopback and an OS-assigned port.
  const loader=join(dir,'native.mjs')
  const modules={storage:pathToFileURL(resolve('../server/src/storage/index.ts')).href,config:pathToFileURL(resolve('../server/src/config.ts')).href,auth:pathToFileURL(resolve('../server/src/auth.ts')).href,server:pathToFileURL(resolve('../server/src/index.ts')).href}
  writeFileSync(loader,`Date.now=()=>1791892800000;const serve=Bun.serve;Bun.serve=options=>{const fetch=options.fetch;return serve({...options,fetch:async(...args)=>{const response=await fetch(...args);response.headers.set('x-opengym-native-test',${JSON.stringify(nonce)});return response}})};const{openStore,putUser}=await import(${JSON.stringify(modules.storage)});const store=openStore(process.env.DATA_DIR);putUser(store.db,{...${JSON.stringify(user)},created:'2026-10-13T00:00:00.000Z',admin:0,disabled:0,sv:0,invited_by:null,last_pull:null,last_reminder:null,last_nudge:null,ord:0,x:'{}'});const{loadConfig}=await import(${JSON.stringify(modules.config)});const config=loadConfig({PORT:'0',HOST:'127.0.0.1',DATA_DIR:process.env.DATA_DIR,ORIGIN:'http://localhost:8080',RP_ID:'localhost'});const{createAuth}=await import(${JSON.stringify(modules.auth)});const auth=createAuth(store.db,config,{address:()=> '127.0.0.1'});const{startServer}=await import(${JSON.stringify(modules.server)});startServer(config,{auth});`)

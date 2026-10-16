@@ -28,6 +28,7 @@ Generated from the executable contract policy. Retired media routes are omitted.
 | `POST /api/account/devices/revoke` | session | required | burst |
 | `GET /api/data` | session | n/a |  |
 | `GET /api/data/rev` | session | n/a |  |
+| `GET /api/data/activity` | session | n/a |  |
 | `PUT /api/data` | session | required |  |
 | `GET /api/push/public-key` | none | n/a |  |
 | `POST /api/push/subscribe` | session | required |  |

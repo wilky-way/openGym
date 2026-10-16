@@ -9,6 +9,7 @@ The complete request/response types live in [the HTTP contract](../packages/cont
 | Health/config | `GET /api/health`, `GET /api/config` |
 | Current account | `GET /api/me` |
 | Profile state/revision | `GET /api/data`, `GET /api/data/rev` |
+| Device-owned training guard | `GET /api/data/activity` |
 | Conditional state write | `PUT /api/data` |
 | Programme library | `GET /api/programmes/library`; `GET/PUT /api/programmes/library/:id`; `GET /api/programmes/library/:id/versions` |
 | Programme conformance | `POST /api/programmes/validate` |
@@ -47,3 +48,7 @@ MCP uses snake_case wrappers for several arguments; the HTTP API uses the camelC
 ## Errors
 
 Errors contain an `error` string and may contain a machine-readable `code`, validation issues, or `retryAfter`. Typical statuses are 400 malformed input, 401 signed out, 403 wrong permission/origin, 409 revision/version conflict, 413 oversized body, 422 invalid programme/rules, 423 training in progress, 429 throttled, and 503 unreadable storage. Honor `Retry-After`; never automatically retry a refused mutation with weakened guards.
+
+## Training guard and agent authority
+
+The server atomically checks `requireIdle:true` for guarded agent writes. Active training and expired or unknown activity refuse writes; an offline client can still have unsynced work. Browser-owned active markers bind to the authenticated device, document and session identity. Read [training-write-guard.md](training-write-guard.md) for the exact protocol and offline limits, and [AGENT-AUTHORITY.md](AGENT-AUTHORITY.md) for the agent route allowlist. Audited training-max actions and template tools use sealed previews plus conditional full-document writes; they do not bypass these checks.

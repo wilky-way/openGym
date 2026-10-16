@@ -21,7 +21,7 @@ test('SQLite depth oracle exception: 800 total containers succeeds; 801 returns 
   expect(h.stored()).toBe(before)
   expect(fs.readFileSync(path.join(h.dataDir, 'state-u1.json'), 'utf8')).toBe(mirror)
   expect(h.db.query('SELECT * FROM state_doc_history').all()).toHaveLength(1)
-  // The migration importer calls this same exported function before writing.
+  // S09's importer calls this same exported function before its own writes.
   expect(() => assertStateDepth(JSON.parse(raw(800)))).not.toThrow()
   expect(() => assertStateDepth(JSON.parse(raw(801)))).toThrow('invalid state')
 })

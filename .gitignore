@@ -12,3 +12,7 @@ junit.xml
 .gate/
 .artifacts/
 *.bun-build
+
+# Local validation output
+units/
+.public-checks/

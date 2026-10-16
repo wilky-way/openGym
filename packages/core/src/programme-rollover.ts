@@ -1,5 +1,6 @@
 import type { ProgrammeCycle, ProgrammeOccurrence, ProgrammeSession, Routine, Workout, Queue, Unit } from '../../contract/domain/state-doc'
 import { EXIDX, type ExerciseIndex } from './exercises'
+import { hasLoadContinuity } from './progression-engine/continuity'
 export interface RolloverState { programmes?: { cycles: ProgrammeCycle[]; definitions: ProgrammeCycle['snapshot'][]; [key: string]: unknown }; routines: Routine[]; workouts: Workout[]; active?: { routineIds?: string[] } | null; unit?: Unit; queue?: Queue | null; [key: string]: unknown }
 export interface RolloverProposal { routineId: string; instanceId: string; slotId: string | undefined; exerciseId: string | undefined; currentSets: number; sets: number; reason: string }
 import { programmeSessionKey, programmeSnapshotSession } from '@opengym/core/programme-edit'
@@ -9,7 +10,9 @@ import { occurrenceWeekId } from '@opengym/core/programme-calendar'
 import { loggedProgrammeWorkout } from '@opengym/core/programme-ui'
 import { modeOf } from '@opengym/core/history'
 import { isWarmupRow } from '@opengym/core/workout-model'
-import { convertWeight } from '@opengym/core/units'
+import { convertWeightPrecise } from './progression-engine/units'
+export interface RepeatMax { values: Record<string, number>; unit: Unit }
+export interface FinishBlockOptions { today?: string; repeatMax?: RepeatMax }
 
 const clone = <T,>(x: T): T => structuredClone(x)
 const keyOf = (c: Partial<ProgrammeCycle>) => c.rollover && `${c.rollover.fromWeekId}:${c.rollover.toWeekId}:${c.rollover.closedOn}`
@@ -68,7 +71,7 @@ export function acceptRollover(S: RolloverState, cycleId: string, reviewed: Roll
 }
 
 /** Explicit choice after completion; validate a repeat in a draft before archiving. */
-export function finishProgrammeBlock(S: RolloverState, cycleId: string, choice: string, { today }: { today?: string } = {}, index: ExerciseIndex = EXIDX) {
+export function finishProgrammeBlock(S: RolloverState, cycleId: string, choice: string, { today, repeatMax }: FinishBlockOptions = {}, index: ExerciseIndex = EXIDX) {
   const c = S.programmes?.cycles.find(c => c.id === cycleId)
   if (S.active) throw new Error('Finish the current workout before changing the program.')
   if (!c || c.status !== 'finished' || (resolveOccurrences(c,S.workouts) as ProgrammeOccurrence[]).some(o => o.status === 'pending') || c.endHandled) throw new Error('Only a completed block can choose what comes next.')
@@ -81,15 +84,32 @@ export function finishProgrammeBlock(S: RolloverState, cycleId: string, choice: 
     definition.weeks = definition.weeks.filter(w => !w.weekId)
     // A migrated partial block repeats its explicit authored weeks; it never invents W1–W3.
     const tm = clone(old.tm || {})
+    if (repeatMax) {
+      if (!['lb','kg'].includes(repeatMax.unit) || Object.keys(repeatMax.values).length !== Object.keys(tm).length || Object.entries(repeatMax.values).some(([key,value])=>!Object.hasOwn(tm,key) || typeof value !== 'number' || !Number.isFinite(value) || value <= 0)) throw new Error('Review a positive finite max for every lift before repeating.')
+      for (const [key,value] of Object.entries(repeatMax.values)) {
+        const converted = convertWeightPrecise(value,repeatMax.unit,S.unit ?? 'lb')
+        const seed = convertWeightPrecise(converted,S.unit ?? 'lb',definition.unit)
+        if (!Number.isFinite(converted) || converted <= 0 || !Number.isFinite(seed) || seed <= 0) throw new Error('Review a positive finite max in both profile and program units before repeating.')
+        tm[key] = converted
+      }
+    }
     for (const [key, value] of Object.entries(tm)) {
+      if (repeatMax) continue // Reviewed absolute values already include the athlete's chosen bump.
       const amount = Number((definition.repeat as { bump?: Record<string, unknown> } | undefined)?.bump?.[key] ?? 0)
       if (!Number.isFinite(amount) || amount < 0) throw new Error('Invalid training max increment')
-      tm[key] = Number(value) + convertWeight(amount, definition.unit || S.unit, S.unit)
+      tm[key] = Number(value) + convertWeightPrecise(amount, definition.unit || S.unit || 'lb', S.unit || 'lb')
     }
     const saved = clone(draft.programmes!.definitions)
     next = activate(draft, definition, {today,cycleId:`${old.id}:lap${(old.lap || 1)+1}`, lap:(old.lap || 1)+1, seriesId:old.seriesId || old.id,tm,end:old.end,perWeek:old.cadence.perWeek}, index)
     draft.programmes!.definitions = saved
-    old.repeatedAs = next.id
+    if (repeatMax) {
+      const cycle = next as ProgrammeCycle
+      cycle.tmSeed = Object.fromEntries(Object.entries(tm).map(([key,value])=>[key,convertWeightPrecise(Number(value),S.unit ?? 'lb',definition.unit)]))
+      cycle.tmUnit = S.unit ?? 'lb'
+      cycle.repeatMaxReview = clone(repeatMax)
+    }
+    // activate normalizes cycles into fresh objects; stamp the retained parent.
+    if (repeatMax || hasLoadContinuity(definition)) draft.programmes!.cycles.find(cycle => cycle.id === old.id)!.repeatedAs = next.id
   }
   if (draft.queue?.programmeCycleId === c.id) draft.queue = null
   Object.assign(S,draft)

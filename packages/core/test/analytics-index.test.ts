@@ -14,7 +14,7 @@ const rows = [{ w: 30, r: 8, done: true }, { w: 20, r: 8, done: true }]
 const entry = { id: 'synthetic', target: { mode: 'reps' }, sets: rows }
 const S: AnalyticsState = { workouts: [{ id: 'w', d: '2026-08-27', start: 1, entries: [entry] }] }
 
-describe('caller-owned indexes', () => {
+describe('K09 caller-owned indexes', () => {
   it('keeps assisted estimates and estimability isolated across profiles', () => {
     expect(bestSetOf(entry, undefined, assisted)).toBeNull()
     expect(bestSetOf(entry, undefined, loaded)?.est).toBe(38)
@@ -88,7 +88,7 @@ it('keeps assisted topW fallback as a load metric and custom cardio empty mode',
 })
 
 
-// Inert: history's metric selector only uses index after finding no completed rows,
+// Inert: K06's metric selector only uses index after finding no completed rows,
 // where bestWeightForEntry reads its index-independent legacy topW fallback.
 // Exercise history discards those zero-row records anyway. Preserve the forward
 // for future selector changes while its actual native outputs stay covered above.

@@ -6,7 +6,7 @@ import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import Workout from './regression-harness'
+import Workout from './W17-harness'
 import { DEF, useStore } from '../src/store/useStore'
 
 vi.mock('../src/lib/sound', () : any => ({ beep: vi.fn(), vibrate: vi.fn(), alertBuzz: vi.fn(), unlock: vi.fn() }))

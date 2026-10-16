@@ -1,12 +1,16 @@
 import type { RoutineExercise } from "../../contract/domain/state-doc"
 // Dependency-free; keep api/programme-prescription.js identical (parity test).
 const copy = <T,>(x: T): T => JSON.parse(JSON.stringify(x))
-export const authoredPrescriptionFields = ['setTargets','generatedRules','authoredInstructions','noteKind','instructions','open','label','target','setRepsMin','tm','repsMin']
+export const authoredPrescriptionFields = ['nativePrescription','setTargets','generatedRules','authoredInstructions','noteKind','instructions','open','label','target','setRepsMin','tm','repsMin']
 
 /** Settings edit the shape, while the authored effort and rule text remain attached. */
 export function retainProgrammePrescription(previous: RoutineExercise | null | undefined, next: RoutineExercise) {
   if (!authoredPrescriptionFields.some(k => k !== 'repsMin' && previous?.[k] != null)) return next
   for (const key of authoredPrescriptionFields) if (!(key in next) && previous?.[key] != null) next[key] = copy(previous[key])
+  if(next.nativePrescription) {
+    if(next.sets!==next.nativePrescription.sets.length || next.reps!==undefined || next.pyramid || next.weight!==undefined || next.tm)throw new Error('Edit the native source prescription instead of flat targets.')
+    return next
+  }
   const count = Math.max(1, Math.min(100, next.pyramid?.length || Number(next.sets) || 1))
   // Added rows repeat the final back-off prescription; removed rows trim its tail.
   const resize = <T,>(rows: T[]): T[] => Array.from({length:count},(_,i) => copy(rows[Math.min(i,rows.length-1)]!))

@@ -1,3 +1,4 @@
+import { closeTrainingLocally } from './lib/training-close'
 import { buildBackfillSession, fileBackfillWorkout } from '../../core/src/past-workout'
 import { guardedStoreUpdate, abortGuardedUpdate } from './lib/guarded-update'
 import { captureSheetTarget, type SheetTarget as ContextTarget } from './lib/sheet-target'
@@ -45,7 +46,7 @@ export interface WorkoutSheetServices {
   bwSheet(options: {required: true; onDone: (bw: number | null) => void}): void
 }
 let services: WorkoutSheetServices | undefined
-/** The shell binds shared dialogs and the weigh-in flow before rendering. */
+/** W11 / the shell binds its real dialogs and weigh-in flow before rendering. */
 export function configureWorkoutSheets(next: WorkoutSheetServices) { services = next }
 function dialogs(): WorkoutSheetServices { if (!services) throw new Error('Workout sheet services are not configured'); return services }
 const confirmSheet = (options: ConfirmOptions) => dialogs().confirmSheet(options)
@@ -97,20 +98,22 @@ function validateTarget(target: SheetTarget) {
   staleToast()
   return false
 }
-// Returning an unchanged draft still stamps and persists in sync store. Throw before
+// Returning an unchanged draft still stamps and persists in W07. Throw before
 // persistence instead, and let unrelated producer failures keep their meaning.
 function targetUpdate(target: SheetTarget, mut: (draft: StoreDocument) => void,
   valid: (draft: StoreDocument) => boolean = () => true, push = true) {
   return guardedStoreUpdate(s => targetMatches(target, s) && valid(s), mut, {update, push, onStale: staleToast})
 }
+const targetClose=(target:SheetTarget,mutate:(draft:StoreDocument)=>void,valid:(draft:StoreDocument)=>boolean=()=>true)=>
+  closeTrainingLocally(s=>targetMatches(target,s)&&valid(s),mutate,'editor-closed',staleToast)
 // Entries and set rows have no unique legacy id (exercise ids can repeat).
 // Assign a sheet-local identity that travels with that row when it is reordered.
 interface NoteTarget { entry: string; exercise: string; set?: string }
-interface RowIdentity { scope: 'workout-note'; id: string; prior?: unknown }
-const rowIdentity = (row: any): RowIdentity | null => row?.sheetInstanceId?.scope === 'workout-note' &&
+interface RowIdentity { scope: 'W14-note'; id: string; prior?: unknown }
+const rowIdentity = (row: any): RowIdentity | null => row?.sheetInstanceId?.scope === 'W14-note' &&
   typeof row.sheetInstanceId.id === 'string' ? row.sheetInstanceId : null
 function markRow(row: any) {
-  if (!rowIdentity(row)) row.sheetInstanceId = { scope: 'workout-note', id: uid(),
+  if (!rowIdentity(row)) row.sheetInstanceId = { scope: 'W14-note', id: uid(),
     ...(Object.hasOwn(row, 'sheetInstanceId') ? { prior: row.sheetInstanceId } : {}) }
 }
 function noteTarget(target: SheetTarget, entryIdx: number, setIdx?: number): NoteTarget | null {
@@ -612,7 +615,7 @@ export function saveWorkoutEdits(onExit: any = () => nav('/history'), target = s
       confirmText: t('Delete workout'), cancelText: t('Keep editing'), danger: true,
       onConfirm: () => {
         if (!validateTarget(target)) return
-        if (!targetUpdate(target, s => { deleteEditedWorkout(s as any, currentIndex(s)) }, s => editLeftEmpty(s.active))) return
+        if (!targetClose(target, s => { deleteEditedWorkout(s as any, currentIndex(s)) }, s => editLeftEmpty(s.active))) return
         useUI.getState().stopRest()
         useUI.getState().stopWork()
         toast(t('Workout deleted'))
@@ -622,7 +625,7 @@ export function saveWorkoutEdits(onExit: any = () => nav('/history'), target = s
     return
   }
   try {
-    if (!targetUpdate(target, s => { clearSheetRows(s.active); saveWorkoutEdit(s as any, Date.now(), currentIndex(s)) })) return
+    if (!targetClose(target, s => { clearSheetRows(s.active); saveWorkoutEdit(s as any, Date.now(), currentIndex(s)) })) return
     useUI.getState().stopRest()
     useUI.getState().stopWork()
     toast(t('Workout updated'))
@@ -648,7 +651,7 @@ export function exitWorkoutEdit(onExit: any = () => nav('/history')) {
     if (!validateTarget(target)) return
     // A stale prompt's Don't save must not throw away whatever is in S.active by now.
     if (!S().active?.editingWorkoutId) { done(); return }
-    if (!targetUpdate(target, s => { s.active = null })) return
+    if (!targetClose(target, s => { s.active = null })) return
     useUI.getState().stopRest()
     useUI.getState().stopWork()
     done()

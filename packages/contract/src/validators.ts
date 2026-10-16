@@ -7,14 +7,14 @@ export type RouteKey = keyof Routes
  * below are deliberately unknown, even when the static producer type is narrower.
  * Legacy unknown fields survive; schemas only ever see a deep clone. */
 const envelope = z.object({}).passthrough()
-const data = z.object({ state: z.unknown(), baseRev: z.unknown(), baseWid: z.unknown(), stamped: z.unknown() }).passthrough()
+const data = z.object({ state: z.unknown(), baseRev: z.unknown(), baseWid: z.unknown(), stamped: z.unknown(), requireIdle: z.unknown(), trainingClose: z.unknown() }).passthrough()
 const proof = z.object({ cid: z.unknown(), credential: z.unknown() }).passthrough()
 const name = z.object({ name: z.unknown(), code: z.unknown() }).passthrough()
 const idName = z.object({ id: z.unknown(), name: z.unknown() }).passthrough()
 const code = z.object({ code: z.unknown() }).passthrough()
 const subscription = z.object({ subscription: z.unknown(), deviceId: z.unknown() }).passthrough()
 const timer = z.object({ seconds: z.unknown(), deviceId: z.unknown() }).passthrough()
-const activity = z.object({ active: z.unknown(), name: z.unknown(), exIdx: z.unknown(), startedAt: z.unknown() }).passthrough()
+const activity = z.object({ active: z.unknown(), name: z.unknown(), exIdx: z.unknown(), startedAt: z.unknown(), reason: z.unknown(), profileId: z.unknown(), sessionId: z.unknown(), editingWorkoutId: z.unknown(), editorInstanceId: z.unknown() }).passthrough()
 // These handlers deliberately ignore their bodies, including arrays/scalars/null.
 const ignoredBodyRoutes = new Set<RouteKey>([
   'POST /api/login/options', 'POST /api/logout', 'POST /api/logout/all',
@@ -45,13 +45,14 @@ const legacySchemas: Partial<Record<RouteKey, z.ZodTypeAny>> = {
 }
 const definition = z.object({ definition: z.unknown().refine(v => v !== undefined, 'definition required') }).passthrough()
 const newSchemas: Partial<Record<RouteKey, z.ZodTypeAny>> = {
+  'GET /api/data/activity': envelope.optional(),
   'POST /api/account/devices/rename': z.object({ id: z.string(), name: z.string() }).passthrough(),
   'POST /api/account/devices/revoke': z.object({ id: z.string() }).passthrough(),
   'PUT /api/programmes/library/:id': z.object({ definition: z.unknown().refine(v => v !== undefined), expectedVersionId: z.string().nullable(), minLevel: z.enum(['Invalid', 'Valid', 'Complete', 'Ready']).optional() }).passthrough(),
   'POST /api/programmes/validate': definition,
   'POST /api/progression/validate': definition,
   'POST /api/progression/preview': z.object({ source: z.union([z.object({ definitionId: z.string(), versionId: z.string().optional() }).passthrough(), definition]), weeks: z.array(z.number().int()), cycleId: z.string().optional(), asOf: z.string().optional(), hypotheticalLogs: z.array(z.unknown()).optional() }).passthrough(),
-  // Apply's semantic checks (training, ownership and revision) belong to the progression API.
+  // Apply's semantic checks (including training/ownership/revision) belong to P5.
   // Its closed producer shape has no client-controlled asOf or hypothetical logs.
   'POST /api/progression/apply': z.object({ cycleId: z.string(), weeks: z.array(z.number().int()), expectedRev: z.number().int(), expectedWid: z.string().nullable(), confirmNoActiveSession: z.literal(true), confirmInventoryAdjustment: z.boolean().optional(), dryRun: z.boolean().optional() }).strict(),
 }

@@ -20,7 +20,7 @@ export interface AppServices {
   auth?: AuthService
   notifications?: Notifications
   admin?: AdminServices
-  /** Repositories supply the user count; authentication supplies verified session presence. */
+  /** S02 supplies the repository count; S03 supplies verified session presence. */
   userCount?: () => number | Promise<number>
   signedIn?: (request: Request) => boolean | Promise<boolean>
   writable?: () => boolean | Promise<boolean>
@@ -55,7 +55,10 @@ function routeKey(request: Request, path: string): string {
 }
 
 export function createApp(config: ServerConfig, services: AppServices = {}): GymApp {
-  const app = new Hono<AppEnv>({ strict: true, getPath: requestPath })
+  const app = new Hono<AppEnv>({ strict: true, getPath: request => {
+    const path = requestPath(request)
+    return config.basePath ? (path.startsWith(config.basePath + '/') ? path.slice(config.basePath.length) : '/__outside_base_path__') : path
+  } })
   app.use('*', async (c, next) => {
     await next()
     c.res = secureResponse(c.res, c.req.path)

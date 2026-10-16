@@ -2,7 +2,7 @@ import { useRef } from 'react'
 
 interface Keyed { key: string; value: string; shape: string }
 let sequence = 0
-/** Ephemeral React identities survive sync store clones and permutations without writing to the document.
+/** Ephemeral React identities survive W07 clones and permutations without writing to the document.
  * Exact matches move first. A single edited object retains its key; ambiguous duplicates on a
  * structural edit get new keys, cancelling their gestures instead of reusing another occurrence. */
 export function useWorkoutKeys(items: any[], shape: (item: any) => unknown): string[] {

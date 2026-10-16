@@ -3,8 +3,8 @@ import { evaluate, p3Extensions, type EngineInput } from '../src/progression-eng
 import { syntheticProgramme } from './fixtures/synthetic-programme'
 
 const stallExtensions = p3Extensions
-// Public synthetic regression coverage.
-describe('real TM stall-rule hand-computed golden',()=>{
+// P3-MUST-ENABLE: its registry extra gate must run scripts/assert-stall-golden-enabled.ts.
+describe('P3-MUST-ENABLE real TM stall-rule hand-computed golden',()=>{
   it('two failed exposures reset immutable TM200 by .9 to180 for the next week',()=>{
     const d=syntheticProgramme(),week=d.weeks[0]
     d.lengthWeeks=3;d.tmSeeds={bench:{value:200,unit:'lb'}}

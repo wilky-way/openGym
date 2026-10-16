@@ -11,7 +11,7 @@ import { configureClientIO } from '../src/lib/client-io'
 import { configureUx, createBrowserUx } from '../src/platform/ux'
 import { configureExportFileReader } from '../src/platform/export-file'
 
-// The binding safety exception is exercised through real sync store account/persistence
+// The binding safety exception is exercised through real W07 account/persistence
 // actions, with a synthetic, memory-only KV. No app data or server is accessed.
 let dispose: () => void, platform: ReturnType<typeof createBrowserPlatform>
 const roots: Root[] = []
@@ -56,7 +56,7 @@ afterEach(() => {
   act(() => roots.splice(0).forEach(root => root.unmount())); dispose()
   document.body.innerHTML = ''; configureExportFileReader(); vi.restoreAllMocks(); vi.useRealTimers()
 })
-describe('confirmations after a real account switch', () => {
+describe('W11 confirmations after a real account switch', () => {
   it.each(['body-weight', 'goal-save', 'goal-remove', 'starter', 'delete', 'import'])('revalidates %s inside the updater before persistence', async kind => {
     if (kind === 'body-weight') bwSheet()
     else if (kind === 'starter') starterPlanSheet()

@@ -1,3 +1,4 @@
+import { nativePrescriptionSchema } from './native-prescription-schema'
 import { progressionRuleDefs, progressionDefinitionFields, progressionSlotFields } from './progression-rule-schema'
 /** The subset of JSON Schema interpreted by the frozen programme validator. */
 export interface ProgrammeSchema {
@@ -53,6 +54,7 @@ const slot = object({
   id:nullable(text), open:{type:'boolean'}, label:nullable(text), category:nullable(text), slotId:nullable(text),
   role:nullable({enum:['main','supplement','accessory','gpp']}), sets:{type:'integer',minimum:1,maximum:100},
   reps:rep, repsMin:nullable(rep), pyramid:array(rep,{minItems:1,maxItems:10}),
+  nativePrescription:nativePrescriptionSchema,
   mode:text, sec:positive, target:nullable(target), setTargets:array(nullable(target)),
   setRepsMin:array(nullable(rep)), weight:nullable({anyOf:[{type:'number',minimum:0},text]}),
   pyramidWeight:array(nullable({anyOf:[{type:'number',minimum:0},text]})),
@@ -74,7 +76,7 @@ export const programmeModelSchema = {
   title:'openGym ProgrammeDefinition',
   description:'Structural validity; use programmeConformance for Complete and Ready. Unknown extension fields are retained.',
   ...object({
-    id:nonempty,name:nonempty,unit:{enum:['kg','lb']},end:nullable({enum:['next','repeat','stop']}),
+    id:nonempty,name:nonempty,maxBasis:{enum:['1rm','tm','e1rm']},unit:{enum:['kg','lb']},end:nullable({enum:['next','repeat','stop']}),
     goal:nullable(text),level:nullable(text),daysPerWeek:integer,lengthWeeks:integer,
     equipment:array(nonempty,{uniqueItems:true}),licence:nullable(text),
     source:{type:'object',additionalProperties:{anyOf:[text,{type:'boolean'},{type:'null'}]}},

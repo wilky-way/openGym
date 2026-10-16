@@ -60,7 +60,7 @@ describe('importing a backup over a profile that moved on', () => {
     expect(put.state.restSec).toBe(120)
   })
 
-  // Review of the compatibility baseline: a workout logged here and not yet sent was neither counted nor merged.
+  // Review of 771184c9: a workout logged here and not yet sent was neither counted nor merged.
   it('counts this device\'s unsent workouts too, and "Merge them in" keeps them', async () => {
     signedIn({ ...clone(DEF), _ts: 200, workouts: [workout('w1')] }, 7)
     useStore.getState().update((s: any) => { s.workouts.push(workout('unsent', '2026-09-27')) })

@@ -2,7 +2,7 @@ import { dbLoadFor, dbLoadOf, meaningFactor, type BellProfile } from '../dumbbel
 import { checkedLoad, convertWeightPrecise } from './units'
 import type { Exposure, RuleContext, WorkingSet } from './types'
 
-/** Uses replayLoad each/total semantics and returns definition-unit load. */
+/** Same explicit each/total semantics as P2 replayLoad; returns definition-unit load. */
 export function adaptiveWorkingLoad(context: RuleContext, exposure: Exposure, set: WorkingSet): number | undefined {
   if (typeof set.w !== 'number') return undefined
   const cfg = { ...context.authored.slot, id: context.authored.slot.id ?? undefined }

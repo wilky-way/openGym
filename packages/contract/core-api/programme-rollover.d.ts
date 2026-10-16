@@ -21,7 +21,7 @@ export declare function acceptRollover(S: any, cycleId: any, reviewed: any, sele
     reason: string;
 }[];
 /** Explicit choice after completion; validate a repeat in a draft before archiving. */
-export declare function finishProgrammeBlock(S: any, cycleId: any, choice: any, { today }?: {    today?: unknown;
+export declare function finishProgrammeBlock(S: any, cycleId: any, choice: any, { today }?: {    today?: string; repeatMax?: import('../../core/src/programme-rollover').RepeatMax;
 }, index?: ExerciseIndex): {
     id: any;
     programmeId: any;

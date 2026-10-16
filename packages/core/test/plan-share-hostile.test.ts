@@ -8,7 +8,7 @@ const plan = () => ({ opengym_plan: 1, name: 'Synthetic plan', routines: [
 const target = (): ExportPlan => ({ routines: [], customEx: [], week: { 6: ['old'] } })
 afterEach(() => vi.restoreAllMocks())
 
-describe('hostile shared-plan safety exceptions', () => {
+describe('K16 hostile shared-plan safety exceptions', () => {
   it('copies only own weekday keys and keeps ordinary prototypes through parse and merge', () => {
     const raw = JSON.stringify(plan()).replace('"week":{"1":["r"]}', '"week":{"1":["r"],"__proto__":["r"],"constructor":["r"],"7":["r"]}')
     const parsed = parsePlan(raw)
@@ -116,7 +116,7 @@ describe('hostile shared-plan safety exceptions', () => {
   })
 })
 
-describe('plan import resource limits', () => {
+describe('K16 plan import resource limits', () => {
   const rejectedBeforeDecode = (raw: string) => {
     const decode = vi.spyOn(JSON, 'parse')
     expect(() => parsePlan(raw)).toThrowError(expect.objectContaining({ code: 'plan-limit' }))

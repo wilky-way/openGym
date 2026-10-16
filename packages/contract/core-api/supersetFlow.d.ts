@@ -53,7 +53,7 @@ export declare function restOnRecheck({ timerRunning, unitDone, lastUnit }: {
  * have no rest of their own, but an exercise that explicitly asks for one still gets it — the
  * setting is a default, and this field overrides the default.
  */
-export declare function restSecFor(entries: any, unit: any, defaultRestSec: any, setRest?: null): any;
+export declare function restSecFor(entries: any, unit: any, defaultRestSec: any, setRest?: { idx: number; sec: number } | null): any;
 /**
  * The rest a completed set earns when it was a warm-up ramp set.
  *

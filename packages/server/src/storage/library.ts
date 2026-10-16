@@ -32,7 +32,7 @@ export function definitionJson(value: unknown): string {
 export const libraryVersionId = (canonical: string): string => 'sha256:' + createHash('sha256').update(canonical).digest('hex')
 export const privateDefinition = (definition: unknown): boolean => {
   const d = object(definition)
-  return object(d?.source)?.private === true || typeof d?.id === 'string' && new RegExp('^(?:' + String.fromCharCode(98,98,109) + '|' + String.fromCharCode(115,98,115) + ')-', 'i').test(d.id)
+  return object(d?.source)?.private === true || typeof d?.id === 'string' && /^(bbm-|sbs-)/i.test(d.id)
 }
 export function profileState(db: Database, profileId: string): Record<string, unknown> {
   return object(JSON.parse(readStateDoc(db, profileId)?.json ?? '{}')) ?? {}

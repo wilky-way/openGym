@@ -1,5 +1,5 @@
 // Forward-only, numbered SQLite migrations (STORAGE-CONTRACT §6). The DDL is the frozen contract file,
-// Embedded at build time. Optional projection tables are deliberately not applied here.
+// embedded at build time. 0002_projection_OPTIONAL.sql belongs to S12 and is deliberately not applied here.
 import init from '../../../contract/storage/migrations/0001_init.sql' with { type: 'text' }
 
 export interface Migration {

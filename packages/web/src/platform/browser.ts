@@ -1,5 +1,5 @@
 import type { KeyValueStore, Navigation, Platform, ServerEndpoint, Transport } from '@opengym/contract/platform/adapters'
-import { browserKeyValueStore, browserObjectStore } from './storage'
+import { browserKeyValueStore, browserObjectStore, browserWorkoutJournal } from './storage'
 import { configureUx, createBrowserUx } from './ux'
 import type { NavReaders } from '../lib/nav'
 
@@ -78,7 +78,7 @@ export function browserNavigation(win: Window): Navigation {
   }
 }
 
-/** Navigation accepts these readers at boot; the browser adapter supplies capabilities only. */
+/** K02's nav module accepts these readers at boot; W00 does not own/re-port that module. */
 export function browserNavReaders(win: Window = window): NavReaders & { onSheetEntry(): boolean; currentRoute(): string } {
   const sheetEntry = (): boolean => {
     try { return !!win.history.state?.openGymSheet } catch { return false }
@@ -89,15 +89,17 @@ export function browserNavReaders(win: Window = window): NavReaders & { onSheetE
 
 export interface BrowserPlatformOptions { buildSha?: string }
 
-/** The browser client injects this digest into sha256Hex; other shells retain the pure-JS default. */
+/** W01 passes this to K01 sha256Hex; core keeps its pure-JS default in every other shell. */
 export function browserSha256Options(win: Window = window): { subtle: SubtleCrypto | undefined } {
   return { subtle: win.crypto?.subtle }
 }
 
-export function createBrowserPlatform(options: BrowserPlatformOptions = {}): Platform {
+export function createBrowserPlatform(options: BrowserPlatformOptions = {}): Platform & { workoutJournal: import('@opengym/contract/platform/adapters').WorkoutJournalStorage } {
   if (typeof window === 'undefined') throw new Error('Browser window is unavailable')
   configureUx(createBrowserUx())
   const win = window
+  // Best effort once per boot; refusal never blocks workout logging.
+  try { void win.navigator.storage?.persist?.().catch(() => {}) } catch { /* unavailable */ }
   const kv = browserKeyValueStore(win), server = browserServerEndpoint(kv)
   const canServiceWorker = 'serviceWorker' in win.navigator && win.location.protocol === 'https:'
   const worker = win.navigator.serviceWorker
@@ -115,6 +117,7 @@ export function createBrowserPlatform(options: BrowserPlatformOptions = {}): Pla
   return {
     kv,
     objects: browserObjectStore(win.indexedDB),
+    workoutJournal: browserWorkoutJournal(win.indexedDB),
     server,
     transport: browserTransport(win, server),
     nav: browserNavigation(win),

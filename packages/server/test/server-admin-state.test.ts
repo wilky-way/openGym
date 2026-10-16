@@ -92,7 +92,7 @@ test('a pull shows as the last sync, in the list and the drill-down', async () =
   let row = (await h.get('/api/admin/users')).body.users.find((u: any) => u.id === VICTIM);
   assert.equal(row.lastSync, null);
   const before = h.clock.t;
-  // Exercise the durable last_pull seam used by GET /api/data.
+  // S04 owns GET /api/data transport; exercise its durable last_pull seam here.
   h.sqlite.query('UPDATE users SET last_pull=? WHERE id=?').run(h.clock.t, VICTIM);
   writeAccountsMirror(h.sqlite, h.dataDir);
   assert.equal(h.db().users.find((u: any) => u.id === VICTIM).lastPull, h.clock.t);

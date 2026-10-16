@@ -4,7 +4,7 @@ import { programmeTMConfig, missingProgrammeTMs } from '../src/programme-tm'
 import { dropGrid, loadKindFor } from '../src/plates'
 import type { ExerciseIndex } from '@opengym/core/exercises'
 // Compile-only fixture: real contract consumers require no broad casts.
-export function checkProgressionConsumers(state: StateDoc, cfg: RoutineExercise, routine: Routine, entry: WorkoutEntry, sets: WorkoutSet[], index: ExerciseIndex) {
+export function checkK08Consumers(state: StateDoc, cfg: RoutineExercise, routine: Routine, entry: WorkoutEntry, sets: WorkoutSet[], index: ExerciseIndex) {
   const result = nextPrescription(state, cfg, routine, index)
   readSession(entry, cfg, index)
   sessionsFor(state, cfg.id, cfg, routine.id, index)
@@ -25,7 +25,7 @@ type GoalAllowsMax = Assert<'max' extends ReturnType<typeof readSession>['goal']
 import * as declaredProgression from '@opengym/core/progression'
 import * as declaredPlates from '@opengym/core/plates'
 import * as declaredTM from '@opengym/core/programme-tm'
-export function checkProgressionPackageIndices(state: StateDoc, cfg: RoutineExercise, routine: Routine, entry: WorkoutEntry, index: ExerciseIndex) {
+export function checkK08PackageIndices(state: StateDoc, cfg: RoutineExercise, routine: Routine, entry: WorkoutEntry, index: ExerciseIndex) {
   declaredProgression.weightIncrement(cfg, state.unit, index)
   declaredProgression.policyFor(cfg, routine, cfg.mode, index)
   declaredProgression.plannedOf(cfg, index)

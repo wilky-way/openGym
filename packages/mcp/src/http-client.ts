@@ -85,8 +85,11 @@ export class ApiClient {
       let apiCode: string | undefined
       let details: Record<string, unknown> | undefined
       try {
-        let body = await res.json() as { code?: unknown; issues?: unknown; warnings?: unknown }
-        if (path.startsWith('/api/progression/')) {
+        let body = await res.json() as { code?: unknown; issues?: unknown; warnings?: unknown; guardStatus?: unknown }
+        if (path === '/api/data' && res.status === 423 && body?.code === 'TRAINING_NOW') {
+          apiCode = 'TRAINING_NOW'
+          details = {status:423,code:apiCode,...(['active','unknown'].includes(String(body.guardStatus)) ? {guardStatus:body.guardStatus} : {})}
+        } else if (path.startsWith('/api/progression/')) {
           body = this.redactCredentials(body)
           const codes = ['REV_CONFLICT','CYCLE_NOT_ACTIVE','PAST_WEEK','TRAINING_NOW','INVALID_RULES','NOT_FOUND','INVALID_LOAD','INVALID_DEFINITION','UNSUPPORTED_REPS','UNSUPPORTED_ASSISTED']
           if (typeof body?.code === 'string' && codes.includes(body.code)) apiCode = body.code
@@ -106,8 +109,10 @@ export class ApiClient {
             const rows = details[key]
             if (Array.isArray(rows)) while (Buffer.byteLength(JSON.stringify(rows)) > 12 * 1024) { rows.pop(); details.diagnosticsTruncated = true }
           }
-        } else if (typeof body?.code === 'string' && ['version-conflict', 'active-definition', 'private-downgrade', 'not-ready'].includes(body.code)) apiCode = body.code
+        } else if (path.startsWith('/api/data') && body?.code === 'TRAINING_NOW') apiCode = body.code
+        else if (typeof body?.code === 'string' && ['version-conflict', 'active-definition', 'private-downgrade', 'not-ready'].includes(body.code)) apiCode = body.code
       } catch { /* Refusal bodies may be empty. */ }
+      if (apiCode === 'TRAINING_NOW') throw Object.assign(error('TRAINING_NOW','Training is active or its status is unknown; the owning device must confirm idle.'),details,{status:res.status,apiCode})
       if (details) throw Object.assign(error(apiCode ?? (res.status === 409 ? 'REV_CONFLICT' : 'API_REFUSED'), `The openGym API refused the request (${res.status}). ${JSON.stringify(details)}`), {status:res.status,apiCode,...details})
       throw Object.assign(res.status === 409 ? error('REV_CONFLICT', 'The profile changed. Read the program again before applying this action.') : error('API_REFUSED', `The openGym API refused the request (${res.status}).`), { status: res.status, apiCode })
     }

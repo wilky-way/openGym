@@ -39,7 +39,7 @@ export function offloadInputs(a: SyncProgrammes | null | undefined, b: SyncProgr
   if (!offloaded && !installed) return [a, b]
   const inUse = new Set([...cycles(a?.cycles), ...cycles(b?.cycles)]
     .filter(c => c.status === 'active' || c.status === 'paused').map(c => c.programmeId))
-  // compatibility policy: protection is an explicit install, so terminal release cannot re-offload.
+  // GM ruling: protection is an explicit install, so terminal release cannot re-offload.
   // The offloaded version and its clock + 1 are identical on client and server; no wall clock.
   for (const d of [...list(a?.definitions), ...list(b?.definitions)]) {
     if (!d?.id || !inUse.has(d.id) || !offloaded || !Object.hasOwn(offloaded, d.id)) continue

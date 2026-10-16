@@ -93,7 +93,7 @@ test('disable preserves history/credentials and burns device links; delete casca
   expect(readStateDoc(h.sqlite, VICTIM)).not.toBeNull()
   expect((await fetch(h.api + '/api/me', { headers: { Authorization: 'Bearer ' + token } })).status).toBe(401)
   await h.post('/api/admin/user/disable', { id: VICTIM, disabled: false })
-  // Disabling burns the session version; re-enabling never revives old tokens.
+  // I03: disabling burns the session version; re-enabling never revives old tokens.
   expect((await fetch(h.api + '/api/me', { headers: { Authorization: 'Bearer ' + token } })).status).toBe(401)
   await h.del(VICTIM)
   expect(h.sqlite.query('SELECT * FROM devices WHERE user_id=?').all(VICTIM)).toEqual([])

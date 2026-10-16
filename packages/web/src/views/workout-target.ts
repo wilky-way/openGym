@@ -22,7 +22,7 @@ export function captureWorkoutTarget(valid: (S: StoreDocument) => boolean = () =
   validators.add(target)
   return target
 }
-/** Destructive confirms also fence sync store's saved copy before its post-producer tab join.
+/** Destructive confirms also fence W07's saved copy before its post-producer tab join.
  * The wid is read with the bytes inside the producer; a queued storage event need not
  * have updated the in-memory draft yet. This is a read-only check, never a sync write. */
 export function captureDurableWorkoutTarget(snapshot = true): WorkoutTarget {
@@ -47,17 +47,24 @@ export function captureDurableWorkoutTarget(snapshot = true): WorkoutTarget {
       if (account !== durableOwner || (savedOwner !== null && savedOwner !== (account || '')) ||
         (user?.id ?? null) !== (useStore.getState().user?.id ?? null)) return false
       const wid = kv.get('gym_state_wid'), raw = kv.get('gym_state_v1')
-      if (!raw) return wid === openedWid // First save, with sync store recovery guarantees intact
+      if (!raw) return wid === openedWid // first save, with W07 recovery guarantees intact
       const saved = JSON.parse(raw)
-      // A different write may contain unrelated edits; allow it only with the captured
-      // active session still byte-identical, including rows and any instance metadata.
-      return identity === owner(saved) && JSON.stringify(saved.active) === (snapshot ? active : JSON.stringify(S.active))
+      // Degraded same-session progress may lead the saved bytes, but a normal
+      // same-generation peer write must still prove the captured session identity.
+      if (!snapshot && useStore.getState().sync?.localDurability && useStore.getState().sync.localDurability !== 'saved' &&
+        typeof useStore.getState().validateWorkoutOwner === 'function') {
+        return useStore.getState().validateWorkoutOwner() === true &&
+          (typeof useStore.getState().validateWorkoutBaseline === 'function' ? useStore.getState().validateWorkoutBaseline() === true : identity === owner(saved)) && target(S) && target()
+      }
+      if (identity !== owner(saved)) return false
+      // Destructive confirms retain the complete saved-session snapshot check.
+      return JSON.stringify(saved.active) === (snapshot ? active : JSON.stringify(S.active))
     } catch { return false }
   }
 }
 let refusalEpoch = 0
 export function staleWorkoutToast() { refusalEpoch++; useUI.getState().toast('The account, profile or workout changed. Open this action again.') }
-/** Sync store stamps even unchanged producers: unwind it before stamps, persistence or push. */
+/** W07 stamps even unchanged producers: unwind it before stamps, persistence or push. */
 export function workoutTargetUpdate(target: WorkoutTarget, mutate: (S: StoreDocument) => void, push = true): boolean {
   return guardedStoreUpdate(S => target(S), mutate, {push, onStale: staleWorkoutToast})
 }
@@ -66,7 +73,7 @@ export function workoutCallbackTarget(args: unknown[], fallback: WorkoutTarget):
   const last = args.at(-1)
   return typeof last === 'function' && validators.has(last) ? last as WorkoutTarget : fallback
 }
-/** Validate callbacks handed to active workout before dispatch; the caller also guards its producer. */
+/** Validate callbacks handed to W18 before dispatch; the caller also guards its producer. */
 export function workoutTargetCallback<T extends (...args: any[]) => any>(target: WorkoutTarget, callback: T): T {
   return ((...args: Parameters<T>) => {
     // A no-write producer probe checks the actual draft without ever committing it.

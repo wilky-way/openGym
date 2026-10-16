@@ -102,11 +102,13 @@ describe('Settings B — state preservation', () => {
   mount('plan'); click(row('Load starter plan')); expect(services.starterPlanSheet).toHaveBeenCalledOnce()
   mount('workout'); click(row('Fine-tuning')); expect(services.navigate).toHaveBeenCalledWith('/settings/advanced')
  })
- it('deleted media controls stay absent and saved media preferences remain verbatim', () => {
+ it('catalogue media controls follow and persist saved preferences', () => {
   useStore.getState().update(s => { s.gifSize = 'mini'; s.exFigure = 'female' })
   const before = structuredClone(useStore.getState().S)
   mount('workout'); expect(host.textContent).not.toContain('Exercise animations')
-  mount('look'); expect(host.textContent).not.toContain('Exercise drawings')
+  mount('look'); expect(host.textContent).toContain('Exercise drawings')
   expect(useStore.getState().S).toEqual(before)
+  pick('Exercise animations', 'Off'); expect(useStore.getState().S.gifSize).toBe('off')
+  pick('Exercise drawings', 'Male'); expect(useStore.getState().S.exFigure).toBe('male')
  })
 })

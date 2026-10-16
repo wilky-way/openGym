@@ -7,7 +7,7 @@ import { useUI } from '../store/useUI'
 // session without invalidating a settings edit or ordinary workout logging.
 const identity = (store: StoreState, draft = store.S, session = true) => JSON.stringify([
   store.user?.id ?? null, store.documentInstance ?? 0,
-  draft.unit, draft.activeEquipId, draft.resetAt,
+  draft.profileId, draft.unit, draft.activeEquipId, draft.resetAt,
   session && draft.active ? [draft.active.id, draft.active.start, draft.active.d,
     draft.active.routineId, draft.active.editingWorkoutId, draft.active.programme?.instanceId] : null,
 ])

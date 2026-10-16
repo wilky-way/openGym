@@ -72,7 +72,7 @@ CREATE TABLE invites (
 ) STRICT;
 
 -- Per-device sessions (contract api.ts "per-device tokens"). One row per signed-in browser, paired device,
--- agent (local host MCP) or native shell. Revoking a row kills that device's token only.
+-- agent (MCP) or native shell. Revoking a row kills that device's token only.
 CREATE TABLE devices (
   id          TEXT PRIMARY KEY,           -- 16-char base64url; legacy tokens map to 'legacy:<16 hex>'
   user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -164,7 +164,7 @@ CREATE TABLE library_versions (
   FOREIGN KEY (profile_id, definition_id) REFERENCES library_definitions(profile_id, id) ON DELETE CASCADE
 ) STRICT, WITHOUT ROWID;
 
--- Public compatibility and regression coverage.
+-- ───────────── media (only if kept; EXECUTION §1.4 Q2) ─────────────
 -- Blobs stay on disk at $DATA_DIR/uploads/<uid>/<sha256>.<ext> exactly as legacy. This table
 -- replaces uploads/<uid>/.gc.json and the in-memory index.
 CREATE TABLE media_objects (

@@ -69,3 +69,14 @@ export interface Platform {
   /** register the SW only when info.canServiceWorker; no-op elsewhere */
   registerServiceWorker(url: string): Promise<void>
 }
+
+/** Durable workout payloads and terminal receipts, separate from disposable caches. */
+export interface WorkoutJournalStorage {
+  get(key: string): Promise<string | null>
+  put(key: string, value: string): Promise<void | boolean>
+  /** Expected payload/receipt enables an atomic causal retirement; newer decisions survive. */
+  delete(key: string, expected?: string): Promise<void | boolean>
+  /** Recoverable active/finished payload keys; terminal receipts are separate. */
+  keys(): Promise<string[]>
+  receipts(): Promise<[string, string][]>
+}

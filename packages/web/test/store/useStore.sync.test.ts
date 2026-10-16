@@ -63,7 +63,7 @@ describe('pull against a revisioned server', () => {
   })
 
   it('survives an unforked stamped writer, clean fork pull, and the fork phone’s next push', async () => {
-    const programme: any = { version: 1, fork: 'opengym/1', definitions: [{ id: 'synthetic' }], cycles: [{ id: 'cycle', occurrences: [] }] }
+    const programme: any = { version: 1, fork: 'wilky/1', definitions: [{ id: 'synthetic' }], cycles: [{ id: 'cycle', occurrences: [] }] }
     const local: any = { ...clone(DEF), _ts: 100, programmes: programme }
     // v1.4.0 mergeStates starts from its newer copy: no programmes key or edited.programmes.
     const staleMerge: any = { ...clone(DEF), _ts: 200, sound: false }

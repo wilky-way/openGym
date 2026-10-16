@@ -1,0 +1,166 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`W12 real custom exercise index outputs > custom warmup and drop swap cb reps uses load grids 1`] = `
+[
+  {
+    "done": false,
+    "phase": "warmup",
+    "r": 8,
+    "w": 20,
+    "warmup": true,
+  },
+  {
+    "done": false,
+    "drops": [
+      {
+        "r": 8,
+        "w": 20,
+      },
+    ],
+    "r": 8,
+    "type": "dropset",
+    "w": 27,
+  },
+]
+`;
+
+exports[`W12 real custom exercise index outputs > custom warmup and drop swap cb time uses load grids 1`] = `
+[
+  {
+    "done": false,
+    "phase": "warmup",
+    "sec": 30,
+    "w": 20,
+    "warmup": true,
+  },
+  {
+    "done": false,
+    "drops": [
+      {
+        "r": undefined,
+        "w": 20,
+      },
+    ],
+    "sec": 30,
+    "type": "dropset",
+    "w": 27,
+  },
+]
+`;
+
+exports[`W12 real custom exercise index outputs > custom warmup and drop swap cd reps uses load grids 1`] = `
+[
+  {
+    "done": false,
+    "phase": "warmup",
+    "r": 8,
+    "w": 12,
+    "warmup": true,
+  },
+  {
+    "done": false,
+    "drops": [
+      {
+        "r": 8,
+        "w": 12,
+      },
+    ],
+    "r": 8,
+    "type": "dropset",
+    "w": 27,
+  },
+]
+`;
+
+exports[`W12 real custom exercise index outputs > custom warmup and drop swap cl reps uses load grids 1`] = `
+[
+  {
+    "done": false,
+    "phase": "warmup",
+    "r": 8,
+    "w": 10,
+    "warmup": true,
+  },
+  {
+    "done": false,
+    "drops": [
+      {
+        "r": 8,
+        "w": 20,
+      },
+    ],
+    "r": 8,
+    "type": "dropset",
+    "w": 27,
+  },
+]
+`;
+
+exports[`W12 real custom exercise index outputs > custom warmup and drop swap cl time uses load grids 1`] = `
+[
+  {
+    "done": false,
+    "phase": "warmup",
+    "sec": 30,
+    "w": 10,
+    "warmup": true,
+  },
+  {
+    "done": false,
+    "drops": [
+      {
+        "r": undefined,
+        "w": 20,
+      },
+    ],
+    "sec": 30,
+    "type": "dropset",
+    "w": 27,
+  },
+]
+`;
+
+exports[`W12 real custom exercise index outputs > planned custom swaps retain progression and lower assistance load 1`] = `
+{
+  "id": "ca",
+  "plan": {
+    "kind": "hold",
+    "policy": "linear",
+    "reps": 10,
+    "weight": 10,
+    "why": [
+      "First time in this routine, so starting from its own target.",
+    ],
+  },
+  "planned": {
+    "reps": 10,
+    "sets": 3,
+    "weight": 0,
+  },
+  "rid": "r",
+  "sets": [
+    {
+      "done": false,
+      "r": 10,
+      "w": 10,
+    },
+    {
+      "done": false,
+      "r": 10,
+      "w": 10,
+    },
+    {
+      "done": false,
+      "r": 10,
+      "w": 10,
+    },
+  ],
+  "target": {
+    "id": "ca",
+    "mode": "reps",
+    "reps": 10,
+    "sets": 3,
+    "weight": 10,
+  },
+}
+`;

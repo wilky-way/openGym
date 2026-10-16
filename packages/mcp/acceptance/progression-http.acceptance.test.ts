@@ -37,7 +37,7 @@ function target(state: any = fixture(), library: any[] = []) {
   const app = createApp(config, { auth, data, now, log: () => {}, progression: { today: () => '2026-01-05', livePresence: () => live.active ? { active: true } : null } })
   const env: Record<string,string> = { OPENGYM_URL: 'http://127.0.0.1:1', OPENGYM_TOKEN: auth.mint(user, 'agent'), OPENGYM_UID: user.id, OPENGYM_AUTHORING_DIR: join(root, 'drafts'), OPENGYM_ENABLE_PROGRAMME_AUTHORING: '1', OPENGYM_ENABLE_PROGRAMME_WRITES: '1' }
   const calls: { method: string; path: string; body?: any }[] = []
-  // Route requests directly into the data/progression Hono app, never to a listener.
+  // Requests are routed directly into the real S04/P5 Hono app, never to a listener.
   const fetcher: Fetcher = async (url, init) => {
     calls.push({ method: init.method!, path: new URL(url).pathname, ...(init.body ? { body: JSON.parse(String(init.body)) } : {}) })
     return app.request(new Request(url, init))
@@ -157,7 +157,7 @@ test('draft preview crosses only the HTTP preview boundary and cannot mutate its
   expect((await h.call('get_program_draft', { draft_id: d.draft_id })).rev).toBe(d.rev); expect(JSON.stringify(h.saved())).toBe(before)
   expect(h.calls.filter(c => c.method !== 'GET').map(c => c.path)).toEqual(['/api/progression/preview'])
 })
-test('library and historical preview sources resolve through HTTP without relying on an unmounted progression API library seam', async () => {
+test('library and historical preview sources resolve through HTTP without relying on an unmounted P5 library seam', async () => {
   const state: any = fixture(), library = structuredClone(state.programmes.definitions[0]); library.id = 'library-progress'
   const h = target(state,[library]), before = JSON.stringify(h.saved())
   const response = await h.fetcher(h.env.OPENGYM_URL + '/api/programmes/library/library-progress',{ method: 'GET', headers: { Authorization: 'Bearer ' + h.env.OPENGYM_TOKEN } })

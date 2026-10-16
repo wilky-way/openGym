@@ -14,8 +14,8 @@ import { createBrowserPlatform } from '../src/platform/browser'
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 let root: Root
 let host: HTMLDivElement
-const assisted: Exercise = { id: 'c-component-assisted', n: 'Synthetic assisted curl', custom: true, assisted: true, eq: 'assisted', bp: 'upper arms', tg: 'biceps' }
-const dumbbell: Exercise = { id: 'c-component-dumbbell', n: 'Synthetic dumbbell curl', custom: true, eq: 'dumbbell', bp: 'upper arms', tg: 'biceps' }
+const assisted: Exercise = { id: 'c-w10-assisted', n: 'Synthetic assisted curl', custom: true, assisted: true, eq: 'assisted', bp: 'upper arms', tg: 'biceps' }
+const dumbbell: Exercise = { id: 'c-w10-dumbbell', n: 'Synthetic dumbbell curl', custom: true, eq: 'dumbbell', bp: 'upper arms', tg: 'biceps' }
 function seed(customEx: Exercise[] = [assisted, dumbbell]) {
   const S = { ...freshState(), customEx }
   useStore.setState({ S, index: createExerciseIndex(customEx) })
@@ -38,7 +38,7 @@ beforeEach(() => {
 })
 afterEach(() => { act(() => root.unmount()); host.remove(); vi.useRealTimers() })
 
-describe('exercise components without media', () => {
+describe('exercise catalogue components', () => {
   it('toggles and persists list/cards through the real store and explorer', () => {
     const platform = createBrowserPlatform()
     platform.kv.remove(KEY)
@@ -69,7 +69,7 @@ describe('exercise components without media', () => {
       render(); selectBiceps()
       act(() => host.querySelector<HTMLButtonElement>('.ex-view-btn')!.click())
       expect(host.querySelector('.list')!.classList.contains('ex-grid')).toBe(true)
-      expect(host.querySelector('img,video,.thumb')).toBeNull()
+      expect(host.querySelector('img.thumb')).toBeTruthy()
     } finally { updater.mockRestore(); dispose(); useStore.setState({ update: originalUpdate }); platform.kv.remove(KEY) }
   })
   it('uses the real custom assisted index for the best-load badge', () => {
@@ -100,6 +100,7 @@ describe('exercise components without media', () => {
     act(() => row(assisted.n!).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })))
     expect(onPick).toHaveBeenCalledWith(assisted)
     expect(row(assisted.n!).querySelector('button')).toBeNull()
+    expect(row(assisted.n!).querySelector('img,video,.thumb')).toBeNull()
     act(() => [...host.querySelectorAll<HTMLButtonElement>('button')].find(el => el.textContent === 'Clear selection')!.click())
     expect(host.querySelector('.list')).toBeNull()
   })
@@ -115,7 +116,7 @@ describe('exercise components without media', () => {
     expect(useStore.getState().S.equipFilterOn).toBe(true)
   })
   it('pages forty at a time with the actual Button ref and resets the page on search', () => {
-    seed(Array.from({ length: 85 }, (_, i) => ({ ...dumbbell, id: `c-component-${i}`, n: `Synthetic page curl ${i}` })))
+    seed(Array.from({ length: 85 }, (_, i) => ({ ...dumbbell, id: `c-w10-${i}`, n: `Synthetic page curl ${i}` })))
     const observe = vi.fn(), disconnect = vi.fn()
     configureUx({ ...createBrowserUx(), observeIntersection: () => ({ observe, disconnect } as unknown as IntersectionObserver) })
     render(); selectBiceps(); search('Synthetic page')

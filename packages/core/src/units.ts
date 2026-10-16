@@ -92,8 +92,12 @@ export function convertStateUnit(S: SyncDoc, to: "kg" | "lb", index: ExerciseInd
   // sets, so they must move with the sets or show kg totals under an lb label (QA C11). The
   // volume is re-added from the converted sets, so it agrees with the set list to the number.
   const convSession = (s: LoadSession): LoadSession => {
-    const out: LoadSession = { ...s, entries: (s.entries || []).map(e => convEntry(e, from, to)) }
-    if (out.bw != null) out.bw = bw(out.bw)
+    const stamped = s.unit === 'kg' || s.unit === 'lb'
+    const sessionFrom = stamped ? s.unit as 'kg' | 'lb' : from
+    // Replay reads an explicit session unit before the profile unit. Move the
+    // stamp with its numbers, and do not reconvert already-target-unit history.
+    const out: LoadSession = { ...s, ...(stamped ? {unit:to} : {}), entries: (s.entries || []).map(e => convEntry(e, sessionFrom, to)) }
+    if (out.bw != null) out.bw = convertBodyWeight(out.bw, sessionFrom, to)
     if (Number.isFinite(out.vol)) out.vol = workoutVolume({ entries: out.entries.filter(e => Array.isArray(e?.sets)) }, index)
     return out
   }

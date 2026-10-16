@@ -18,7 +18,18 @@
     "test:server": "bun run --cwd packages/server test",
     "backup:create": "bun packages/server/src/cli/backup.ts create",
     "backup:verify": "bun packages/server/src/cli/backup.ts verify",
-    "audit:dependencies": "bun audit"
+    "audit:dependencies": "bun audit",
+    "test:contract": "bun run --cwd packages/contract test",
+    "test:parity": "bun run --cwd packages/parity test",
+    "test:foundation": "bun --bun vitest run --config scripts/vitest.config.ts",
+    "lint:boundaries": "bun scripts/boundaries.ts",
+    "gen:model": "bun scripts/gen-model.ts",
+    "gen:core-api": "bun scripts/gen-core-api.ts",
+    "gen:mcp-tools": "bun scripts/gen-mcp-tools.ts",
+    "legacy:verify": "bun scripts/legacy-verify.ts",
+    "parity:assert-count": "bun scripts/assert-count.ts",
+    "gate": "bun scripts/public-checks.ts",
+    "corpus:record": "bun scripts/record-public-requests.ts"
   },
   "devDependencies": {
     "@babel/parser": "8.0.7",

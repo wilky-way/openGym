@@ -31,7 +31,7 @@ const loads=(x: EngineInput)=>evaluate(x).weeks[0]?.slots[0]?.sets.map(s=>s.load
 const assertClean=(x: EngineInput)=>expect(evaluate(x).warnings).toEqual([])
 
 // HAND-COMPUTED GOLDENS: these literals are arithmetic worked before the engine,
-// not values captured from evaluate(). percentage-wave set percentages are 65/75/85,
+// not values captured from evaluate(). Percentage-wave set percentages are 65/75/85,
 // 70/80/90, 75/85/95; nearest ties round UP. No external paid content.
 const waves: ProgressionRule={id:'waves',kind:'percentage',ref:{lift:'bench',basis:'tm'},rounding,weeks:{
   '1':[{pct:0.65,reps:5},{pct:0.75,reps:5},{pct:0.85,reps:'amrap',repsMin:5}],
@@ -49,7 +49,7 @@ const goldenWaves = [
   {unit:'kg' as const,tm:142.5,increment:2.5,expected:[[92.5,107.5,120],[100,115,127.5],[107.5,120,135]]},
 ]
 describe('hand-computed progression goldens',()=>{
-  for (const table of goldenWaves) it(`percentage-wave at TM ${table.tm} ${table.unit}`,()=>{
+  for (const table of goldenWaves) it(`percentage wave at TM ${table.tm} ${table.unit}`,()=>{
     const rule=structuredClone(waves);rule.rounding.increment=table.increment
     const x=input(programme(rule,3,table.unit));x.cycle!.tmSeed={bench:table.tm};x.profile.unit=table.unit;x.weeks=[1,2,3]
     const result=evaluate(x)
@@ -59,7 +59,7 @@ describe('hand-computed progression goldens',()=>{
     expect(result.weeks.map(w=>w.slots[0]!.sets[2]!.repsMin)).toEqual([5,3,1])
     expect(result.weeks[0]!.slots[0]!.sets[0]!.why[0]).toMatchObject({kind:'percentage',inputs:{pct:0.65,reference:table.tm,basis:'tm'}})
   })
-  it('tiered-strength-style 3x5 linear: 135 ->140 ->hold140 ->145 ->150',()=>{
+  it('3x5 linear: 135 ->140 ->hold140 ->145 ->150',()=>{
     const x=input(programme(linear()),5)
     // Independent table: miss 3rd set at 140; repeat, then add 5 on success.
     const rows=[{load:135,reps:[5,5,5],next:140},{load:140,reps:[5,5,4],next:140},{load:140,reps:[5,5,5],next:145},{load:145,reps:[5,5,5],next:150}]
@@ -363,7 +363,7 @@ describe('rep representation errors and numeric normalization',()=>{
   })
 })
 
-describe('composition failures never produce guessed loads',()=>{
+describe('P1 composition failures never produce guessed loads',()=>{
   function rejected(d: ReturnType<typeof programme>, code: string) {
     const out=evaluate(input(d))
     expect(out.error?.code).toBe('INVALID_RULES');expect(out.weeks).toEqual([])

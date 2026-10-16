@@ -2,7 +2,7 @@ import { mkdirSync } from 'node:fs'
 import { secureResponse, bootAddress } from './security-headers'
 import { createApp, appNotifications, type AppServices } from './app'
 import { loadConfig, type ServerConfig } from './config'
-import { BodyDeadline, RequestBody, corsHeaders, errorResponse } from './http'
+import { ApiError, BodyDeadline, RequestBody, corsHeaders, errorResponse } from './http'
 import { staticHandler } from './static'
 
 export { createApp } from './app'
@@ -13,18 +13,16 @@ export function startServer(config: ServerConfig = loadConfig(), services: AppSe
   if (config.exposure === 'public' && !config.deviceTokens) throw new Error('EXPOSURE=public requires DEVICE_TOKENS=1')
   mkdirSync(config.dataDir, { recursive: true })
   const app = createApp(config, services)
-  const serveStatic = config.staticDir ? staticHandler(config.staticDir) : undefined
+  const serveStatic = config.staticDir ? staticHandler(config.staticDir, config.basePath) : undefined
   const server = Bun.serve({
     port: config.port, hostname: config.host,
     // Bun exposes an idle header timeout, not an absolute pre-header deadline.
-    // Request transport is handled by the shared HTTP middleware.
+    // See S01 RESULT for the coordinator's transport ruling.
     idleTimeout: config.headersTimeoutMs / 1000,
     // The application sends JSON 413 and discards at most twice its cap. Bun's own
     // cap would preempt that response (and its JSON conventions).
     maxRequestBodySize: Number.MAX_SAFE_INTEGER,
     async fetch(request, listener) {
-      const asset = serveStatic?.(request)
-      if (asset) return secureResponse(asset, new URL(request.url).pathname)
       let timer: ReturnType<typeof setTimeout> | undefined
       const body = new RequestBody(request, config.maxBodyBytes, () => {
         clearTimeout(timer)
@@ -39,7 +37,15 @@ export function startServer(config: ServerConfig = loadConfig(), services: AppSe
         }
       })
       let response: Response
-      try { response = await Promise.race([app.fetch(request, { body }), expired]) }
+      try { response = await Promise.race([(async () => {
+        const asset = serveStatic?.(request)
+        if (asset) {
+          // Bun discards GET/HEAD bodies. Refuse static framing rather than bypassing limits.
+          if (framed && !request.body) throw new ApiError(+(request.headers.get('content-length') || 0) > config.maxBodyBytes ? 413 : 400, 'unexpected request body', {}, { Connection: 'close' })
+          await body.receipt(); return asset
+        }
+        return app.fetch(request, { body })
+      })(), expired]) }
       catch (error) { response = errorResponse(error, services.log) }
       if (response.status === 413 && body.draining && !body.complete) {
         // Flush the JSON error while draining. Keep the response stream open until the
@@ -61,7 +67,8 @@ export function startServer(config: ServerConfig = loadConfig(), services: AppSe
         if (response.status !== 413) body.cancel()
       }
       corsHeaders(request, config.origin).forEach((value, key) => response.headers.set(key, value))
-      return secureResponse(response, new URL(request.url).pathname)
+      response = await compressResponse(request, response)
+      return secureResponse(response, new URL(request.url).pathname.slice(config.basePath.length))
     },
     error: error => secureResponse(errorResponse(error, services.log)),
   })
@@ -78,3 +85,22 @@ export function startServer(config: ServerConfig = loadConfig(), services: AppSe
 }
 
 if (import.meta.main) startServer(loadConfig(process.env, process.argv.slice(2)))
+
+/** Match nginx's text gzip policy without compressing ranges, images or small bodies. */
+async function compressResponse(request: Request, response: Response): Promise<Response> {
+  if (response.status !== 200 || !/^(text\/(plain|html|css|javascript)|application\/(json|javascript)|image\/svg\+xml)(;|$)/i.test(response.headers.get('content-type') || '')) return response
+  const vary = response.headers.get('Vary')
+  response.headers.set('Vary', [vary, 'Accept-Encoding'].filter(Boolean).join(', '))
+  const gzip = (request.headers.get('accept-encoding') || '').split(',').some(item => {
+    const [coding, ...params] = item.trim().split(';')
+    return coding?.toLowerCase() === 'gzip' && !params.some(p => /^\s*q\s*=\s*0(?:\.0*)?\s*$/.test(p))
+  })
+  if (!gzip || request.method === 'HEAD') return response
+  const bytes = new Uint8Array(await response.arrayBuffer())
+  if (bytes.length < 1024) return new Response(bytes, response)
+  const compressed = Bun.gzipSync(bytes)
+  const headers = new Headers(response.headers)
+  headers.set('Content-Encoding', 'gzip'); headers.set('Content-Length', String(compressed.length))
+  headers.delete('Accept-Ranges')
+  return new Response(compressed, { status: response.status, headers })
+}

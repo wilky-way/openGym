@@ -620,7 +620,7 @@ function mergeProgrammeEntry(a: SyncRecord, b: SyncRecord) {
 
 /** The server's pre-stamp offload filter. Never mutates the stored programme block.
  * Entries at/before Reset are removed; a definition's _ts is never an install marker.
- * Both client and server use the shared offload helpers.
+ * Both client and server use K10's shared offload helpers.
  * A protected definition receives the helper's deterministic install marker
  * (same versionId, offloaded.at + 1), before activation ownership is reconciled.
  */

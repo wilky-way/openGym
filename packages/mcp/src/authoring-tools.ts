@@ -82,7 +82,7 @@ export function createAuthoringTools(options:{env?:Environment;fetcher?:Fetcher;
         definition=preview.definition
         origin={kind:'import',format:p.format,...(p.filename?{filename:p.filename}:{}),sha256:createHash('sha256').update(typeof p.content==='string'?p.content:JSON.stringify(p.content)).digest('hex')}
       }
-      // All host drafts are the operator unpublished personal working copies.
+      // All host drafts are Alex's unpublished personal working copies.
       definition.source={...definition.source,private:true};identities(definition);budget(definition)
       return store(s=>draftResult(s.create({definition,origin,customEx,...(targetDefinitionId?{targetDefinitionId}:{})})))
     },true),

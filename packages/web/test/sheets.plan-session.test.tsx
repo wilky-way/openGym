@@ -1,4 +1,4 @@
-// design safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
+// GM safety divergence from legacy: callbacks bind owner/session/editor/row identity; stale targets abort.
 import './workout-sheet-environment'
 // @vitest-environment happy-dom
 // "Saved as 2 × 10, the training day shows 2 × 15" (Discord report, #275), end to end through the

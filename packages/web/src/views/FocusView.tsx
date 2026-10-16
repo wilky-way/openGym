@@ -1,3 +1,5 @@
+import { NativeTarget } from '../components/NativeTarget'
+import Media, { WorkoutThumb } from '../components/Media'
 import './FocusView.css'
 import { captureWorkoutTarget, captureWorkoutRow, workoutTargetCallback, workoutIdentityKey, staleWorkoutToast } from './workout-target'
 import { createExerciseIndex } from '@opengym/core/exercises'
@@ -26,7 +28,7 @@ import { effortPickerSheet, exerciseDetailSheet, exerciseHistorySheet, exerciseN
 import { baseWeightFor, inventoryFor, loadKindFor, rowLoad } from '@opengym/core/plates'
 import { ownedWeightsFor, stepOwned } from '@opengym/core/dumbbells'
 import Icon from '../components/Icon'
-import { Button, Stepper } from '../components/ui'
+import { Button, Stepper, NumberField } from '../components/ui'
 
 
 const firstIncomplete = (entry: any ) : any => {
@@ -295,7 +297,9 @@ export default function FocusView({
           <button aria-label={t('Next superset set')} disabled={sequenceIdx < 0 || sequenceIdx >= sequence.length - 1} onClick={() : any => selectSequence(sequenceIdx + 1)}><Icon name="chevronRight" /></button>
         </div>
       </div>}
+      {S.gifSize !== 'mini' && <Media ex={ex} minimizable />}
       <header className="focus-card-header">
+        {S.gifSize === 'mini' && <WorkoutThumb ex={ex} onExpand={() => useStore.getState().update(s => { s.gifSize = 'full' })} />}
         <h2>{exerciseNameFor(ex)}</h2>
         <button className="iconbtn" aria-label={t('Details')} onClick={() : any => exerciseDetailSheet(ex)}><Icon name="info" /></button>
         {isWarmupRow(set) && <span className="focus-warmup" aria-label={t('Warm-up')}>🔥</span>}
@@ -318,6 +322,7 @@ export default function FocusView({
         {guidance && <button className="focus-guidance" onClick={onProgressionSettings}><Icon name="lightbulb" />{t(guidance.policyLabel)}</button>}
       </div>
       <Prescription entry={entry} setIdx={setIdx} unit={S.unit} fallbackRest={S.restSec} kind={programmeEffortOf(S)}>
+        {set.nativeTarget && <NativeTarget row={set} entry={entry} />}
         {(set.target || set.repTarget) && <span className="focus-badge set-target">{set.repTarget && `${set.repTarget.min}–${set.repTarget.max} · `}{targetLabel(set.target,t,programmeEffortOf(S))}</span>}
         <PlanBadge entry={entry} mode={mode} />
         <PlateBadge S={S} entry={entry} set={set} />
@@ -338,13 +343,13 @@ export default function FocusView({
             {(inclineFits(ex, currentIndex()) || entry.sets.some(hasIncline)) && <Stepper {...holdProps} label={t('Incline (%)')} ariaLabel="incline" value={set.incline || 0} step={INCLINE_STEP} max={INCLINE_MAX} disabled={readOnly}
               onChange={(value: any ) : any => onField(setIdx, 'incline', clampIncline(value))} />}
           </> : <>
-            <Stepper {...holdProps} label={t('Load ({0})', S.unit)} ariaLabel="load" value={set.w || 0} step={loadStep} onStep={stepLoad} disabled={readOnly}
-              onChange={(value: any ) : any => onField(setIdx, 'w', value)} />
+            {set.nativeTarget ? <label className="stp-w" style={{marginTop:12}}><span className="stp-l">{t('Load ({0})', S.unit)}</span><span className="stp"><span className="val"><NumberField aria-label="Actual load" nullable value={set.w ?? ''} disabled={readOnly} onChange={value=>onField(setIdx,'w',value)} /></span></span></label> : <Stepper {...holdProps} label={t('Load ({0})', S.unit)} ariaLabel="load" value={set.w || 0} step={loadStep} onStep={stepLoad} disabled={readOnly}
+              onChange={(value: any ) : any => onField(setIdx, 'w', value)} />}
           {mode === 'time' ? <div className="focus-timed">
             <strong>{t('{0}s hold', set.sec || entry.target?.sec || 45)}</strong>
             <Button icon="play" aria-label={t('Start set')} disabled={readOnly || busy}
               onClick={() : any => onStartTimed(setIdx, onProgress)}>{t('Start')}</Button>
-          </div> : <Stepper {...holdProps} label={t('Reps')} ariaLabel="reps" value={set.r || 0} step={1} decimal={false} disabled={readOnly}
+          </div> : set.nativeTarget ? <label className="stp-w" style={{marginTop:12}}><span className="stp-l">{t('Reps')}</span><span className="stp"><span className="val"><NumberField aria-label="Actual reps" nullable decimal={false} value={set.r ?? ''} disabled={readOnly} onChange={value=>onField(setIdx,'r',value)} /></span></span></label> : <Stepper {...holdProps} label={t('Reps')} ariaLabel="reps" value={set.r || 0} step={1} decimal={false} disabled={readOnly}
             onChange={(value: any ) : any => onField(setIdx, 'r', value)} />}</>}
         </>}
         <div className="focus-extras">

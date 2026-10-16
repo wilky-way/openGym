@@ -1,3 +1,5 @@
+import { validNativeEvaluation, validateNativeRelativeRows } from './native-relative-load'
+import { canCompleteNativeSet } from './native-prescription'
 import { EXIDX, type ExerciseIndex } from './exercises'
 import type { Row, Entry, Session } from './session-types'
 // The persisted boundary for a finished session. Keep this pure so compatibility tests can
@@ -68,13 +70,15 @@ export function sessionEnd(active: Session | null | undefined, now = Date.now(),
 }
 
 export function buildCompletedWorkout(active: Session, { end = Date.now(), prs = [], snapshotFor }: { end?: number; prs?: string[]; snapshotFor?: (entry: Entry) => unknown } = {}, index: ExerciseIndex = EXIDX) {
+  for(const entry of active?.entries || [])validateNativeRelativeRows(entry,index)
+  if((active?.entries || []).some(e=>e.sets?.some(row=>row.done && (!canCompleteNativeSet(row) || !validNativeEvaluation(row)))))throw new Error('Enter actual reps and load before completing this set.')
   const entries = (active?.entries || []).map(entry => {
     const completed: Entry & { sets: Row[] } = {
       id: entry.id,
       // Only what was logged — the live-session bookkeeping on a row stays behind (finishedRow).
-      sets: (entry.sets || []).map(finishedRow),
+      sets: (entry.sets || []).map(row=>row.nativeTarget || row.nativeExtraIdentity?structuredClone(finishedRow(row)):finishedRow(row)),
       topW: bestWeightForEntry(entry, index) || null,
-      target: entry.target || null,
+      target: entry.target?.nativePrescription ? structuredClone(entry.target) : entry.target || null,
       // Which routine this entry came from, and whether it counts for progression. Written
       // only when set/true, so a single-routine non-excluded session is byte-for-byte the
       // shape it always was. Without this the whitelist drops both at finish.
@@ -86,7 +90,7 @@ export function buildCompletedWorkout(active: Session, { end = Date.now(), prs =
       ...(entry.noProg === true ? { noProg: true } : {}),
       // What the routine asked for when the session was built (session-start.js), next to the
       // target the prescription moved — how the next session tells an edited plan (#275).
-      ...(entry.planned ? { planned: entry.planned } : {}),
+      ...(entry.planned ? { planned: entry.planned.nativePrescription ? structuredClone(entry.planned) : entry.planned } : {}),
       // The superset the exercise was done in, so the history can show the pairing. Without it
       // the workout forgot at finish what it had been all session.
       ...(entry.sg ? { sg: entry.sg } : {}),

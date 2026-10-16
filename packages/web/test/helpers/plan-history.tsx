@@ -16,7 +16,7 @@ export function setupPlanHistoryTest(): void {
     exerciseHistorySheet(id) {
       useUI.getState().openSheet(() => <><h3>Exercise history</h3>{useStore.getState().S.workouts.flatMap((w: any) => w.entries.filter((e: any) => e.id === id).flatMap((e: any) => e.sets.map((s: any) => setLabel(id,s,e.target,undefined,useStore.getState().index)))).join(' · ')}</>)
     },
-    repeatWorkout() { throw new Error('repeat seam') },
-    logPastWorkoutSheet() { throw new Error('backfill seam') },
+    repeatWorkout() { throw new Error('W14 repeat seam') },
+    logPastWorkoutSheet() { throw new Error('W14 backfill seam') },
   })
 }

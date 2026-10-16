@@ -5,7 +5,7 @@ import { t, getVersion } from '@opengym/core/i18n-core'
 
 export { EXDB }
 
-// The shared explicit-index contract defines the public exercise shapes.
+// F1's corrected explicit-index contract owns the public exercise shapes.
 import type { Exercise, ExerciseIndex } from '@opengym/core/exercises'
 export type { Exercise, ExerciseIndex } from '@opengym/core/exercises'
 const CUSTOM_IDS = Symbol('customExerciseIds')
@@ -211,8 +211,10 @@ export const isCardio = (idOrEx?: string | Exercise | null, index: ExerciseIndex
 // Both default to the bodyweight model (one reps stepper, progression in reps then sets); the
 // per-exercise Bodyweight switch still overrides it either way (issue #39).
 const BODYWEIGHT_EQ = new Set(['body weight', 'band', 'resistance band'])
-export const isBodyweightEq = (idOrEx?: string | Exercise | null, index: ExerciseIndex = EXIDX) =>
-  BODYWEIGHT_EQ.has((typeof idOrEx === 'string' ? index[idOrEx] : idOrEx)?.eq ?? '')
+export const isBodyweightEq = (idOrEx?: string | Exercise | null, index: ExerciseIndex = EXIDX) => {
+  const ex = typeof idOrEx === 'string' ? index[idOrEx] : idOrEx
+  return typeof ex?.bodyweight === 'boolean' ? ex.bodyweight : BODYWEIGHT_EQ.has(ex?.eq ?? '')
+}
 
 // Equipment that is a load in its own right: a bar, a bell, a stack, a sled, a weight. A set on
 // one of these logged at 0 kg is a number nobody typed in. The rest of the catalogue that is not

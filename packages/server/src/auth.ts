@@ -397,7 +397,7 @@ export function createAuth(
     for (const [code, p] of pairings)
       if (p.uid === uid && (p.deviceId === id || initiatingDevice(p)?.id === id)) pairings.delete(code)
   }
-  // Device revocation and pending enrollment invalidation must be one write.
+  // S13 security: device revocation and pending enrollment invalidation are one write.
   function revokeDevice(id: string, uid: string): boolean {
     const revoked = db.transaction(() => {
       if (!revokeStoredDevice(db, id, uid, now())) return false

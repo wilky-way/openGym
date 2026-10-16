@@ -1,4 +1,4 @@
-// Frozen audit codes from the legacy server, independent of browser rendering.
+// Frozen from legacy/api/server.js at oracle bda93c10; independent of W01 renderer.
 export const EVENTS = [
   "admin.audit.clear",
   "admin.denied",

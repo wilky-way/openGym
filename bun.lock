@@ -36,6 +36,18 @@
         "zod": "^3.23.8",
       },
     },
+    "packages/parity": {
+      "name": "@opengym/parity",
+      "version": "0.0.0",
+      "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.0.4",
+        "@simplewebauthn/server": "13.3.2",
+        "jsqr": "1.4.0",
+        "lean-qr": "^2.7.4",
+        "web-push": "3.6.7",
+        "zod": "3.25.76",
+      },
+    },
     "packages/server": {
       "name": "@opengym/server",
       "version": "0.0.0",
@@ -113,6 +125,8 @@
     "@opengym/core": ["@opengym/core@workspace:packages/core"],
 
     "@opengym/mcp": ["@opengym/mcp@workspace:packages/mcp"],
+
+    "@opengym/parity": ["@opengym/parity@workspace:packages/parity"],
 
     "@opengym/server": ["@opengym/server@workspace:packages/server"],
 

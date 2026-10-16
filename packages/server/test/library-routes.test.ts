@@ -179,7 +179,7 @@ test('private head and installed private definitions cannot be downgraded; paid 
   const removed = { ...publicD }; delete removed.source
   expect((await h.put(removed, first.versionId)).status).toBe(403)
   expect(await (await h.request('library/synthetic')).json()).toEqual(first)
-  for (const id of [String.fromCharCode(98,98,109),String.fromCharCode(115,98,115)].map(prefix => `${prefix}-synthetic`)) {
+  for (const id of ['bbm','sbs'].map(prefix => `${prefix}-synthetic`)) {
     expect((await h.put(definition(id))).status).toBe(200)
     expect((await (await h.request('library')).json()).items.find((i: { id: string }) => i.id === id).private).toBe(true)
   }

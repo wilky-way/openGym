@@ -7,7 +7,7 @@ export interface LibraryList { items: LibrarySummary[]; etag: string }
 export class LibraryError extends Error {
   constructor(message: string, public code: string, public status?: number) { super(message) }
 }
-// Mirrored from server assertLibraryId; tests check the exact validation patterns.
+// Mirrored from S08 assertLibraryId; equality is checked against its pinned source and, at integration, the live server source.
 export const LIBRARY_ID_PATTERN = /^[A-Za-z0-9._-]{1,128}$/
 export const LIBRARY_DOT_ID_PATTERN = /^\.+$/
 const opaqueId = (id: string) => {

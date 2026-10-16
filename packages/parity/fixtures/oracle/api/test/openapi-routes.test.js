@@ -1,0 +1,103 @@
+/* Pin OpenAPI parity with the generic API route table, its declared tags and
+   shared component references. No documentation generator is needed for this check. */
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const API = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = f => fs.readFileSync(f, 'utf8');
+const spec = read(path.join(API, 'openapi.yaml'));
+
+/** Every `'GET /api/x': async (req, res)` key in the route table. */
+const routeKeys = src => [...src.matchAll(/^\s*'(GET|POST|PUT|DELETE) (\/api\/[^']*)':/gm)].map(m => `${m[1]} ${m[2]}`);
+
+/** Every operation under `paths:`, as "METHOD /path". */
+function specOperations(yaml) {
+  const out = [];
+  let inPaths = false, current = null;
+  for (const line of yaml.split('\n')) {
+    if (/^paths:/.test(line)) { inPaths = true; continue; }
+    if (inPaths && /^[a-zA-Z]/.test(line)) inPaths = false;     // the next top-level key ends it
+    if (!inPaths) continue;
+    const p = /^ {2}(\/[^:]*):/.exec(line);
+    if (p) { current = p[1]; continue; }
+    const m = /^ {4}(get|post|put|delete):/.exec(line);
+    if (m && current) out.push(`${m[1].toUpperCase()} ${current}`);
+  }
+  return out;
+}
+
+test('every route the server registers is in openapi.yaml, and nothing else is', () => {
+  const routes = new Set(routeKeys(read(path.join(API, 'server.js'))));
+  const ops = new Set(specOperations(spec));
+  assert.ok(routes.size > 40, `only found ${routes.size} routes — the route table moved`);
+
+  assert.deepEqual([...routes].filter(r => !ops.has(r)).sort(), [], 'undocumented routes — add them to api/openapi.yaml');
+  assert.deepEqual([...ops].filter(o => !routes.has(o)).sort(), [], 'documented routes the server does not serve');
+
+});
+
+test('every tag and component reference the spec uses is declared', () => {
+  const declared = [...spec.matchAll(/^ {2}- name: (\S+)$/gm)].map(m => m[1]);
+  const used = new Set([...spec.matchAll(/^ {6}tags: \[([^\]]+)\]/gm)].flatMap(m => m[1].split(',').map(s => s.trim())));
+  for (const tag of used) assert.ok(declared.includes(tag), `tag "${tag}" is used but never declared under tags:`);
+
+  const components = new Set();
+  let inComponents = false, section = null;
+  for (const line of spec.split('\n')) {
+    if (/^components:/.test(line)) { inComponents = true; continue; }
+    if (inComponents && /^[a-zA-Z]/.test(line)) inComponents = false;
+    if (!inComponents) continue;
+    const group = /^ {2}(\w+):/.exec(line);
+    if (group) { section = group[1]; continue; }
+    const name = /^ {4}(\w+):/.exec(line);
+    if (name && section) components.add(`${section}/${name[1]}`);
+  }
+  assert.ok(components.size > 20, 'shared OpenAPI components were found');
+  const refs = [...spec.matchAll(/#\/components\/(\w+\/\w+)/g)].map(m => m[1]);
+  for (const ref of refs) assert.ok(components.has(ref), `undeclared component reference: ${ref}`);
+});
+
+/* The e-mail routes answer with codes a client switches on. /api/register/password answered
+   `400 email-invalid` for a while with the spec listing only the password policy under 400. */
+test('every error code the e-mail and password signup routes return is in their spec entry', () => {
+  const server = read(path.join(API, 'server.js'));
+  const handler = key => {
+    const start = server.indexOf(`  '${key}': async`);
+    assert.ok(start >= 0, key);
+    const next = server.slice(start + 1).search(/\n {2}'(GET|POST|PUT|DELETE) \//);
+    return server.slice(start, next < 0 ? undefined : start + 1 + next);
+  };
+  const emailCodes = Object.fromEntries([...server.matchAll(/^\s{2}(\w+): \{ error: '[^']*', code: '([^']+)' \}/gm)].map(m => [m[1], m[2]]));
+  const operation = (p, method) => {
+    const from = spec.indexOf(`\n  ${p}:\n`);
+    assert.ok(from >= 0, p);
+    const rest = spec.slice(from + 1);
+    const block = rest.slice(0, rest.slice(1).search(/\n {2}\/|\n[a-zA-Z]/) + 1);
+    const op = block.slice(block.indexOf(`\n    ${method}:`));
+    const end = op.slice(1).search(/\n {4}\w+:/);
+    const text = end < 0 ? op : op.slice(0, end + 1);
+    // Follow the shared responses it points at.
+    const refs = [...text.matchAll(/#\/components\/responses\/(\w+)/g)].map(m => {
+      const at = spec.indexOf(`\n    ${m[1]}:\n`);
+      const tail = spec.slice(at + 1);
+      return tail.slice(0, tail.slice(1).search(/\n {4}\w+:/) + 1);
+    });
+    return [text, ...refs].join('\n');
+  };
+  for (const [key, p, method] of [
+    ['POST /api/register/password', '/api/register/password', 'post'],
+    ['POST /api/account/email', '/api/account/email', 'post']
+  ]) {
+    const src = handler(key);
+    const codes = new Set([
+      ...[...src.matchAll(/code: '([^']+)'/g)].map(m => m[1]),
+      ...[...src.matchAll(/EMAIL_ERRORS\.(\w+)/g)].map(m => emailCodes[m[1]])
+    ]);
+    assert.ok(codes.size > 1, key);
+    const doc = operation(p, method);
+    for (const c of codes) assert.ok(doc.includes(c), `${key} returns "${c}" but its openapi entry never mentions it`);
+  }
+});

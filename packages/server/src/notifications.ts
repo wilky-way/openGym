@@ -1,3 +1,4 @@
+import { heartbeatTraining } from './training-guard'
 import type { AuthService } from './auth'
 import { createPush, deviceIdOf, type PushOptions } from './push'
 import { createPresence } from './presence'
@@ -81,6 +82,9 @@ export function installNotifications(app: GymApp, auth: AuthService, service: No
   })
   app.post('/api/activity', async c => {
     const id = uid(c), body = await c.get('body').readJson()
+    const session = auth.sessionOf(c.req.raw)
+    if (!session || session.user.id !== id) throw new ApiError(401, 'not signed in')
+    heartbeatTraining(auth.db, session, body, auth.now())
     presence.activity(id, body)
     return json(200, { ok: true })
   })

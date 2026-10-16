@@ -17,7 +17,7 @@ async function trickle(port: number, line: string, headers: string, first = '{"h
 }
 
 test('a trickled body is cut after the body deadline on every route but a signed-in upload', async () => {
-  // The upload exemption is deleted by compatibility policy; the legacy test name is retained.
+  // The upload exemption is deleted by GM ruling; the legacy test name is retained.
   const h = start({ BODY_TIMEOUT_MS: '200' }, { routes: app => {
     app.post('/api/register/options', async context => json(200, await context.get('body').readJson()))
     app.post('/api/logout', () => json(200, { ok: true }))
@@ -33,7 +33,7 @@ test('a trickled body is cut after the body deadline on every route but a signed
   for (const route of ['POST /api/logout', 'PUT /api/media/' + 'd'.repeat(64), 'POST /missing']) {
     const result = await trickle(h.server.port!, route, 'Content-Length: 999999\r\n')
     expect(result.elapsed).toBeLessThan(1200)
-    // Ignored-body handlers must await receipt bounds before mutation.
+    // I03: known ignored-body handlers await receipt bounds before mutation.
     expect(result.response).toMatch(route === 'POST /api/logout' ? /^HTTP\/1\.1 408 / : /^HTTP\/1\.1 404 /)
     expect(result.response).toContain('Connection: close')
   }

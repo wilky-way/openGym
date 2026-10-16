@@ -35,15 +35,17 @@ Use the same command, arguments, and environment for a Codex MCP server. Keep th
 | `OPENGYM_TOKEN` | Agent/profile Bearer credential |
 | `OPENGYM_AUTHORING_DIR` | Optional local draft store outside repositories and sync roots |
 | `OPENGYM_ENABLE_PROGRAMME_AUTHORING` | `1` permits draft changes; otherwise authoring writes are refused |
+| `OPENGYM_ENABLE_ROUTINE_WRITES` | `1` permits sealed routine-template changes |
+| `OPENGYM_ENABLE_EXERCISE_WRITES` | `1` permits sealed custom-exercise changes |
 | `OPENGYM_ENABLE_PROGRAMME_WRITES` | `1` permits remote programme actions and workout history writes; otherwise writes are refused |
 
 Default authoring directories: macOS `~/Library/Application Support/opengym-authoring`; Linux `${XDG_DATA_HOME:-~/.local/share}/opengym-authoring`. Local edits and remote writes are separate permissions. Remote publish/apply require both gates and explicit per-call confirmation. Publishing a draft adds it to your **private server library**, never to a public repository.
 
 ## Tool reference
 
-[MCP-TOOLS.md](MCP-TOOLS.md) and [mcp-tools.json](mcp-tools.json) are generated from the shipped tool registry and contain every tool description and input schema. Read the schema before calling a tool: extra keys are refused. The main groups are workout/routine/history reads, conditional programme lifecycle actions, local draft authoring, library inspection/publish, and progression validate/preview/apply.
+[MCP-TOOLS.md](MCP-TOOLS.md) and [mcp-tools.json](mcp-tools.json) are generated from the shipped tool registry and contain every tool description and input schema. Read the schema before calling a tool: extra keys are refused. The 44 tools cover workout/routine/history reads, conditional programme lifecycle actions, audited training-max decisions, routine/custom-exercise authoring, local programme drafts, library inspection/publish, and progression validate/preview/apply. SDK schemas retain their original representation; the runtime additionally refuses unknown top-level keys.
 
-Regenerate both references with `bun packages/mcp/scripts/generate-docs.ts`.
+Regenerate the tool references and route inventory with `bun run gen:mcp-tools`; use `bun run gen:mcp-tools --check` to verify all three outputs.
 
 ## Log a past workout
 
@@ -83,3 +85,11 @@ Review the returned record before explicitly sending `dry_run:false`. Saving req
 Supported rule kinds: percentage, RPE load, double progression, linear increments, AMRAP training-max changes, stall responses, scheduled deload, and volume ramp. Rules are versioned JSON interpreted deterministically. A slot without attached rules retains its manually authored target. The logged value wins over a prediction.
 
 `generate_deload` previews by default. Supply all factors and effort targets explicitly; it has no implicit intensity or volume defaults. Apply to the draft only with `confirm:true` and the expected revision, then validate and preview again. The agent should explain the proposed change and its affected weeks before a remote write.
+
+## Training max and routine/exercise tools
+
+`set_training_max` previews by default. Applying requires `apply:true`, its exact process-local `preview_token`, the programme-write gate, explicit units and the current revision/write identity. It appends a dated audit event. `undo_training_max` previews a compensating event, retaining the original history. Read [MAX_ADJUSTMENTS.md](MAX_ADJUSTMENTS.md) before changing a max or repeating a block.
+
+`search_exercises` returns exact catalogue/custom IDs. `create_routine`, `edit_routine`, `delete_routine`, `create_custom_exercise`, `edit_custom_exercise`, and `undo_template_change` use sealed previews and separate routine/exercise write gates. They refuse unsafe programme ownership, ineffective load/rest inputs, active or unknown training, and stale documents. See [the template skill](../skills/opengym-templates/SKILL.md) and [MCP-GAPS.md](MCP-GAPS.md) for limits.
+
+The six [generic seed programmes](../seeds/generic-v1/README.md) are original JSON definitions for manual import and review. They are not automatically installed. Confirm units, equipment, progression and the initial working weights before use.

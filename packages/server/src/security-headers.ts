@@ -9,7 +9,7 @@ export const SECURITY_HEADERS = {
 export function secureResponse(response: Response, path = ''): Response {
   for (const [key, value] of Object.entries(SECURITY_HEADERS)) response.headers.set(key, value)
   try { path = decodeURIComponent(path) } catch { /* malformed media suffix still receives CORP */ }
-  if (path.startsWith('/exercise-media/')) response.headers.set('Cross-Origin-Resource-Policy', 'same-origin')
+  if (path.replace(/\/{2,}/g, '/').toLowerCase().startsWith('/exercise-media/')) response.headers.set('Cross-Origin-Resource-Policy', 'same-origin')
   return response
 }
 

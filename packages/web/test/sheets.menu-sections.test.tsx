@@ -1,5 +1,5 @@
-// Intentional design safety exception: stale account/profile/session actions abort
-// With a toast; real sync store account-switch regressions are in sheets-a-account-targets.
+// Intentional GM safety exception: stale account/profile/session actions abort
+// with a toast; real W07 account-switch regressions are in sheets-a-account-targets.
 import { configureUx, createBrowserUx } from '../src/platform/ux'
 // @vitest-environment happy-dom
 import React, { act } from 'react'

@@ -29,7 +29,7 @@ const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 0]   // every getDay() index; only the read
                                           // screen puts them in an order (see weekOrder)
 const PLAN_UNITS = new Set(['kg', 'lb'])
 
-// Safety limit: shared-plan imports are bounded before parsing, including file reads.
+// Safety exception to legacy import behavior; see PORTING-WAIVERS.md and W13's file-read cap.
 // These generous limits apply to unknown metadata as well as the visible prescriptions.
 const PLAN_LIMITS = {
   bytes: 1024 * 1024, depth: 32, stringLength: 16 * 1024, nodes: 100_000,

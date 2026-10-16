@@ -7,7 +7,7 @@ export type ValidateTarget = (state?: StoreDocument) => boolean
 const S = () => useStore.getState().S
 const ui = () => useUI.getState()
 const toast = (message: string) => ui().toast(message)
-// Sheet target re-validation (design safety exception): callbacks belong to the account,
+// Sheet target re-validation (GM safety exception): callbacks belong to the account,
 // session instance and editor that opened them, even if a newer sheet is now visible.
 const sessionIdentity = (state: StoreDocument = S()) => {
   const active = state.active
@@ -36,7 +36,7 @@ export function openEditor(render: (close: () => void, validate: ValidateTarget)
   return sheet
 }
 
-/** A rejected producer never reaches sync store persistence. */
+/** A rejected producer never reaches W07 persistence. */
 export function createSheetUpdater(validate: ValidateTarget, defaultPush = false) {
   return (mutate: (state: StoreDocument) => void, push = defaultPush): boolean =>
     guardedStoreUpdate(state => validate(state), mutate, {push})

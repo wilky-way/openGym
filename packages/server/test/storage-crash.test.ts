@@ -1,4 +1,4 @@
-// Public compatibility and regression coverage.
+// Extra gate (EXECUTION §3.3, S02): kill -9 during a mirror write → boot reconciles from SQLite.
 // Each drill starts a real child process and sends it SIGKILL at the point where the write is cut short.
 import { test, expect } from 'bun:test'
 import fs from 'node:fs'

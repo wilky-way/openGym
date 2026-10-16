@@ -9,8 +9,10 @@ import { clientFor, currentClient, invalidate } from './state'
 import { error, type Environment, type Fetcher } from './http-client'
 import { createExerciseIndex } from '@opengym/core/exercises'
 import { highestStamp } from '@opengym/core/server-stamp'
+import { createMaxTools } from './max-tools'
 
 export async function mutateProgramme(action: string, params: Record<string, any>, options: { fetcher?: Fetcher; env?: Environment } = {}) {
+  if (action === 'set_training_max') throw error('PREVIEW_REQUIRED', 'Use set_training_max with its reviewed preview token and explicit apply:true.')
   const env = options.env ?? currentClient()?.env ?? process.env
   if (env.OPENGYM_ENABLE_PROGRAMME_WRITES !== '1') throw error('WRITES_DISABLED', 'Enable OPENGYM_ENABLE_PROGRAMME_WRITES=1 to use program actions.')
   const client = !options.env && !options.fetcher && currentClient() || clientFor({ ...env, OPENGYM_UID: env.OPENGYM_UID || getUser().id }, options.fetcher)
@@ -44,8 +46,9 @@ export async function mutateProgramme(action: string, params: Record<string, any
 }
 const withState=(handler: any)=>(p: any)=>{const S=getState();return S?handler(S,p):{error:'no synced state yet — sign in at least once from a device',unit:'kg'}}
 const common={expected_rev:z.number().int().nonnegative(),expected_wid:z.string().nullable(),today:date.optional()}
-const fromParams=(p: any)=>({expectedRev:p.expected_rev,expectedWid:p.expected_wid,today:p.today,cycleId:p.cycle_id,instanceId:p.instance_id,programmeId:p.programme_id,weekIndex:p.week_index,perWeek:p.per_week,tm:p.tm,existingRoutineIds:p.adopt,reason:p.reason})
+const fromParams=(p: any)=>({expectedRev:p.expected_rev,expectedWid:p.expected_wid,today:p.today,cycleId:p.cycle_id,instanceId:p.instance_id,programmeId:p.programme_id,weekIndex:p.week_index,perWeek:p.per_week,tm:p.tm,existingRoutineIds:p.adopt,reason:p.reason,lift:p.lift,value:p.value,unit:p.unit})
 export const PROGRAMME_TOOLS: Tool[] = [
+  ...createMaxTools(),
   {name:'get_programme',description:'Includes effortScale and displayDefinition in the profile scale alongside the unchanged authored definition and cycle. Read the active program and its frozen definition, or a specific cycle/definition. Includes the synced revision for conditional actions.',schema:{cycle_id:z.string().optional(),programme_id:z.string().optional()},handler:withState((S: any,p: any)=>getProgramme(S,{cycleId:p.cycle_id,programmeId:p.programme_id}))},
   {name:'programme_position',description:'Read program week, next session/date, projected end and done/skipped adherence using the same projection as the UI. Pending dates are derived.',schema:{cycle_id:z.string().optional(),today:date.optional()},handler:withState((S: any,p: any)=>programmePosition(S,p.today || todayISO(),p.cycle_id))},
   {name:'activate_programme',description:'Activate or adopt a saved validated program using UI guards. Requires explicit write opt-in, a paired API token for this profile and the expected revision. Never replaces an active/paused cycle or a running workout.',schema:{...common,programme_id:z.string(),week_index:z.number().int().positive().optional(),per_week:z.number().int().min(1).max(7).optional(),tm:z.record(z.number().positive()).optional(),adopt:z.record(z.string()).optional()},handler:withState((S: any,p: any)=>mutateProgramme('activate',fromParams(p)))},

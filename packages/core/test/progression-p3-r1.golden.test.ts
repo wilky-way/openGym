@@ -8,7 +8,7 @@ import type { LinearRule } from '../../contract/domain/progression'
 const first = (out: ReturnType<typeof evaluate>) => out.weeks[0]!.slots[0]!.sets[0]!
 const linear = (): LinearRule => ({ id: 'linear', kind: 'linear', increment: 5, unit: 'lb', every: { sessions: 1 }, success: 'all-sets-all-reps', rounding })
 
-describe('fix-round independent hand goldens', () => {
+describe('P3 fix-round independent hand goldens', () => {
   it('100x6 per limb estimates120, not parent100x12=140; target6/RIR2 rounds to95', () => {
     const rule = rpeRule(); rule.weeks['*'] = [{ reps: 6, rir: 2 }]
     const x = p3Input(rule), log = p3Log(1, 100, 12, { sides: { L: { w: 100, r: 6, done: true }, R: { w: 100, r: 6, done: true } } })

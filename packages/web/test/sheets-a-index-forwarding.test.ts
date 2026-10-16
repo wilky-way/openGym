@@ -17,7 +17,7 @@ function calls(): any[] {
   }
   visit(ast); return found
 }
-describe('inert import merge index forwarding', () => {
+describe('W11 inert import merge index forwarding', () => {
   it('inventories all three merge edges', () => { expect(calls()).toHaveLength(3) })
   it.each([[0, 'CSV/XML summary'], [1, 'Hevy workouts'], [2, 'Hevy bodyweight']])('forwards index at inert edge %s (%s)', (ordinal) => {
     expect(calls()[Number(ordinal)].arguments[2]).toMatchObject({ type: 'CallExpression', callee: { type: 'Identifier', name: 'index' }, arguments: [] })

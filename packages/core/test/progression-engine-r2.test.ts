@@ -39,7 +39,7 @@ function amrapFixture() {
 
 // Hand tables fixed before the implementation: reflect additive/multiplicative deltas,
 // then round once. CUSTOM metadata lives only in this index, never in the authored slot.
-describe('custom assisted hand-computed goldens',()=>{
+describe('P2 r2 custom assisted hand-computed goldens',()=>{
   it('linear success100-5=95, failure holds100; caller index is required',()=>{
     const {x}=fixture();log(x)
     expect(sets(x).map(s=>s.load)).toEqual([95,95,95])
@@ -98,7 +98,7 @@ describe('custom assisted hand-computed goldens',()=>{
     expect(sets(x,{deload:multiply(0.6)}).map(s=>s.load)).toEqual([null,null,null])
   })
 })
-describe('undefined assisted rules fail closed',()=>{
+describe('P2 r2 undefined assisted rules fail closed',()=>{
   it('an assisted AMRAP source without an attached load rule still reports a slot error',()=>{
     const {slot,x}=amrapFixture();slot.progression.rules=[]
     expect(result(x).slotErrors?.[0]?.code).toBe('UNSUPPORTED_ASSISTED')
@@ -140,7 +140,7 @@ describe('undefined assisted rules fail closed',()=>{
     expect(evaluate(x).slotErrors).toBeUndefined()
   })
 })
-describe('replay date ingestion',()=>{
+describe('P2 r2 replay date ingestion',()=>{
   it.each(['invalid','2026-02-30','2026-13-01','2026-1-05','2026-01-05T00:00:00Z','2026-00-01','2026-01-00','   '])('excludes nonempty invalid date %s with a warning under session cadence',date=>{
     const {d,x}=fixture();log(x,100,5,date)
     const warnings: ReturnType<typeof evaluate>['warnings']=[]

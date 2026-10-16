@@ -1,6 +1,6 @@
 import type {Platform} from '@opengym/contract/platform/adapters'
 import {configureBrowserServer, SERVER_URL_KEY, DEVICE_TOKEN_KEY} from './browser'
-/** Injectable browser client capabilities. Network/storage are always Platform-owned. */
+/** Injectable browser capabilities for W01. Network/storage are always Platform-owned. */
 export interface ClientCapabilities {
   connection: {configure(baseUrl: string, token: string | null): Promise<void>; token(): string | null}
   userAgent(): string

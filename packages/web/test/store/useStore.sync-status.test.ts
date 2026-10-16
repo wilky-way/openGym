@@ -459,7 +459,7 @@ describe('another account signing in on a copy that still owes the first', () =>
     })
     try {
       api.mockImplementation(twosServer)
-      // local-data safety exception: retain the only copy instead of deleting it to make room.
+      // GM local-data safety exception: retain the only copy instead of deleting it to make room.
       expect(() => useStore.getState().setUser({ id: 'user-2', name: 'Two' })).toThrow(/switch was refused/)
     } finally { full.mockRestore() }
 

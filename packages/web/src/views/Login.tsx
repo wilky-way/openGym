@@ -1,4 +1,4 @@
-import { authenticate } from '../lib/auth-actions'
+import { authenticate } from '../lib/auth-transactions'
 import { useSheetContext } from '../lib/sheet-context'
 import { clientPlatform } from '../lib/client-io'
 import { PairRedeemSheet } from '../components/Devices'

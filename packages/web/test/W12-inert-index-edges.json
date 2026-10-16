@@ -1,0 +1,152 @@
+[
+  {
+    "id": "usesBar#1",
+    "helper": "usesBar",
+    "argument": 2,
+    "reason": "The caller supplies an exercise object; the helper reads its equipment/body part directly and never resolves an id through the index."
+  },
+  {
+    "id": "baseWeightFor#1",
+    "helper": "baseWeightFor",
+    "argument": 3,
+    "reason": "The caller supplies an exercise object; the helper reads its equipment/body part directly and never resolves an id through the index."
+  },
+  {
+    "id": "isBellEx#1",
+    "helper": "isBellEx",
+    "argument": 2,
+    "reason": "The caller supplies an exercise object; the helper reads its equipment/body part directly and never resolves an id through the index."
+  },
+  {
+    "id": "dbLoadFor#1",
+    "helper": "dbLoadFor",
+    "argument": 3,
+    "reason": "dbLoadFor reads cfg.dbLoad and S.dbLoad by key; its index parameter is unused."
+  },
+  {
+    "id": "isCardio#1",
+    "helper": "isCardio",
+    "argument": 2,
+    "reason": "The caller supplies an exercise object; the helper reads its equipment/body part directly and never resolves an id through the index."
+  },
+  {
+    "id": "modeOf#2",
+    "helper": "modeOf",
+    "argument": 2,
+    "reason": "Reps/time swap configs carry explicit mode. Cardio configs have no load/failure fields, so the alternate step/owned-grid branch cannot alter the cardio rows built by the separately indexed buildSets."
+  },
+  {
+    "id": "withMeaning#1",
+    "helper": "withMeaning",
+    "argument": 4,
+    "reason": "withMeaning forwards only to dbLoadFor, whose index parameter is unused; the returned target depends solely on cfg and S.dbLoad."
+  },
+  {
+    "id": "applyIntensifierPlan#1",
+    "helper": "applyIntensifierPlan",
+    "argument": 4,
+    "reason": "The index reaches only applyFailurePlan modeOf. Reps/time configs carry explicit mode; default/saved cardio configs never contain lastToFailure, so this indexed branch is unreachable."
+  },
+  {
+    "id": "dbLoadFor#2",
+    "helper": "dbLoadFor",
+    "argument": 3,
+    "reason": "dbLoadFor reads cfg.dbLoad and S.dbLoad by key; its index parameter is unused."
+  },
+  {
+    "id": "modeOf#3",
+    "helper": "modeOf",
+    "argument": 2,
+    "reason": "Reps/time swap configs carry explicit mode. Cardio configs have no load/failure fields, so the alternate step/owned-grid branch cannot alter the cardio rows built by the separately indexed buildSets."
+  },
+  {
+    "id": "policyFor#1",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "policyFor#2",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "policyFor#3",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "dbLoadFor#3",
+    "helper": "dbLoadFor",
+    "argument": 3,
+    "reason": "dbLoadFor reads cfg.dbLoad and S.dbLoad by key; its index parameter is unused."
+  },
+  {
+    "id": "policyFor#4",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "modeOf#5",
+    "helper": "modeOf",
+    "argument": 2,
+    "reason": "ExConfig resolves cardio separately through isCardio(id,index); the remaining non-cardio cfg has explicit time/reps mode or the same implicit reps fallback with either index."
+  },
+  {
+    "id": "policyFor#5",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "policyFor#6",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "defaultConfig#3",
+    "helper": "defaultConfig",
+    "argument": 3,
+    "reason": "setMode specifies time/reps and spreads the current config over the default. The only indexed default is bodyweight; inferred/explicit bodyweight is already the same effective value, and Save compares it with the separately indexed dataset default before emitting a flag."
+  },
+  {
+    "id": "policyFor#7",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "isBellEx#2",
+    "helper": "isBellEx",
+    "argument": 2,
+    "reason": "The caller supplies an exercise object; the helper reads its equipment/body part directly and never resolves an id through the index."
+  },
+  {
+    "id": "policyFor#8",
+    "helper": "policyFor",
+    "argument": 4,
+    "reason": "The caller always supplies a nonempty, already resolved mode as argument 3; policyFor never executes its indexed mode fallback."
+  },
+  {
+    "id": "isBellEx#3",
+    "helper": "isBellEx",
+    "argument": 2,
+    "reason": "The caller supplies an exercise object; the helper reads its equipment/body part directly and never resolves an id through the index."
+  },
+  {
+    "id": "dbLoadFor#4",
+    "helper": "dbLoadFor",
+    "argument": 3,
+    "reason": "dbLoadFor reads cfg.dbLoad and S.dbLoad by key; its index parameter is unused."
+  },
+  {
+    "id": "dbLoadFor#5",
+    "helper": "dbLoadFor",
+    "argument": 3,
+    "reason": "dbLoadFor reads cfg.dbLoad and S.dbLoad by key; its index parameter is unused."
+  }
+]

@@ -60,7 +60,7 @@ beforeEach(() => {
 })
 afterEach(()=>{act(()=>root.unmount());host.remove();dispose();vi.useRealTimers()})
 for(const title of ['Reset everything','Sign out','Sign out everywhere','Delete recovery copy']) {
- it(`${title}: an A → B confirmation preserves B’s real sync store saved bytes`,async()=>{
+ it(`${title}: an A → B confirmation preserves B’s real W07 saved bytes`,async()=>{
   map.set(pointer,recovery);map.set(recovery,'unreadable-A')
   mount(<SettingsA page={title.includes('Sign out')?'account':'data'} />);await flush();await click(title)
   switchToB();const before=snapshot()
@@ -149,7 +149,7 @@ it('the external app picker passes the captured target and aborts a stale select
  await act(async()=>{input.dispatchEvent(new Event('change',{bubbles:true}))})
  unchanged(before);expect(importApp).not.toHaveBeenCalled()
 })
-it('revoke passkey: A → B during the owner proof preserves B’s real sync store saved bytes',async()=>{
+it('revoke passkey: A → B during the owner proof preserves B’s real W07 saved bytes',async()=>{
  mount(<PasskeysSheet close={()=>{}}/>);await flush();await click('Laptop');mount(sheets.at(-1)!(()=>{}));await flush()
  const remove=[...host.querySelectorAll<HTMLButtonElement>('button')].find(el=>el.textContent==='Remove passkey')!;act(()=>remove.click());mount(sheets.at(-1)!(()=>{}))
  let answer!:(proof:any)=>void;m.proof.mockImplementation(()=>new Promise(resolve=>{answer=resolve}))
@@ -194,7 +194,7 @@ it('revoke passkey: a late updater A → B switch aborts before owner proof is a
  await act(async()=>{button.click();await Promise.resolve()});unchanged(before)
  expect(m.api.mock.calls.some(([,opts])=>opts?.method==='DELETE')).toBe(false)
 })
-it('revoke passkey fails closed without the authentication lock and keeps saved bytes',async()=>{
+it('revoke passkey fails closed without the W15 authentication lock and keeps saved bytes',async()=>{
  useStore.setState({beginAuthTransaction:async()=>{throw new Error('Authentication lock is not configured')}})
  mount(<PasskeysSheet close={()=>{}}/>);await flush();await click('Laptop');mount(sheets.at(-1)!(()=>{}));await flush()
  act(()=>[...host.querySelectorAll<HTMLButtonElement>('button')].find(el=>el.textContent==='Remove passkey')!.click());mount(sheets.at(-1)!(()=>{}))
@@ -219,7 +219,7 @@ for(const action of ['Reset everything','Sign out','Delete recovery copy'])it(`$
  map.set('gym_owner','B');const before=new Map(map);await act(async()=>{await confirms.at(-1).onConfirm()})
  expect(map).toEqual(before);expect(toast).toHaveBeenCalledWith(expect.stringMatching(/changed/))
 })
-it('same-account document replacement invalidates an old reset target before document instance tracking is integrated',async()=>{
+it('same-account document replacement invalidates an old reset target before W16’s instance seam is integrated',async()=>{
  mount(<SettingsA page="data"/>);await click('Reset everything');useStore.getState().replaceState({...clone(DEF),workouts:[{id:'replacement',entries:[]}]},false);const before=snapshot()
  await act(async()=>{await confirms.at(-1).onConfirm()});unchanged(before)
 })
@@ -234,7 +234,7 @@ it('a profile change on the passkey editor refuses opening its stale nested remo
  useStore.getState().update(s=>{s.activeEquipId='new-profile'},false);const before=snapshot(),count=sheets.length
  act(()=>[...host.querySelectorAll<HTMLButtonElement>('button')].find(el=>el.textContent==='Remove passkey')!.click());unchanged(before);expect(sheets).toHaveLength(count)
 })
-for(const action of ['reset','replace','merge'])it(`${action}: UI opts into durable sync store replacement and reports a refused save without success`,async()=>{
+for(const action of ['reset','replace','merge'])it(`${action}: UI opts into durable W07 replacement and reports a refused save without success`,async()=>{
  if(action==='reset'){mount(<SettingsA page="data"/>);await click('Reset everything')}
  else {useStore.setState({importConflict:async()=>action==='merge'?{workouts:1,state:clone(DEF),rev:1}:null});await importSettingsBackup(backup())}
  const before=snapshot(),index=useStore.getState().index
@@ -259,7 +259,7 @@ async function openPasskeyRemoval() {
  mount(<PasskeysSheet close={()=>{}}/>);await flush();await click('Laptop');mount(sheets.at(-1)!(()=>{}));await flush()
  act(()=>[...host.querySelectorAll<HTMLButtonElement>('button')].find(el=>el.textContent==='Remove passkey')!.click());mount(sheets.at(-1)!(()=>{}))
 }
-it('a real auth-action passkey refusal keeps the existing user and saved bytes',async()=>{
+it('a real auth-transaction passkey refusal keeps the existing user and saved bytes',async()=>{
  await openPasskeyRemoval();const before=snapshot()
  m.api.mockImplementation((_path,opts)=>opts?.method==='DELETE'?Promise.reject(Object.assign(new Error('last way in'),{status:409,data:{code:'last-way-in'}})):Promise.resolve({}))
  await act(async()=>{[...host.querySelectorAll<HTMLButtonElement>('button')].find(el=>el.textContent==='Confirm with a passkey')!.click()})

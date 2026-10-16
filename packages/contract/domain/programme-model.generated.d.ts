@@ -39,6 +39,7 @@ export type TmSeed =
 export interface OpenGymProgrammeDefinition {
   id: string;
   name: string;
+  maxBasis?: "1rm" | "tm" | "e1rm";
   unit: "kg" | "lb";
   end?: ("next" | "repeat" | "stop") | null;
   goal?: string | null;
@@ -229,6 +230,95 @@ export interface Slot {
         number | "max" | string,
         number | "max" | string
       ];
+  nativePrescription?: {
+    version: 1;
+    variantKey: string;
+    source: {
+      slotId: string;
+      workbookSha256: string;
+      sheet: string;
+      cell: string;
+    };
+    restSeconds?: number;
+    /**
+     * @minItems 1
+     * @maxItems 100
+     */
+    sets: [
+      {
+        sourceTemplateId: string;
+        relativeLoad?: {
+          kind: "same-entry-reduction";
+          reductionPercent: number;
+          anchor: {
+            variantKey: string;
+            source: {
+              slotId: string;
+              workbookSha256: string;
+              sheet: string;
+              cell: string;
+            };
+            sourceTemplateId: string;
+            rowOrdinal: number;
+          };
+        };
+        reps: {
+          kind: "fixed" | "range" | "amrap";
+          min: number;
+          max?: number;
+        };
+        effort?: {
+          scale: "rpe" | "rir";
+          min?: number;
+          max?: number;
+          maxExclusive?: boolean;
+        };
+        percentage?: {
+          min: number;
+          max: number;
+          role: "prescribed" | "guide";
+          basis: "1rm" | "tm" | "e1rm";
+          key: string;
+        };
+      },
+      ...{
+        sourceTemplateId: string;
+        relativeLoad?: {
+          kind: "same-entry-reduction";
+          reductionPercent: number;
+          anchor: {
+            variantKey: string;
+            source: {
+              slotId: string;
+              workbookSha256: string;
+              sheet: string;
+              cell: string;
+            };
+            sourceTemplateId: string;
+            rowOrdinal: number;
+          };
+        };
+        reps: {
+          kind: "fixed" | "range" | "amrap";
+          min: number;
+          max?: number;
+        };
+        effort?: {
+          scale: "rpe" | "rir";
+          min?: number;
+          max?: number;
+          maxExclusive?: boolean;
+        };
+        percentage?: {
+          min: number;
+          max: number;
+          role: "prescribed" | "guide";
+          basis: "1rm" | "tm" | "e1rm";
+          key: string;
+        };
+      }[]
+    ];
+  };
   mode?: string;
   sec?: number;
   target?: {

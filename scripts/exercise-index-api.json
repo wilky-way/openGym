@@ -1,0 +1,238 @@
+{
+  "session-merge.d.ts": [
+    "buildCombinedEntries"
+  ],
+  "media-prefetch.d.ts": [
+    "planMediaUrls",
+    "startMediaPrefetch"
+  ],
+  "programme-import.d.ts": [
+    "validateProgrammeDefinition",
+    "importProgramme",
+    "saveImportedProgramme"
+  ],
+  "backoff.d.ts": [
+    "backoffStepOf"
+  ],
+  "muscles.d.ts": [
+    "loadOf",
+    "loadOfWorkouts",
+    "loadOfRoutine",
+    "loadOfWeeklyPlan",
+    "loadOfActive"
+  ],
+  "workout-date.d.ts": [
+    "rebuildPrHistory",
+    "moveWorkout"
+  ],
+  "progression.d.ts": [
+    "defaultIncrement",
+    "weightIncrement",
+    "policyFor",
+    "plannedOf",
+    "planChanged",
+    "readSession",
+    "sessionsFor",
+    "nextPrescription"
+  ],
+  "workout-card.d.ts": [
+    "workoutCardModel"
+  ],
+  "finish-compare.d.ts": [
+    "finishCompare",
+    "finishCardio"
+  ],
+  "import-hevy.d.ts": [
+    "matchHevyTemplate",
+    "buildHevyExerciseMap",
+    "parseHevyWorkouts",
+    "parseHevyRoutines",
+    "importHevyData"
+  ],
+  "plan-share.d.ts": [
+    "buildPlanBundle",
+    "parsePlan",
+    "mergePlan",
+    "planPrintHTML",
+    "printPlan"
+  ],
+  "session-start.d.ts": [
+    "programmeDeloadConfig",
+    "buildPlannedEntry",
+    "buildSessionEntries"
+  ],
+  "units.d.ts": [
+    "convertStateUnit"
+  ],
+  "programme-rollover.d.ts": [
+    "rolloverProposals",
+    "acceptRollover",
+    "finishProgrammeBlock"
+  ],
+  "recovery.d.ts": [
+    "anchorsByWorkout",
+    "resolveSetRir",
+    "fatigueOf",
+    "strengthOf",
+    "fatiguedMuscles",
+    "detrainedMuscles"
+  ],
+  "demoSeed.d.ts": [
+    "buildDemoState"
+  ],
+  "workout-text.d.ts": [
+    "workoutText"
+  ],
+  "incline.d.ts": [
+    "inclineFits"
+  ],
+  "sync-merge.d.ts": [
+    "inUnitOf",
+    "sinceReset",
+    "mergeStates"
+  ],
+  "routines.d.ts": [
+    "replaceSlotExercise",
+    "routineChangesFromEntry",
+    "updateRoutineFromEntry"
+  ],
+  "exercise-history.d.ts": [
+    "exerciseHistory",
+    "bestSetFor"
+  ],
+  "programme-today.d.ts": [
+    "repeatProgrammeWeek"
+  ],
+  "programme-refresh.d.ts": [
+    "refreshProgrammeDefinitions"
+  ],
+  "history.d.ts": [
+    "modeOf",
+    "isTimed",
+    "isBw",
+    "setsFromRows",
+    "setLabel",
+    "defaultConfig",
+    "setsRepsOf",
+    "exLine",
+    "bestWeightFor",
+    "buildSets",
+    "barFloor",
+    "applyIntensifierPlan",
+    "applyFailurePlan",
+    "workoutVolume",
+    "metricEntriesForExercise",
+    "bestWeightForEntry"
+  ],
+  "strength-exercises.d.ts": [
+    "primaryMuscleOf",
+    "strengthExerciseRows",
+    "strengthExerciseRowsForMuscle"
+  ],
+  "programme-agent.d.ts": [
+    "applyProgrammeAgentAction"
+  ],
+  "import-csv.d.ts": [
+    "matchExercise",
+    "matchHevyTitle",
+    "parseWorkoutCSV",
+    "parseImport",
+    "mergeImport"
+  ],
+  "onerm.d.ts": [
+    "bestSetOf",
+    "e1rmSeries",
+    "best1RM",
+    "is1RMRecord"
+  ],
+  "dumbbells.d.ts": [
+    "isBellEx",
+    "dbLoadFor",
+    "isOneArm",
+    "bellsIn",
+    "withMeaning",
+    "volumeFactor",
+    "meaningFactor",
+    "entryAs",
+    "workoutAs",
+    "historyAs",
+    "ownedWeightsFor"
+  ],
+  "exercises.d.ts": [
+    "canonicalExId",
+    "isCustomEx",
+    "isCardio",
+    "isBodyweightEq",
+    "isLoadedEq",
+    "defaultIncrement",
+    "isAssisted",
+    "betterWeight",
+    "beatsWeight",
+    "exOr"
+  ],
+  "starter.d.ts": [
+    "substituteFor",
+    "buildStarterPlan"
+  ],
+  "session-routines.d.ts": [
+    "routineFromSession",
+    "saveSessionAsRoutine"
+  ],
+  "backfill.d.ts": [
+    "markAllSetsDone"
+  ],
+  "programme-conformance.d.ts": [
+    "programmeConformance"
+  ],
+  "programme.d.ts": [
+    "materializeWeek",
+    "activate",
+    "adopt",
+    "insertDeload"
+  ],
+  "effort.d.ts": [
+    "hasEstimableEffort"
+  ],
+  "session-repeat.d.ts": [
+    "repeatSessionEntries"
+  ],
+  "structuralBalance.d.ts": [
+    "resolveCurrent",
+    "resolveCurrentReps",
+    "computeBalance"
+  ],
+  "programme-open-slots.d.ts": [
+    "chooseOpenSlot"
+  ],
+  "programme-lifecycle.d.ts": [
+    "startProgramme",
+    "switchProgramme"
+  ],
+  "plates.d.ts": [
+    "loadKindFor",
+    "baseWeightFor",
+    "dropGrid"
+  ],
+  "session-edit.d.ts": [
+    "saveWorkoutEdit",
+    "editChangesNothing",
+    "deleteEditedWorkout"
+  ],
+  "finish-workout.d.ts": [
+    "buildCompletedWorkout"
+  ],
+  "programme-quality.d.ts": [
+    "improveProgrammeDefinition"
+  ],
+  "bar.d.ts": [
+    "usesBar",
+    "barWeightFor"
+  ],
+  "programme-tm.d.ts": [
+    "programmeTMConfig"
+  ],
+  "fit-export.d.ts": [
+    "workoutFitMessages",
+    "workoutFit"
+  ]
+}

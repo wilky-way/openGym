@@ -1,5 +1,5 @@
 import type { AdoptionPrompt } from '../store/sync-engine'
-/** The shell binds shared dialog/menu services and file export at boot. */
+/** W23 binds W11's dialog/menu services and the shell's file export. */
 export interface AuthUiServices {
   askAddDeviceData: AdoptionPrompt
   menuSheet(options: { title: string; items: { icon: string; label: string; onClick(): void | Promise<void> }[] }): unknown

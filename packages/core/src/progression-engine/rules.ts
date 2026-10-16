@@ -109,6 +109,10 @@ export function replayLoad(context: RuleContext, rule: LinearRule | DoubleRule) 
     failures=success ? 0 : failures+1
     if (rule.kind === 'double') {
       if (success && load !== null) { load=increase(load); bumps++; reps=rule.repsLow }
+      else if (a.slot.progression?.parameters?.repProgression === 'step' && e.sets.length >= requiredCount(e, source)) {
+        const achieved = Math.min(...Array.from({length:requiredCount(e, source)}, (_, i) => finite(e.sets.find(s=>s.workIndex===i)?.r) ?? 0))
+        if (achieved >= reps!) reps=Math.min(rule.repsHigh, achieved+1)
+      }
     } else if ('sessions' in rule.every) {
       streak=success ? streak+1 : 0
       if (streak === rule.every.sessions) { if (load !== null) {load=increase(load);bumps++} streak=0 }

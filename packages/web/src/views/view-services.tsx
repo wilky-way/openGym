@@ -2,7 +2,7 @@ import type { ComponentProps, ComponentType } from 'react'
 import type { Exercise } from '@opengym/core/exercises'
 import type { StoreDocument } from '../store/useStore'
 
-/** The shell binds statistics/library views and shared sheet/row services at boot. */
+/** W19 supplies views; W11–W14 supply sheets and rows. W23 binds these at boot. */
 export interface ViewServices {
   bwSheet(): unknown
   goalSheet(): unknown
@@ -24,7 +24,7 @@ export interface ViewServices {
 let services: ViewServices | undefined
 export function bindViewServices(next: ViewServices): void { services = next }
 function current(): ViewServices {
-  if (!services) throw new Error('view services must be bound by the shell before rendering stats/library views')
+  if (!services) throw new Error('W19 view services must be bound by the shell before rendering stats/library views')
   return services
 }
 export const bwSheet = () => current().bwSheet()

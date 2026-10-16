@@ -1,4 +1,4 @@
-/** Injectable browser UX capabilities, configured by the shell at boot. */
+/** W04's injectable browser UX capabilities. Configured by the shell at boot. */
 export interface UxAudio {
   createContext(): AudioContext
   appleTouchDevice(): boolean

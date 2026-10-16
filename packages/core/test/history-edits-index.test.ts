@@ -9,7 +9,7 @@ import { acceptRollover, finishProgrammeBlock, rolloverProposals } from '../src/
 import * as programme from '@opengym/core/programme'
 import type { Workout } from '../../contract/domain/state-doc'
 
-// Native catalogue, set-kind, history, lifecycle and session dependencies; actual output assertions only.
+// Native K03/K05/K06/K12/K14 dependencies; actual output assertions only.
 beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(new Date('2026-10-13T12:00:00Z')) })
 afterEach(() => { vi.useRealTimers() })
 const id = 'custom-assisted'
@@ -100,7 +100,7 @@ it('recomputes a real custom one-arm dumbbell volume when saving an edit', () =>
 
 // Inert: unchanged-editor comparison strips every exercise topW, the only
 // index-dependent field produced by draftRecord/buildCompletedWorkout. Repeat
-// Activation converts routine numbers without reading exercise metadata.
+// activation reaches K12's routine-only numeric conversion, which reads no metadata.
 it('keeps the two proven inert history-edit forwards explicit', () => {
   type Node = { type?: string; callee?: { name?: string }; arguments?: { type?: string; name?: string }[]; [key: string]: unknown }
   const cases = [

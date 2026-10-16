@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore'
 import type { Platform } from '@opengym/contract/platform/adapters'
 import { useUI } from '../store/useUI'
 import type { Workout } from '@opengym/contract/domain/state-doc'
-/** The shell binds shared dialogs, plan import/export and workout sheets at boot. */
+/** W20/W23 bind these to the W11/W13/W14 sheet modules after integration. */
 export interface ProgrammeUiServices {
   platform: Platform
   initialProgramId?(): string | null

@@ -223,7 +223,7 @@ describe('Settings: removing a passkey', () => {
     expect(alertText(host)).toBe('It is your only way in, so it cannot be removed until there is another.')
     expect(close).not.toHaveBeenCalled()
     expect(changed).not.toHaveBeenCalled()
-    // design safety exception: safe transaction refusals also toast without signing out.
+    // GM safety exception: safe transaction refusals also toast without signing out.
     expect(mocks.toast).toHaveBeenLastCalledWith('It is your only way in, so it cannot be removed until there is another.')
   })
 
@@ -472,8 +472,8 @@ it('a device-link verify from a previous account does not switch a newly signed-
   expect(mocks.setUser).not.toHaveBeenCalled(); expect(mocks.adoptProfile).not.toHaveBeenCalled()
 })
 
-// UI twins isolate the seam; store/auth-action.test.ts verifies real carrier and upload fencing.
-vi.mock('../src/lib/auth-actions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
+// UI twins isolate the seam; store/auth-transaction.test.ts verifies real carrier and upload fencing.
+vi.mock('../src/lib/auth-transactions', () => ({authenticate: async (exchange: any, valid: any, options: any) => {
   if (!valid()) return null
   const user = await exchange()
   if (!valid()) return null

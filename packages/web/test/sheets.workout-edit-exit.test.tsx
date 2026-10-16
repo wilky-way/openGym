@@ -1,6 +1,6 @@
 import './workout-sheet-environment'
 // @vitest-environment happy-dom
-// sheet target safety exception: stale callbacks now abort with a toast and no navigation.
+// GM sheet target safety exception: stale callbacks now abort with a toast and no navigation.
 // Closing the editor of a saved workout: a save prompt still open after the editor already
 // closed (a route exit racing the first Save) must not offer to delete the workout it saved.
 import React, { act } from 'react'

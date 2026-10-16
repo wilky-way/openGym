@@ -1,3 +1,4 @@
+import { isCanonicalPrescription, importCanonicalPrescription } from './canonical-prescription'
 import type { ExerciseIndex } from '../../contract/core-api/exercises'
 import { EXIDX } from '@opengym/core/exercises'
 import type { ProgrammeState, ProgrammeDefinition, ProgrammeWeek, ProgrammeDay, RoutineExercise, SetTarget } from './programme-engine-types'
@@ -87,7 +88,7 @@ function generatedRules(e: SourceExercise) {
     ...(row.open_count ? {open_count:true} : {}),
   })).filter(row => Object.keys(row).some(key => key !== 'from'))
 }
-const privateSource = (raw: {source?: ProgrammeDefinition['source']; id?: string}) => raw.source?.private === true || new RegExp('^(?:' + String.fromCharCode(98,98,109) + '|' + String.fromCharCode(115,98,115) + ')-', 'i').test(raw.id || '')
+const privateSource = (raw: {source?: ProgrammeDefinition['source']; id?: string}) => raw.source?.private === true || /^(?:bbm|sbs)-/i.test(raw.id || '')
 
 export const hasPrivateProgrammes = (S: ProgrammeState) => list<ProgrammeDefinition>(S.programmes?.definitions).some(d=>d.source?.private) || list<import('./programme-engine-types').ProgrammeCycle>(S.programmes?.cycles).some(c=>c.snapshot?.source?.private)
 export const importExerciseKey = (e: {name?: string; id?: string; equipment?: string}) => `${e.name || e.id || ''}|${e.equipment || ''}`
@@ -95,16 +96,28 @@ export const importExerciseKey = (e: {name?: string; id?: string; equipment?: st
 /** Preview is pure. Explicit mappings beat unique exact catalogue names; ambiguities stay unresolved. */
 export function importProgramme(input: unknown, { filename='', mappings={}, prescriptions={}, customEx=[], strictPrescriptions=false }: ProgrammeImportOptions = {}, index: ExerciseIndex = EXIDX): ProgrammeImportPreview {
   if (filename === 'pub-_flagged.json' || (input as {id?: string} | null)?.id === 'pub-_flagged' || Array.isArray(input)) return {skipped:true,definition:null,unknown:[],unprescribed:[],warnings:[]}
-  if (typeof input !== 'string') {preflight(input,prescriptions);if((input as ProgrammeDefinition).weeks?.[0]?.index != null) validateProgrammeDefinition(input,[...CATALOGUE,...customEx],index)}
+  const canonicalSource=typeof input!=='string' && (input as ProgrammeDefinition)?.weeks?.[0]?.index==null && isCanonicalPrescription(input)
+  if(canonicalSource) {
+    if(Object.keys(prescriptions).length)throw new Error('Native prescription pending: legacy manual prescriptions cannot replace native source goals')
+    importCanonicalPrescription(input,{mappings,customEx},index)
+  }
+  if (typeof input !== 'string' && !canonicalSource) {preflight(input,prescriptions);if((input as ProgrammeDefinition).weeks?.[0]?.index != null) validateProgrammeDefinition(input,[...CATALOGUE,...customEx],index)}
   const json = typeof input === 'string' ? input : JSON.stringify(input)
   if (typeof json !== 'string' || new TextEncoder().encode(json).length > MAX_BYTES) throw new Error('Program exceeds the import size limit.')
   const parsed: unknown = JSON.parse(json)
   const raw = parsed as SourceProgramme
   const catalogue = [...CATALOGUE,...customEx]
   if (!raw || typeof raw !== 'object') throw new Error('Invalid program definition')
-  preflight(raw,prescriptions)
+  if((raw as ProgrammeDefinition).weeks?.[0]?.index!=null || !isCanonicalPrescription(raw))preflight(raw,prescriptions)
   if ((parsed as ProgrammeDefinition).weeks?.[0]?.index != null) {
     const definition = validateProgrammeDefinition({...(parsed as ProgrammeDefinition),source:{...raw.source,private:privateSource(raw)}},catalogue,index)
+    return {definition,unknown:[],unprescribed:[],warnings:[],skipped:false}
+  }
+  if (isCanonicalPrescription(raw)) {
+    if(Object.keys(prescriptions).length)throw new Error('Native prescription pending: legacy manual prescriptions cannot replace native source goals')
+    const native=importCanonicalPrescription(raw,{mappings,customEx},index)
+    preflight(native)
+    const definition=validateProgrammeDefinition(native,catalogue,index)
     return {definition,unknown:[],unprescribed:[],warnings:[],skipped:false}
   }
   if (typeof raw.id !== 'string' || !raw.id || typeof raw.name !== 'string' || !['lb','kg'].includes(raw.unit) || !list<SourceWeek>(raw.weeks).length) throw new Error('Invalid library program')
@@ -135,7 +148,7 @@ export function importProgramme(input: unknown, { filename='', mappings={}, pres
       key:`d${day.n ?? di+1}`,ordinal:Number(day.n ?? di+1),sessions:[{sessionTemplateId:`d${day.n ?? di+1}:${day.kind || 'lift'}`,routineSnapshot:{name:day.name || `D${di+1}`,prog:'off',ex:list<SourceExercise>(day.exercises).flatMap((e,ei): ProgrammePreviewSlot[]=>{
         if (/cardio|conditioning/i.test(e.role || '')) {omitted++;return []}
         const exerciseKey=importExerciseKey(e)
-        const open = e.open === true || new RegExp('^' + String.fromCharCode(115,98,115) + '-', 'i').test(raw.id || '') && !list<SourceSet>(e.sets).length && /accessory/i.test(e.name || e.role || '')
+        const open = e.open === true || /^sbs-/i.test(raw.id || '') && !list<SourceSet>(e.sets).length && /accessory/i.test(e.name || e.role || '')
         const id = open ? null : resolve(e)
         if (!list<SourceSet>(e.sets).length && positive(e.minutes)) return [{id,slotId:`day:${di+1}:slot:${e.slot || ei+1}`,mode:'time',sec:Number(e.minutes)*60,sets:1,weight:0,prog:'off',note:String(e.notes || ''),...(e.role?{role:e.role}:{}),...(e.target?{target:clone(e.target)}:{})}]
         let setRows=list<SourceSet>(e.sets)
@@ -219,6 +232,6 @@ export function saveImportedProgramme(S: ProgrammeState, preview: Pick<Programme
   const d=validateProgrammeDefinition(preview.definition!,[...CATALOGUE,...list<NonNullable<ProgrammeState['customEx']>[number]>(S.customEx)],index) as ProgrammeDefinition
   const definitions=list<ProgrammeDefinition>(S.programmes?.definitions)
   if (definitions.some(x=>x.id===d.id) && !replace) throw new Error('A program with this id already exists. Confirm replacement first.')
-  S.programmes={version:1,fork:'opengym/1',...S.programmes,cycles:list<import('./programme-engine-types').ProgrammeCycle>(S.programmes?.cycles),definitions:definitions.filter(x=>x.id!==d.id).concat(clone(d))}
+  S.programmes={version:1,fork:'wilky/1',...S.programmes,cycles:list<import('./programme-engine-types').ProgrammeCycle>(S.programmes?.cycles),definitions:definitions.filter(x=>x.id!==d.id).concat(clone(d))}
   return d
 }

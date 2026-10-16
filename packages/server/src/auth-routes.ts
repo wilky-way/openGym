@@ -5,6 +5,23 @@ import { cookieHeaders } from './auth'
 import { ApiError, json } from './http'
 import { deviceResponse, listDevices } from './storage/devices'
 
+// Agent devices carry coaching/data authority, never the owner's identity or
+// administrator authority. Keep this allowlist explicit: a newly mounted route
+// must not silently become another way to mint a less restricted credential.
+// Keys use the same undecoded, base-path-relative routing as ROUTE_POLICY.
+const agentRoutes: ReadonlySet<string> = new Set([
+  'GET /api/health', 'GET /api/config', 'GET /api/me',
+  'GET /api/data', 'GET /api/data/rev', 'GET /api/data/activity', 'PUT /api/data',
+  'GET /api/programmes/library', 'GET /api/programmes/library/:id',
+  'GET /api/programmes/library/:id/versions', 'PUT /api/programmes/library/:id',
+  'POST /api/programmes/validate', 'POST /api/progression/validate',
+  'POST /api/progression/preview', 'POST /api/progression/apply',
+])
+const agentCapability = (session: Session | null, key: string): void => {
+  if (session?.device.kind === 'agent' && !agentRoutes.has(key))
+    throw new ApiError(403, 'forbidden')
+}
+
 const cookieResponse = (body: unknown, headers: Headers): Response => {
   const response = json(200, body)
   for (const cookie of headers.getSetCookie())
@@ -28,6 +45,7 @@ export function installAuth(app: GymApp, auth: AuthService): void {
     const policy = ROUTE_POLICY[key as keyof typeof ROUTE_POLICY]
     const session = auth.sessionOf(c.req.raw)
     c.set('session', session)
+    agentCapability(session, key)
     if (policy?.auth === 'session' || policy?.auth === 'admin')
       required(session)
     if (policy?.auth === 'admin' && !auth.publicUser(session!.user).admin) {
@@ -49,6 +67,7 @@ export function installAuth(app: GymApp, auth: AuthService): void {
     // The body can arrive after a disable/revocation. Never dispatch with its old session.
     const current = auth.sessionOf(c.req.raw)
     c.set('session', current)
+    agentCapability(current, key)
     if (policy?.auth === 'session' || policy?.auth === 'admin') required(current)
     if (policy?.auth === 'admin' && !auth.publicUser(current!.user).admin) throw new ApiError(403, 'forbidden')
     await next()

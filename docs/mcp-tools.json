@@ -375,6 +375,105 @@
     }
   },
   {
+    "name": "set_training_max",
+    "description": "Preview an audited per-lift max decision by default. apply:true requires its exact expiring preview_token, programme-write opt-in and unchanged authenticated document; active/unknown training refuses. Original seed and history stay immutable.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "cycle_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "lift": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "value": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "lb",
+            "kg"
+          ]
+        },
+        "today": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 1000,
+          "default": ""
+        },
+        "expected_rev": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_wid": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "cycle_id",
+        "lift",
+        "value",
+        "unit",
+        "expected_rev",
+        "expected_wid"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "undo_training_max",
+    "description": "Preview compensation for a sealed max decision. apply:true appends an audited restoring value; never deletes the original event. Refuses changed documents or an absent prior max. Requires the exact undo preview and programme-write opt-in.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "undo_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "today": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "undo_token"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
     "name": "validate_program",
     "description": "Validate supplied JSON, a local draft, or an HTTP library definition without writing data.",
     "inputSchema": {
@@ -3231,6 +3330,625 @@
       "required": [
         "workout_id",
         "confirm"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "search_exercises",
+    "description": "Search catalogue and custom metadata; returns explicit exercise IDs. Search never auto-selects a match.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 30
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "create_routine",
+    "description": "Preview a reps-mode workout template with ordered exercise IDs, sets/reps/rest/supersets and explicit placement. Ineffective load/rest inputs under history, progression or timer ownership are refused. apply:true requires its exact preview_token and OPENGYM_ENABLE_ROUTINE_WRITES=1.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "exercises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "exercise_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "source_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 99
+              },
+              "sets": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "reps": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9999
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 9999
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "lb"
+                ]
+              },
+              "rest_sec": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3600
+              },
+              "superset": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 10000
+              },
+              "bodyweight": {
+                "type": "boolean"
+              },
+              "assisted": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "exercise_id",
+              "sets",
+              "reps"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "placement": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "none"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "week"
+                },
+                "days": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "0",
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 7
+                }
+              },
+              "required": [
+                "kind",
+                "days"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "date"
+                },
+                "date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kind",
+                "date"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "queue"
+                },
+                "index": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 999
+                },
+                "starts_on": {
+                  "$ref": "#/properties/placement/anyOf/2/properties/date"
+                },
+                "label": {
+                  "$ref": "#/properties/name"
+                }
+              },
+              "required": [
+                "kind",
+                "index"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "exercises",
+        "placement"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "edit_routine",
+    "description": "Preview edits to a routine, preserving unknown fields. Full ordered exercise list; source_index carries existing slot extensions. Active/paused programme routines are protected. Load/shape changes to per-set, engine or TM prescriptions and ineffective load/rest inputs are refused. Time/cardio slots permit unchanged prescriptions with metadata edits only.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "routine_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "exercises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "exercise_id": {
+                "$ref": "#/properties/routine_id"
+              },
+              "source_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 99
+              },
+              "sets": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "reps": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9999
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 9999
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "lb"
+                ]
+              },
+              "rest_sec": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3600
+              },
+              "superset": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 10000
+              },
+              "bodyweight": {
+                "type": "boolean"
+              },
+              "assisted": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "exercise_id",
+              "sets",
+              "reps"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "placement": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "none"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "week"
+                },
+                "days": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "0",
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 7
+                }
+              },
+              "required": [
+                "kind",
+                "days"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "date"
+                },
+                "date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kind",
+                "date"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "queue"
+                },
+                "index": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 999
+                },
+                "starts_on": {
+                  "$ref": "#/properties/placement/anyOf/2/properties/date"
+                },
+                "label": {
+                  "$ref": "#/properties/name"
+                }
+              },
+              "required": [
+                "kind",
+                "index"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "routine_id"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "delete_routine",
+    "description": "Preview routine deletion and removal of its plan/manual queue references. Programme and rotation ownership are protected; exact preview required to apply.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "routine_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "routine_id"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "create_custom_exercise",
+    "description": "Preview a custom exercise with name, primary/secondary muscles, equipment, bodyweight/assisted flags and notes. apply:true requires preview_token and OPENGYM_ENABLE_EXERCISE_WRITES=1.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "muscles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "minItems": 1,
+          "maxItems": 30
+        },
+        "secondary_muscles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "maxItems": 30
+        },
+        "equipment": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "bodyweight": {
+          "type": "boolean"
+        },
+        "assisted": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 10000
+        }
+      },
+      "required": [
+        "name",
+        "muscles",
+        "equipment",
+        "bodyweight",
+        "assisted"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "edit_custom_exercise",
+    "description": "Preview a custom exercise edit by exact ID; retains unknown metadata and protects active/paused programme references. No built-in catalogue changes.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "exercise_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "muscles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "minItems": 1,
+          "maxItems": 30
+        },
+        "secondary_muscles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "maxItems": 30
+        },
+        "equipment": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "bodyweight": {
+          "type": "boolean"
+        },
+        "assisted": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 10000
+        }
+      },
+      "required": [
+        "exercise_id"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "undo_template_change",
+    "description": "Preview undo using the returned undo_token; refuses any document edit since apply. Apply needs this undo preview_token and the original write gate. Tokens live only in this MCP process.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "apply": {
+          "type": "boolean",
+          "default": false
+        },
+        "preview_token": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "undo_token": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "undo_token"
       ],
       "additionalProperties": false,
       "$schema": "http://json-schema.org/draft-07/schema#"

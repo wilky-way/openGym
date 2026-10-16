@@ -1,3 +1,4 @@
+import { createTemplateTools } from './template-tools'
 import { createWorkoutTools } from './workout-tools'
 import { createAuthoringTools } from './authoring-tools'
 import { createLibraryTools } from './library-tools'
@@ -13,6 +14,7 @@ import { effortOf } from '@opengym/core/history'
    {0}/{1} template the lib returns so the LLM gets final text, not template strings.
    ISO dates are validated on the way in; the handlers never see 'yesterday'. */
 import { PROGRAMME_TOOLS } from './programme-tools'
+import { createMaxTools } from './max-tools'
 import { z } from 'zod'
 import { getState, getUser, withRemoteState, withToolRedaction } from './state'
 import {
@@ -698,7 +700,8 @@ export const previewSession = {
 /* ---------- registration list ---------- */
 
 export const PROFILE_TOOLS: Tool[] = [
-  listRoutines, getRoutine, previewSession, getWeekPlan, listWorkouts, getWorkout, getBodyweight, estimate1rm, muscleBalance, ...PROGRAMME_TOOLS
+  listRoutines, getRoutine, previewSession, getWeekPlan, listWorkouts, getWorkout, getBodyweight, estimate1rm, muscleBalance,
+  ...PROGRAMME_TOOLS.filter(tool=>!['set_training_max','undo_training_max'].includes(tool.name))
 ].map(tool => ({ ...tool, handler: (params: Record<string, any> = {}) =>
   invocationIndex.run({ state: getState() }, () => tool.handler(params)) }))
 
@@ -715,6 +718,6 @@ export function createTools(options: { env?: Environment; fetcher?: Fetcher } = 
     const env = options.env ?? process.env
     if (['activate_programme', 'shift_programme', 'skip_programme_session'].includes(tool.name) && env.OPENGYM_ENABLE_PROGRAMME_WRITES !== '1') throw Object.assign(new Error('Enable OPENGYM_ENABLE_PROGRAMME_WRITES=1 to use program actions.'), { code: 'WRITES_DISABLED' })
     return withRemoteState(() => tool.handler(params), options)
-  }, options) })), ...createAuthoringTools(options), ...createLibraryTools(options), ...createProgressionTools(options), ...createWorkoutTools(options)]
+  }, options) })), ...createMaxTools(options), ...createAuthoringTools(options), ...createLibraryTools(options), ...createProgressionTools(options), ...createWorkoutTools(options), ...createTemplateTools(options)]
 }
 export const TOOLS = createTools()

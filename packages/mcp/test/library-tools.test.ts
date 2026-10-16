@@ -19,7 +19,7 @@ const connect = async (s = state(), library: any[] = []) => {
   api = await target(s, library); env = { ...env, ...api.env }; tools = createTools({ env, fetcher: api.fetcher }); return api
 }
 const editStored = (id: string, change: (d: any) => void) => { const store = new DraftStore(env.OPENGYM_AUTHORING_DIR!); try { return store.edit(id, 1, change) } finally { store.close() } }
-beforeEach(() => { root = mkdtempSync(join(tmpdir(), 'library-publishing-synthetic-')); env = { OPENGYM_AUTHORING_DIR: join(root, 'authoring'), OPENGYM_ENABLE_PROGRAMME_AUTHORING: '1', OPENGYM_ENABLE_PROGRAMME_WRITES: '1' }; tools = createTools({ env }) })
+beforeEach(() => { root = mkdtempSync(join(tmpdir(), 'm03-synthetic-')); env = { OPENGYM_AUTHORING_DIR: join(root, 'authoring'), OPENGYM_ENABLE_PROGRAMME_AUTHORING: '1', OPENGYM_ENABLE_PROGRAMME_WRITES: '1' }; tools = createTools({ env }) })
 afterEach(async () => { await api?.close(); api = undefined; rmSync(root, { recursive: true, force: true }) })
 
 test('library list returns summary heads and active/privacy flags through authenticated direct HTTP', async () => {
@@ -87,7 +87,7 @@ test('private downgrade through a damaged local record is refused even with a pr
   await expect(call('publish_program_draft', params({ ...d, rev: changed.rev }, { expected_parent_version_id: head.versionId, replace: true, dry_run: false, confirm: true }))).rejects.toMatchObject({ code: 'PRIVATE_DOWNGRADE' })
   expect(api.calls.every(c => c.method === 'GET')).toBe(true)
 })
-test.each(['../bad', '.', '..', '...', 'bad/id', 'bad%2fid', 'x'.repeat(129), 'é'])('publish refuses definition id outside library storage allowlist: %s', async id => {
+test.each(['../bad', '.', '..', '...', 'bad/id', 'bad%2fid', 'x'.repeat(129), 'é'])('publish refuses definition id outside S08 allowlist: %s', async id => {
   const api = await connect(), definition = syntheticProgramme(); definition.id = id; const d = await draft(definition)
   await expect(call('publish_program_draft', params(d, { dry_run: false, confirm: true }))).rejects.toMatchObject({ code: 'EINVAL' }); expect(api.calls).toEqual([])
 })

@@ -1,6 +1,6 @@
 import type { Exercise, ExerciseIndex } from '@opengym/core/exercises'
 export type { ExerciseIndex }
-// Legacy records retain unknown fields; these are only the fields read by derived analytics.
+// Legacy records retain unknown fields; these are only the fields read by K11.
 export interface LoadRecord {
   w?: number | string | null; r?: number | string | null; done?: boolean;
   unit?: string; u?: string; weightUnit?: string; weight_unit?: string; loadUnit?: string;

@@ -1,4 +1,4 @@
--- OPTIONAL projection tables; deliberately excluded from automatic migrations.
+-- OPTIONAL (unit S12, off the critical path; built only if the GM opts in).
 -- Not applied unless OPENGYM_PROJECTION=1. Safe to add later: derived data only.
 
 -- ───────────── derived projection (rebuildable; never a source of truth) ─────────────

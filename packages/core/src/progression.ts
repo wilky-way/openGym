@@ -18,7 +18,7 @@ export interface Routine { [key: string]: unknown; id?: string; prog?: string; e
 export interface Profile {
   [key: string]: unknown
   unit?: string; workouts?: { [key: string]: unknown; d: string; start?: number; entries?: Entry[]; programmeInstance?: { weekIndex?: number; [key: string]: unknown } }[];
-  routines?: Routine[]; programmes?: { cycles?: { id: string; tm?: Record<string, unknown> }[] };
+  routines?: Routine[]; programmes?: { cycles?: { id: string; tmUnit?: 'lb' | 'kg'; tm?: Record<string, unknown> }[] };
   plates?: Record<string, Record<string, unknown>>; barWeights?: Record<string, number>;
   loadKind?: Record<string, unknown>
 }

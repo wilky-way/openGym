@@ -33,14 +33,14 @@ export function recorder(h: FlowHarness) {
 }
 export function golden(name: string, rows: unknown[]) {
   const file=path.join(import.meta.dir,'transcripts',name+'.json')
-  if (process.env.RECORD_PASSKEYS==='1') fs.writeFileSync(file,JSON.stringify(rows,null,2)+'\n')
+  if (process.env.RECORD_S13==='1') fs.writeFileSync(file,JSON.stringify(rows,null,2)+'\n')
   assert.deepEqual(rows,JSON.parse(fs.readFileSync(file,'utf8')))
 }
 
 export async function passkeyPositive(start: FlowServer = startServer) {
   const recordings: string[]=[]
   for(let run=0;run<3;run++) {
-    const h=await start(undefined), rec=recorder(h), owner=softPasskey('passkeys-transcript-owner'), extra=softPasskey('passkeys-transcript-extra')
+    const h=await start(undefined), rec=recorder(h), owner=softPasskey('S13-transcript-owner'), extra=softPasskey('S13-transcript-extra')
     const reg=(await rec.req('POST','/api/register/options',{body:{name:'Synthetic athlete'}})).body
     const created=await rec.req('POST','/api/register/verify',{body:{cid:reg.cid,credential:owner.attestation(reg.options.challenge)}})
     assert.equal(created.status,200)
@@ -55,7 +55,7 @@ export async function passkeyPositive(start: FlowServer = startServer) {
     assert.equal((await rec.req('DELETE','/api/account/passkeys?id='+extra.id,{cookie,body:await proof()})).status,200)
     assert.deepEqual(h.db().creds.map(c=>c.id),[owner.id])
     assert.equal(h.db().users[0].id,uid)
-    golden('regression-passkey-positive',rec.rows);recordings.push(JSON.stringify(rec.rows))
+    golden('S13-passkey-positive',rec.rows);recordings.push(JSON.stringify(rec.rows))
   }
   assert.equal(new Set(recordings).size,1)
 }
@@ -63,7 +63,7 @@ export async function passkeyPositive(start: FlowServer = startServer) {
 export async function deviceLinkPositive(start: FlowServer = startServer) {
   const recordings: string[]=[]
   for(let run=0;run<3;run++) {
-    const owner=softPasskey('passkeys-link-owner'),phone=softPasskey('passkeys-link-phone')
+    const owner=softPasskey('S13-link-owner'),phone=softPasskey('S13-link-phone')
     const h=await start(undefined,{users:[user('u1','Synthetic athlete')],creds:[owner.row('u1')]}),rec=recorder(h),cookie=mintSession('u1')
     const login=(await rec.req('POST','/api/login/options',{body:{}})).body
     const made=await rec.req('POST','/api/account/device-link',{cookie,body:{cid:login.cid,credential:owner.assertion(login.options.challenge)}})
@@ -77,7 +77,7 @@ export async function deviceLinkPositive(start: FlowServer = startServer) {
     assert.equal(h.db().creds[1].id,phone.id)
     assert.equal(h.db().deviceLinks.length,0)
     assert.equal((await rec.req('POST','/api/device-link/options',{body:{code}})).status,400)
-    golden('regression-device-link-positive',rec.rows);recordings.push(JSON.stringify(rec.rows))
+    golden('S13-device-link-positive',rec.rows);recordings.push(JSON.stringify(rec.rows))
   }
   assert.equal(new Set(recordings).size,1)
 }

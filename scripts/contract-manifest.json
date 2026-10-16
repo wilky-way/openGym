@@ -1,0 +1,23 @@
+{
+  "README.md": "01616a9bdbd851b8c69a4d72048d8ddaed9c0e8b99b669f3c3dbb44978b17125",
+  "PORTING-RULES.md": "e8bb52cdd374706421356010246e2cf2c8df289650ed66aeab075e4f0793750c",
+  "platform/adapters.ts": "c6cc6ff74e1289a3ca225279cf387544849a0f7d3d03f11611dc0e9801ae9052",
+  "mcp/MCP-CONTRACT.md": "2b2fb2f78fc480a4110789db063926d1bb23434a07ffd5c465cee87d4f0e13f9",
+  "storage/STORAGE-CONTRACT.md": "a22b4c125636a8d75e9ec6b92e2b562f65916a34fb443bd06babb8da49911aa2",
+  "http/api.ts": "1f366b4d77da4356593789fb8ad8e266fa06c503e14ea1dae80ccf3a8f8fa324",
+  "sync/OFFLOAD.md": "039c9d8bb393ce7235b78a18863ed0cf00868565045e0bd2d57b2a92e4b6ec43",
+  "sync/SYNC-CONTRACT.md": "a71c63388e51a0f83fed1373b0d153a759910d8bd6a730002f84ad390f4a265f",
+  "domain/programme-model.ts": "e728f3136eba698c1b9aba0732b6d6931d2c6c508be335b57c949c16e5d2b822",
+  "domain/programme-model.generated.d.ts": "8eff6e9c74f9ac076fc1935ce0d09fc65c7f5964ca23207ec9601019db520de6",
+  "domain/state-doc.ts": "b686cd8baa0b8cf189ed64495c1d825110dfb95a7372193b70b8135d21f8d7ae",
+  "domain/programme-model.schema.json": "57fc3fe3c4115f3a4a6f4da2b4b4e80b7ede9b563f3c6023d3fcc2fbd76afda3",
+  "domain/progression.ts": "acf29b743aee8887ff2f5f2c17b047eaac50cbd9c8a85060fb46157fb00a4078",
+  "storage/migrations/0001_init.sql": "3ab8379e3c3e6930c190bc854c61638ef69b26c881e11f3a53e7c690dd2212c7",
+  "storage/migrations/0002_projection_OPTIONAL.sql": "572b03a1de90655230d054a845d1c7a935552726da994cc7a73895e7667eb760",
+  "domain/native-prescription.ts": "24a16580f110c15a9c378b02a94592e75f6a4c8f5a749a09005dafdceff7a6c5",
+  "domain/programme-model.named.generated.d.ts": "3d6e04e60fcb6504c853fd48dad6726e267c6576a4c1a7de253c8df5f66490b7",
+  "core-api/native-prescription.d.ts": "3bc5508300cb3555043fea6f83f56b870c1bc724c5f06a784b9cdd08ddd2cfe4",
+  "core-api/native-session.d.ts": "89a197b230016652f936aa3d36adf5942bec290829d09a87557e1f5dfce7eb56",
+  "core-api/native-relative-load.d.ts": "5055faaa4b24416a81fd364257c825834bd9daf49660a617c0911a599cadc21c",
+  "core-api/session-types.d.ts": "e6427cc7e97c1d23983207c4be3e837748dda39ce114dbd4970a81b69d8d6ac4"
+}

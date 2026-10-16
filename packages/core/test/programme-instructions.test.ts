@@ -18,7 +18,7 @@ it('retains opaque instructions without generated rules and handles empty config
 })
 it('agent programme views use the generated-rule seam and never infer note provenance from RP ids',()=>{
  const def: ProgrammeDefinition={id:'rp-synthetic',name:'Synthetic',unit:'lb',weeks:[{index:1,days:[{key:'d1',sessions:[{routineSnapshot:{ex:[{id:'0025',sets:1,reps:5,note:'2 RIR is opaque',generatedRules:[{rpe:[7,8]}],authoredInstructions:'Keep authored 1 RIR.'}]}}]}]}]}
- const S=state('rir');S.programmes={version:1,fork:'opengym/1',definitions:[def],cycles:[]}
+ const S=state('rir');S.programmes={version:1,fork:'wilky/1',definitions:[def],cycles:[]}
  const before=JSON.stringify(S),shown=getProgramme(S,{programmeId:def.id}).displayDefinition!.weeks[0]!.days[0]!.sessions[0]!.routineSnapshot.ex[0]!
  expect(shown.instructions).toBe('RIR 2–3 (as authored; choose the per-set target).\n\nKeep authored 1 RIR.')
  expect(shown.note).toBe('2 RIR is opaque');expect(JSON.stringify(S)).toBe(before)

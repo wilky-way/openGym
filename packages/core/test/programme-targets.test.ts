@@ -34,9 +34,9 @@ it('starts percentages with optional TM, keeping authored percentage targets in 
  c.tm={'0025':200};e=buildSessionEntries(S,S.routines[0])[0];expect(e.sets[0].w).toBe(150);expect(targetLabel(e.sets[0].target)).toBe('@8 · 75%')
  }
 })
-it('imports synthetic restricted-b blank accessories as open slots and remembers chosen exercises by stable slot',async()=>{
+it('imports synthetic SBS blank accessories as open slots and remembers chosen exercises by stable slot',async()=>{
  const {chooseOpenSlot}=await import('@opengym/core/programme-open-slots'),{buildCombinedEntries}=await import('@opengym/core/session-merge'),{buildCompletedWorkout}=await import('@opengym/core/finish-workout')
- const raw=synthetic();raw.id=[String.fromCharCode(115,98,115),'synthetic-targets'].join('-');raw.weeks[0].days[0].exercises=[{name:'Back accessory',slot:'back',sets:[],parsed:true}];raw.weeks.push({...structuredClone(raw.weeks[0]),n:2})
+ const raw=synthetic();raw.id=['sbs','synthetic-targets'].join('-');raw.weeks[0].days[0].exercises=[{name:'Back accessory',slot:'back',sets:[],parsed:true}];raw.weeks.push({...structuredClone(raw.weeks[0]),n:2})
  const p=importProgramme(raw);expect(p.unknown).toEqual([]);expect(p.unprescribed).toEqual([])
  const cfg=p.definition.weeks[0].days[0].sessions[0].routineSnapshot.ex[0];expect(cfg).toMatchObject({open:true,sets:3,repsMin:10,reps:15})
  const S: any={unit:'lb',routines:[],workouts:[]};activate(S,p.definition,{cycleId:'c',today:'2026-10-12'});S.active={id:'a',entries:buildCombinedEntries(S,[S.routines[0].id]).entries}
@@ -71,7 +71,7 @@ it('validates persisted definitions with field clocks while still rejecting malf
  expect(importProgramme(d).definition).toEqual(d);d.name={bad:true};expect(()=>importProgramme(d)).toThrow('metadata')
 })
 it('reimports synthetic private strength templates without losing varying effort or conditional rules',()=>{
- const raw=synthetic();raw.id=[String.fromCharCode(98,98,109),'synthetic-targets'].join('-');raw.weeks[0].days[0].exercises[0].sets[1]={count:3,reps:5,rpe:7,drop_pct:10,until_rpe:8,kind:'backoff'}
+ const raw=synthetic();raw.id=['bbm','synthetic-targets'].join('-');raw.weeks[0].days[0].exercises[0].sets[1]={count:3,reps:5,rpe:7,drop_pct:10,until_rpe:8,kind:'backoff'}
  const p=importProgramme(raw);expect(p.definition.source.private).toBe(true);expect(p.definition.rulesSupported).toBe(true);expect(p.definition.needsReview).toEqual([])
  const cfg=p.definition.weeks[0].days[0].sessions[0].routineSnapshot.ex[0];expect(cfg.sourcePrescription).toBeUndefined();expect(cfg.setTargets).toEqual([{rpe:8},{rpe:7},{rpe:7},{rpe:7}]);expect(cfg.instructions).toContain('repeat until @8')
  expect(importProgramme(JSON.stringify(p.definition)).definition).toEqual(p.definition)

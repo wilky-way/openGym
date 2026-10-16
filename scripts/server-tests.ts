@@ -2,10 +2,10 @@ import { run } from './files'
 import { discoverTests } from './test-discovery'
 import { readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { passingBunTests } from './test-execution'
-// The data performance benchmark runs separately on a quiet host with --perf.
+// S04 owns this benchmark; the coordinator schedules its --perf quiet-host gate.
 const perf = process.env.GATE_PERF === '1' || process.argv.includes('--perf')
 const tests = discoverTests('.').filter(test => perf || !test.endsWith('/data-performance.test.ts'))
-if (!perf) console.log('Data performance benchmark: skipped (opt in with --perf)')
+if (!perf) console.log('S04 performance benchmark: skipped (opt in with gate --perf)')
 if (!tests.length) console.log('server: no tests (foundation skeleton)')
 let passing = 0
 for (const [index, test] of tests.entries()) {

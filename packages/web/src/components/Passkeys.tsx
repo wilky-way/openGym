@@ -1,4 +1,4 @@
-import { authenticate } from '../lib/auth-actions'
+import { authenticate } from '../lib/auth-transactions'
 import { useSheetContext } from '../lib/sheet-context'
 import type { PasskeyState, Proof, Routes } from '@opengym/contract/http/api'
 import type { FormEvent } from 'react'

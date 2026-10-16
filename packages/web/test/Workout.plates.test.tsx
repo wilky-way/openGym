@@ -6,7 +6,7 @@ import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import Workout from './regression-harness'
+import Workout from './W17-harness'
 import { DEF, useStore } from '../src/store/useStore'
 import { useUI } from '../src/store/useUI'
 import { EXIDX } from '@opengym/core/exercises'
@@ -199,7 +199,7 @@ describe('plate line under set rows', () : any => {
     mount([entry(SQUAT, [warm(95), work(145)], { w: 145 })])
     expect(lines().length).toBe(2)
     act(() : any => useStore.setState((s: any ) : any => ({ S: { ...s.S, active: { ...s.S.active, editingWorkoutId: 'saved' } } })))
-    // ActiveWorkout tests cover the saved-editor header.
+    // W18 owns the saved-editor header assertion.
     expect(lines()).toEqual([])
     const more = [...container.querySelectorAll('button')].find((b: any ) : any => (b.getAttribute('aria-label') || b.title || '') === 'More' && !b.classList.contains('n'))
     act(() : any => more.click())

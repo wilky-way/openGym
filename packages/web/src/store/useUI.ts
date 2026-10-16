@@ -79,7 +79,7 @@ const cancelPushRestTimer = () => { if (useStore.getState().user) sendRest('/api
 function sendRest(path: string, body: unknown): void {
   const platform = environment?.platform
   if (!platform) return
-  // Legacy api() bounds POSTs, including the response body, at 60 seconds. The browser client's
+  // Legacy api() bounds POSTs, including the response body, at 60 seconds. W01's
   // full JSON client is separate; this fire-and-forget path retains that bound.
   const ctl = new AbortController()
   let deadline: ReturnType<typeof setTimeout>
@@ -492,7 +492,7 @@ const restStore = () => environment?.platform.kv ?? null
 const writeTimerRecord = (key: string, value: string | null, valid?: (draft: import('./useStore').StoreDocument)=>boolean, expected?: string | null) => {
   const persist = useStore.getState().persistTimerRecord
   if (typeof persist === 'function') return persist(key,value,valid,expected)
-  // Isolated UI fixtures can run without sync store; production installs it before UI.
+  // Isolated UI fixtures can run without W07; production installs it before UI.
   const kv = restStore()
   if (!kv || (expected !== undefined && kv.get(key) !== expected)) return false
   if (value === null) kv.remove(key); else kv.set(key,value)
@@ -542,7 +542,19 @@ const workTargetValid = (wk: WorkTimer, draft = useStore.getState().S) => {
     (wk.occurrence === undefined || wk.occurrence === workOccurrence(wk.owner,s))
   if (!matches(draft)) return false
   if (typeof useStore.getState().persistTimerRecord !== 'function') return true
-  try { const saved = JSON.parse(restStore()?.get('gym_state_v1') || 'null'); return !!saved && matches(saved) } catch { return false }
+  try {
+    const saved = JSON.parse(restStore()?.get('gym_state_v1') || 'null')
+    if (!saved) return false
+    if (useStore.getState().sync?.localDurability && useStore.getState().sync.localDurability !== 'saved' && typeof useStore.getState().validateWorkoutOwner === 'function') {
+      // Elapsed time may lead the saved row, but a peer Finish/discard or a
+      // replacement session still invalidates the hold before its storage event.
+      const baseline=typeof useStore.getState().validateWorkoutBaseline === 'function' && useStore.getState().validateWorkoutBaseline() === true
+      return (matches(saved) || baseline && wk.context !== undefined && wk.context !== workContext(saved)) &&
+        useStore.getState().validateWorkoutOwner() === true && (typeof useStore.getState().validateWorkoutBaseline !== 'function' || baseline) && matches(draft) &&
+        (wk.context === undefined || wk.context === workContext())
+    }
+    return matches(saved)
+  } catch { return false }
 }
 const clearHandedOffWork = (wk: WorkTimer, expected = workRecord(wk)) => {
   if (!wk.owner) return

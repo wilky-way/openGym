@@ -17,8 +17,9 @@ test('production runtime composes storage, auth, admin, data and passkeys and cl
   putUser(store.db, user('synthetic-admin', 0, { admin: 1 }))
   putUser(store.db, user('synthetic-athlete', 1))
   const config = loadConfig({ DATA_DIR: dir, HOST: '127.0.0.1', PORT: '0' })
-  const auth = createAuth(store.db, config), token = auth.mint(user('synthetic-admin', 0, { admin: 1 }), 'agent')
-  const athlete = auth.mint(user('synthetic-athlete', 1), 'agent')
+  const auth = createAuth(store.db, config), token = auth.mint(user('synthetic-admin', 0, { admin: 1 }), 'browser')
+  const agent = auth.mint(user('synthetic-admin', 0, { admin: 1 }), 'agent')
+  const athlete = auth.mint(user('synthetic-athlete', 1), 'browser')
   auth.auditLog.close(); store.close()
   const server = startRuntime(config, () => {})
   try {
@@ -27,6 +28,9 @@ test('production runtime composes storage, auth, admin, data and passkeys and cl
     expect((await request('/api/admin/users')).status).toBe(200)
     expect((await request('/api/account/passkeys')).status).toBe(200)
     expect((await request('/api/data')).status).toBe(200)
+    expect((await request('/api/data', 'GET', undefined, agent)).status).toBe(200)
+    expect((await request('/api/admin/users', 'GET', undefined, agent)).status).toBe(403)
+    expect((await request('/api/pair/create', 'POST', {}, agent)).status).toBe(403)
     const activity = await request('/api/activity', 'POST', { active: true, name: 'Synthetic runtime workout' }, athlete)
     expect(activity.status).toBe(200)
     expect((await (await request('/api/admin/users')).json()).users.find((u: { id: string }) => u.id === 'synthetic-athlete').live.name).toBe('Synthetic runtime workout')
@@ -34,7 +38,7 @@ test('production runtime composes storage, auth, admin, data and passkeys and cl
     expect(disable.status).toBe(200)
     expect((await (await request('/api/admin/users')).json()).users.find((u: { id: string }) => u.id === 'synthetic-athlete').live).toBeNull()
   } finally { await server.stop(true); await server.stop(true) }
-  // A close hook is exercised directly; stopping the runtime must cancel the admin sweep.
+  // A close hook is exercised directly; stopping a shell must cancel S06's sweep.
   const second = openStore(scratchDir()), a = createAuth(second.db, config)
   let cancelled = false
   let notificationsClosed = false
@@ -54,8 +58,8 @@ test('static serving is optional, reserves api and confines public assets includ
   writeFileSync(join(dir, 'index.html'), '<html>synthetic shell</html>')
   writeFileSync(join(dir, 'app.js'), 'console.log("synthetic")')
   writeFileSync(join(outside, 'secret.txt'), 'not public')
-  mkdirSync(join(dir, 'exercise-media'))
-  writeFileSync(join(dir, 'exercise-media', 'fixture.svg'), '<svg/>')
+  mkdirSync(join(dir, 'exercise-media', 'still'), { recursive: true })
+  writeFileSync(join(dir, 'exercise-media', 'still', '0001.webp'), 'synthetic-webp')
   symlinkSync(join(outside, 'secret.txt'), join(dir, 'escape.txt'))
   writeFileSync(join(dir, '.env'), 'not public')
   mkdirSync(join(dir, 'private')); writeFileSync(join(dir, 'private', 'secret.json'), '{"private":true}')
@@ -63,14 +67,14 @@ test('static serving is optional, reserves api and confines public assets includ
   const serve = staticHandler(dir), request = (path: string, method = 'GET') => serve(new Request('http://localhost' + path, { method }))
   expect(await request('/')!.text()).toContain('synthetic shell')
   expect(request('/app.js')!.headers.get('Cache-Control')).toBe('no-cache, must-revalidate')
-  expect(request('/exercise-media/fixture.svg')!.headers.get('Cross-Origin-Resource-Policy')).toBe('same-origin')
+  expect(request('/exercise-media/still/0001.webp')!.headers.get('Cross-Origin-Resource-Policy')).toBe('same-origin')
   expect(await request('/app.js', 'HEAD')!.text()).toBe('')
   for (const path of ['/escape.txt', '/alias.json', '/private/secret.json', '/data/db.json', '/.env', '/%2e%2e%2fsecret.txt', '/%5csecret.txt', '/missing.js', '/app.js.map', '/legacy/index.html', '/tests/fixture.json', '/%ZZ']) expect(request(path)!.status).toBe(404)
   expect(request('/missing?x=1')!.headers.get('Location')).toBe('/?x=1')
   expect(request('/api/unknown')).toBeUndefined()
   expect(request('/api/health')).toBeUndefined()
   expect(request('//other/api/health')).toBeUndefined()
-  expect(request('/', 'PUT')).toBeUndefined()
+  expect(request('/', 'PUT')!.status).toBe(405)
   const server = startRuntime(loadConfig({ DATA_DIR: scratchDir(), STATIC_DIR: dir, PORT: '0', HOST: '127.0.0.1' }), () => {})
   try { expect((await wire(server.port!, '//other/api/health')).status).toBe(200) }
   finally { await server.stop(true) }
@@ -87,10 +91,10 @@ test('production runtime refuses overlapping static and data roots including ali
 })
 
 test('runtime auth receives the real listener peer and ignores untrusted forwarded addresses', async () => {
-  const dir = scratchDir(), server = startRuntime(loadConfig({ DATA_DIR: dir, PORT: '0', HOST: '127.0.0.1', AUDIT_IP: 'full' }), () => {})
+  const dir = scratchDir(), server = startRuntime(loadConfig({ DATA_DIR: dir, PORT: '0', HOST: '127.0.0.1', AUDIT_IP: 'full', BASE_PATH: '/gym' }), () => {})
   try {
     await new Promise<void>((done, fail) => {
-      const req = httpRequest({ host: '127.0.0.1', port: server.port, path: '/api/pair/redeem', method: 'POST', agent: false, headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': '203.0.113.10' } }, response => {
+      const req = httpRequest({ host: '127.0.0.1', port: server.port, path: '/gym/api/pair/redeem', method: 'POST', agent: false, headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': '203.0.113.10' } }, response => {
         expect(response.statusCode).toBe(400); response.resume(); response.on('end', done)
       }); req.on('error', fail); req.end(JSON.stringify({ code: 'BADCODE' }))
     })

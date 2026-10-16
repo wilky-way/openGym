@@ -10,7 +10,7 @@ import { useUI } from '../src/store/useUI'
 import { configureProgrammeUi } from '../src/lib/programme-ui-services'
 import { workoutSheetPlatform } from './workout-sheet-environment'
 import Programs from '../src/views/Programs'
-import { p7Fixture } from './regression-fixture'
+import { p7Fixture } from './p7-fixture'
 
 let root: Root
 let host: HTMLDivElement

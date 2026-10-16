@@ -48,7 +48,7 @@ describe('shell boot and sheets', () => {
     initializeUI({ platform, deviceId: () => 'synthetic-device', notifyRestOver: async () => {} })
     expect(useUI.getState().timer?.left).toBe(30)
   })
-  it('logs an expired hold through the sync store-installed update before rendering', () => {
+  it('logs an expired hold through the W07-installed update before rendering', () => {
     const platform = createBrowserPlatform()
     const owner = { idx: 0, i: 0, id: 'synthetic-hold' }
     platform.kv.set('gym_state_v1', JSON.stringify({ active: { id: 'live', entries: [{ id: owner.id, sets: [{ sec: 45 }] }] } }))

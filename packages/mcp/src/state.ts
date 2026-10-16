@@ -47,7 +47,7 @@ export async function withRemoteState<T>(run: () => T | Promise<T>, options: { e
   const user = await client.checkProfile()
   const revision = await client.request<{ rev: number; wid?: string }>('GET', '/api/data/rev')
   if (!Number.isSafeInteger(revision.rev) || revision.rev < 0 || revision.wid !== undefined && typeof revision.wid !== 'string') throw error('API_UNAVAILABLE', 'The openGym API returned an invalid revision.')
-  // The data API uses revision zero without a wid for absent and unreadable documents.
+  // S04 uses revision zero without a wid for both absent and unreadable documents.
   // A cached absence cannot distinguish those states, so revalidate it every call.
   if (!cached || cached.state === null || cached.client !== client || cached.rev !== revision.rev || cached.wid !== (revision.wid || null)) {
     const got = await client.request<{ rev: number; state: LegacyState | null }>('GET', '/api/data')

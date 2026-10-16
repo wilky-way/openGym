@@ -11,10 +11,10 @@
  *    `nextPrescription`) keep their exact behaviour for routines that are NOT programme-owned. Parity-gated.
  *  - Slot `progression {kind, instructions, parameters?, provenance?}` (schema $defs/progression) stays valid
  *    and keeps meaning "instruction text for the athlete". The engine only acts on a slot whose
- *    `progression.rules` lists rule ids (optional, additive schema field).
+ *    `progression.rules` lists rule ids (NEW optional field, additive; schema change in unit P1).
  *  - Slot `target {rir|rpe|pct}` / `setTargets[]` and `tm {key, percentages, reference}` keep their meaning;
  *    rules may *generate* them for a week instead of them being authored per week.
- *  - the operator 10-12 rule "show RIR targets, no load prediction" still holds for slots without rules: the
+ *  - The target-only policy "show RIR targets, no load prediction" still holds for slots without rules: the
  *    engine never prescribes a load unless a rule that produces loads (percentage, rpe-load, linear, double)
  *    is attached. That is an explicit authoring choice, shown with its Why.
  */
@@ -44,7 +44,7 @@ export interface Rounding {
 
 // ───────────── rules (closed: additionalProperties:false everywhere) ─────────────
 
-/** % of a training max or 1RM per week and set (percentage-wave waves, Sheiko tables). */
+/** % of a training max or 1RM per week and set (percentage waves). */
 export interface PercentageRule {
   id: RuleId; kind: 'percentage'
   ref: { lift: LiftKey; basis: 'tm' | '1rm' }
@@ -53,7 +53,7 @@ export interface PercentageRule {
   rounding: Rounding
 }
 
-/** Load from an RPE/RIR target and an e1RM estimated from logged sets (RTS / effort-based style). */
+/** Load from an RPE/RIR target and an e1RM estimated from logged sets (RTS / Barbell Medicine style). */
 export interface RpeLoadRule {
   id: RuleId; kind: 'rpe-load'
   lift: LiftKey
@@ -95,7 +95,7 @@ export interface LinearRule {
   rounding: Rounding
 }
 
-/** AMRAP result bumps the training max (percentage-wave style). Evaluated at week boundaries. */
+/** AMRAP result bumps the training max (AMRAP progression). Evaluated at week boundaries. */
 export interface AmrapTmRule {
   id: RuleId; kind: 'amrap-tm'
   lift: LiftKey
@@ -129,7 +129,7 @@ export interface ScheduledDeloadRule {
   progressionDuring: 'off'
 }
 
-/** volume-ramp volume ramp: sets per muscle per week from MEV toward MRV. */
+/** RP-style volume ramp: sets per muscle per week from MEV toward MRV. */
 export interface VolumeRampRule {
   id: RuleId; kind: 'volume-ramp'
   scope: { muscles: string[] } | { slots: SlotRef[] }  // muscles = core muscles.js ids
@@ -147,7 +147,7 @@ export type ProgressionRule =
   | PercentageRule | RpeLoadRule | DoubleRule | LinearRule
   | AmrapTmRule | StallRule | ScheduledDeloadRule | VolumeRampRule
 
-/** Optional, additive fields on the programme definition. */
+/** NEW optional fields on the programme definition (schema change in P1; additive). */
 export interface DefinitionProgression {
   progressionRules?: ProgressionRule[]
   /** seed values for cycle.tm at activation when the athlete hasn't set them: lift → {value, unit} or 'from-e1rm' */
@@ -190,7 +190,7 @@ export interface SlotProgressionRefs { rules?: RuleId[]; onStall?: RuleId }
  *   rpe-load: per `whenNoData`.
  * TM timeline (immutable seed, idempotent apply): at activation the cycle stores `tmSeed` (NEW cycle field,
  *   frozen; from cycle.tm as set by the athlete, else definition.tmSeeds). The timeline is ALWAYS recomputed as
- *   seed + amrap-tm bumps + stall resets from replay. `cycle.tm` is a cache written by apply for legacy
+ *   seed + amrap-tm bumps + stall resets + dated absolute maxAdjustments from replay. `cycle.tm` is a cache written by apply for legacy
  *   display, NEVER an input. Re-running preview/apply on the same logs yields byte-identical results and
  *   apply twice is a no-op the second time (required fixtures).
  * Bounds (validator rejects outside): pct (0, 1.5]; reps 1–100; sets 1–100 per slot per week; increment
@@ -211,6 +211,7 @@ export interface EvaluateInput {
     tm?: Record<LiftKey, number>
     /** Frozen at activation, matching ProgrammeCycle.tmSeed (absent on pre-engine cycles). */
     tmSeed?: Record<LiftKey, number>
+    maxAdjustments?: import('./state-doc').MaxAdjustment[]
     /** Cycle occurrence identities/statuses used to resolve logs and exclude skipped exposures. */
     occurrences: ProgrammeOccurrence[]
     week1StartDate: ISODate
@@ -262,11 +263,11 @@ export type ProgressionIssueCode =
   | 'rule.two-load-rules' | 'rule.range'                                // number out of its documented range
   | 'rule.extra-field'                                                  // closed objects; also catches "stage tricks"
   | 'rule.unit-mismatch' | 'rule.ramp-order' | 'rule.deload-overlap' | 'rule.missing-rounding'
-  // Design decision: undefined composition fails closed until semantics are specified.
+  // GM composition ruling: undefined composition fails closed until semantics are specified.
   | 'rule.two-volume-ramps' | 'rule.multiple-amrap-bumps'
   | 'rule.amrap-source-not-amrap' | 'rule.tm-stall-without-key' | 'rule.reps-unsupported'
 export interface ProgressionIssue { code: ProgressionIssueCode; ruleId?: RuleId; ref?: Partial<SlotRef>; path: string; fix: string }
-/** Fails closed: any issue prevents the definition from reaching `Complete`. */
+/** Fails closed: any issue → the definition can't reach `Complete` (added to programme conformance in P1). */
 export interface ProgressionValidateResult { ok: boolean; issues: ProgressionIssue[] }
 
 // ───────────── apply ─────────────

@@ -1,7 +1,8 @@
+import type { NativePrescription, NativeSetTarget, NativeRowIdentity, NativeExtraIdentity, NativeLoadValue, NativeLoadEvaluation } from './native-prescription'
 /**
  * openGym state document + /api/data protocol — frozen draft contract.
- * Shapes for persisted state and whole-document synchronization.
- * This file describes types; runtime modules implement validation and synchronization.
+ * Derived from the original openGym state and synchronization protocol.
+ * Behaviour lives in state-doc.md; this file is shape only.
  *
  * Conventions
  *  - Every object that the app may extend carries `[k: string]: unknown` — unknown fields MUST
@@ -124,6 +125,15 @@ export type PriorNote = Record<string, string[]>
 
 /** One row of a logged/active exercise. All optional; legacy rows have only w/r/done. */
 export interface WorkoutSet {
+  nativeTarget?: NativeSetTarget
+  nativeLoadReason?: string
+  nativeRowIdentity?: NativeRowIdentity
+  /** Ordinary athlete extra; mutually exclusive with authored identity/target/receipts. */
+  nativeExtraIdentity?: NativeExtraIdentity
+  /** Unit-stamped actual for relation-bearing rows; never a derived target. */
+  nativeActualLoad?: NativeLoadValue
+  /** Frozen only when a dependent row is completed. */
+  nativeLoadEvaluation?: NativeLoadEvaluation
   w?: number               // weight, in doc unit
   r?: number               // reps (rest-pause: total incl. clusters)
   sec?: number             // hold time
@@ -238,6 +248,7 @@ export interface RoutineExercise {
   target?: SetTarget & Record<string, unknown>
   setRepsMin?: (number | null)[]
   tm?: { key: string; percentages: number[]; reference?: string; [k: string]: unknown }
+  nativePrescription?: NativePrescription
   sourcePrescription?: unknown
   importNeedsPrescription?: true
   [k: string]: unknown
@@ -419,7 +430,23 @@ export interface ProgrammeWeek {
   [k: string]: unknown
 }
 
+export type MaxBasis = '1rm' | 'tm' | 'e1rm'
+export interface MaxAdjustment {
+  id: string
+  lift: string
+  recordedAt: number
+  effectiveOn: ISODate
+  previous: number | null
+  value: number
+  unit: Unit
+  basis?: MaxBasis
+  reason: string
+  [key: string]: unknown
+}
+
 export interface ProgrammeDefinition extends EntryClocks {
+  /** Verified source basis; absent means unspecified, including legacy lb/as-authored references. */
+  maxBasis?: MaxBasis
   id: string
   name: string
   short?: string
@@ -485,6 +512,9 @@ export interface ProgrammeCycle extends EntryClocks {
   tm?: Record<string, number>
   /** NEW (progression.ts): frozen at activation; the TM timeline is recomputed from it. `tm` becomes a display cache. */
   tmSeed?: Record<string, number>
+  tmUnit?: Unit
+  /** Append-only manual changes, in each event's explicit unit; seed and logs remain frozen. */
+  maxAdjustments?: MaxAdjustment[]
   pausedOn?: ISODate
   completedOn?: ISODate
   archivedOn?: ISODate
@@ -498,7 +528,7 @@ export interface ProgrammeCycle extends EntryClocks {
 /** Root metadata is itself an entry (own _ts/_f) merged separately from its lists. */
 export interface Programmes extends EntryClocks {
   version: 1 | number
-  fork: 'opengym/1' | string
+  fork: 'wilky/1' | string
   definitions: ProgrammeDefinition[]   // union-only; unique string id
   cycles: ProgrammeCycle[]             // union-only; ≤1 active|paused after merge
   /** NEW (contract v1, ../sync/OFFLOAD.md): definitions moved to the library. Joined per id by max `at`. */
@@ -661,6 +691,9 @@ export type ClientStateDoc = Omit<StateDoc, '_unstamped' | '_prior' | 'active'>
 
 // ───────────────────────────── /api/data protocol ─────────────────────────────
 
+/** Auxiliary device-owned closure proof; never stored in the synced document. */
+export interface TrainingCloseProof { lease: string; session: string | null }
+
 export interface PutDataRequest {
   /**
    * Whole document. Must be a non-array object with at least one key other than _rev/_ts.
@@ -674,6 +707,11 @@ export interface PutDataRequest {
   baseWid?: string | null
   /** true ⇒ writer stamps its own changes (the app). Anything else ⇒ server stamps for it. */
   stamped?: boolean
+  /** Opt a non-agent carrier into the atomic idle guard. Agents are always guarded. */
+  requireIdle?: boolean
+  /** Trusted owning browser/paired device only, after local closure: exact lease/session,
+   * state.active:null and current baseRev/baseWid. Never a peer/agent idle assertion. */
+  trainingClose?: TrainingCloseProof
 }
 
 export interface PutDataOk {

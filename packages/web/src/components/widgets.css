@@ -1,4 +1,4 @@
-/* Toast rules shared with the full Logbook theme. */
+/* W23 reconciles these verbatim Toast rules into the full Logbook CSS copy. */
 :root{--sab:env(safe-area-inset-bottom,0px);--surface-2:#2c2c2e;--r-xl:22px;--med:220ms;--ease:cubic-bezier(.32,.72,0,1);}
 
 #toast{

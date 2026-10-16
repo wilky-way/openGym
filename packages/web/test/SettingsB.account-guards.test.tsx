@@ -74,7 +74,7 @@ const paths: DelayedWrite[] = [
  selection('equipment', 'Active profile', 'activeEquipId', 'spare'),
  { name: 'open sound sheet selection', open() { act(() => root.render(<RestSoundSheet close={() => {}} />)); const button = row('Bell'); return () => button.click() }, check() { expect(useStore.getState().S.restSound).toBe('bell') } },
 ]
-describe('Settings B delayed writes on real sync store persistence', () => {
+describe('Settings B delayed writes on real W07 persistence', () => {
  it.each(paths)('$name aborts after A → B and leaves B’s saved bytes intact', path => {
   const commit = path.open()
   act(() => { saveAccount('B'); notifyOwner('gym_owner') })

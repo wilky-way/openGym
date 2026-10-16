@@ -14,6 +14,13 @@
       "maxLength": 10000,
       "minLength": 1
     },
+    "maxBasis": {
+      "enum": [
+        "1rm",
+        "tm",
+        "e1rm"
+      ]
+    },
     "unit": {
       "enum": [
         "kg",
@@ -313,6 +320,250 @@
           },
           "minItems": 1,
           "maxItems": 10
+        },
+        "nativePrescription": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "const": 1
+            },
+            "variantKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "slotId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                "workbookSha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "sheet": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                "cell": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                }
+              },
+              "required": [
+                "slotId",
+                "workbookSha256",
+                "sheet",
+                "cell"
+              ],
+              "additionalProperties": false
+            },
+            "restSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "sets": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sourceTemplateId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "relativeLoad": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "const": "same-entry-reduction"
+                      },
+                      "reductionPercent": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "exclusiveMaximum": 100
+                      },
+                      "anchor": {
+                        "type": "object",
+                        "properties": {
+                          "variantKey": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1000
+                          },
+                          "source": {
+                            "type": "object",
+                            "properties": {
+                              "slotId": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 1000
+                              },
+                              "workbookSha256": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "sheet": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 1000
+                              },
+                              "cell": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 1000
+                              }
+                            },
+                            "required": [
+                              "slotId",
+                              "workbookSha256",
+                              "sheet",
+                              "cell"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "sourceTemplateId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1000
+                          },
+                          "rowOrdinal": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100
+                          }
+                        },
+                        "required": [
+                          "variantKey",
+                          "source",
+                          "sourceTemplateId",
+                          "rowOrdinal"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "reductionPercent",
+                      "anchor"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "reps": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "fixed",
+                          "range",
+                          "amrap"
+                        ]
+                      },
+                      "min": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "max": {
+                        "type": "integer",
+                        "minimum": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "min"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "effort": {
+                    "type": "object",
+                    "properties": {
+                      "scale": {
+                        "enum": [
+                          "rpe",
+                          "rir"
+                        ]
+                      },
+                      "min": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 10
+                      },
+                      "max": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 10
+                      },
+                      "maxExclusive": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "scale"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "percentage": {
+                    "type": "object",
+                    "properties": {
+                      "min": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      "max": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      "role": {
+                        "enum": [
+                          "prescribed",
+                          "guide"
+                        ]
+                      },
+                      "basis": {
+                        "enum": [
+                          "1rm",
+                          "tm",
+                          "e1rm"
+                        ]
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      }
+                    },
+                    "required": [
+                      "min",
+                      "max",
+                      "role",
+                      "basis",
+                      "key"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "sourceTemplateId",
+                  "reps"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "version",
+            "variantKey",
+            "source",
+            "sets"
+          ],
+          "additionalProperties": false
         },
         "mode": {
           "type": "string",

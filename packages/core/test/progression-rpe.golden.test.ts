@@ -6,7 +6,7 @@ import { p3Input, p3Log, rpeRule } from './fixtures/synthetic-p3'
 const sets = (x: ReturnType<typeof p3Input>, index?: ReturnType<typeof createExerciseIndex>) => evaluate(x, {}, index).weeks[0]!.slots[0]!.sets
 const estimate = (x: ReturnType<typeof p3Input>) => sets(x)[0]!.why[0]!.inputs.e1rm
 
-describe('hand-computed RPE load goldens', () => {
+describe('P3 hand-computed RPE load goldens', () => {
   it('Epley: 100x6=120 e1RM; six reps at RIR2 invert 1+8/30 to 94.7368 ->95', () => {
     const r = rpeRule(); r.weeks['*']![0]!.rir = 2
     const x = p3Input(r); x.logs = [p3Log(1, 100, 6, { rir: 4 })]

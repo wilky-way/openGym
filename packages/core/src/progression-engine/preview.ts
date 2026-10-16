@@ -15,7 +15,8 @@ export function preview(input: PreviewInput, extensions: EngineExtensions = {}, 
     const start=known ? weekDate(input,week) : undefined
     const boundary=start ? new Date(Date.parse(`${start}T00:00:00Z`)-86400000).toISOString().slice(0,10) : undefined
     const cutoff=[input.asOf ?? input.now,boundary].filter((v):v is string=>!!v).sort()[0]
-    const evaluated=evaluate({...input,logs,weeks:[week],...(cutoff ? {asOf:cutoff} : {})},extensions,index)
+    const evaluated=evaluate({...input,logs,weeks:[week],prescriptionAsOf:input.asOf ?? input.now,...(cutoff ? {asOf:cutoff} : {}),
+      communityPreviewHistory:week===input.cycle?.weekIndex ? {asOf:input.asOf,now:input.now} : undefined},extensions,index)
     if (evaluated.error) return evaluated
     result.weeks.push(...evaluated.weeks)
     result.tm=evaluated.tm

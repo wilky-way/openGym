@@ -70,7 +70,7 @@ export default function SettingsB({ page = 'workout' }: { page?: SettingsBPage }
     const owner = sheetOwner(S), source = S.unit, unitSet = snapshot(S.unitSet)
     const setUnit = (options?: { convert: boolean }) => guardedUpdate(owner,
       s => s.unit === source && snapshot(s.unitSet) === unitSet, () => {
-        // The real sync store action owns conversion, stamps and its immediate push.
+        // The real W07 action owns conversion, stamps and its immediate push.
         // Suppress the outer draft's save so it cannot overwrite that action.
         useStore.getState().setUnit(v, options)
       }, update, true)
@@ -375,6 +375,16 @@ export default function SettingsB({ page = 'workout' }: { page?: SettingsBPage }
             value={S.body === 'female' ? 'female' : 'male'}
             onChange={v => update(s => { s.body = v })}
           />
+        </Row>
+        <Row icon="play" iconTint="var(--orange)" title={t('Exercise animations')}>
+          <Segmented className="seg-inline" value={S.gifSize === 'mini' || S.gifSize === 'off' ? S.gifSize : 'full'}
+            options={[{ value: 'full', label: t('Full') }, { value: 'mini', label: t('Small') }, { value: 'off', label: t('Off') }]}
+            onChange={v => update(s => { s.gifSize = v })} />
+        </Row>
+        <Row icon="figureStrength" iconTint="var(--teal)" title={t('Exercise drawings')}>
+          <Segmented className="seg-inline" value={S.exFigure || 'body'}
+            options={[{ value: 'body', label: t('Body diagram') }, { value: 'male', label: t('Male') }, { value: 'female', label: t('Female') }]}
+            onChange={v => update(s => { s.exFigure = v })} />
         </Row>
       </Section>
       <Section title={t('On Home')}>

@@ -27,7 +27,7 @@ describe('progression HTTP transcripts',()=> {
     expect(repeat.status).toBe(200);expect(repeat.body.changed).toEqual([]);expect(h.stored()).toBe(committedText)
     const transcript=[{request:{action:'validate',body:{definition}},status:200,body:{ok:true,issues:[]}},{request:{action:'preview',body:{source:{definition},cycleId:'c',weeks:[2]}},...preview},{request:{action:'apply',body:{...applyBody,dryRun:true}},...dry},{request:{action:'apply',body:applyBody},status:applied.status,body:{...applied.body,wid:'<fresh-wid>'}}]
     const transcriptPath=new URL('./transcripts/progression.json',import.meta.url)
-    if(process.env.PROGRESSION_RECORD_TRANSCRIPTS==='1') writeFileSync(transcriptPath,JSON.stringify(transcript,null,2)+'\n')
+    if(process.env.P5_RECORD_TRANSCRIPTS==='1') writeFileSync(transcriptPath,JSON.stringify(transcript,null,2)+'\n')
     expect(transcript).toEqual(JSON.parse(readFileSync(transcriptPath,'utf8')))
 
   })
@@ -177,7 +177,7 @@ describe('progression HTTP transcripts',()=> {
     const accepted=await h.call('POST',path+'apply',{...applyBody,confirmInventoryAdjustment:true})
     expect(accepted.status).toBe(200);expect(accepted.body.warnings).toEqual(preview.body.warnings);expect(JSON.parse(h.stored()!).routines[1].ex[0].pyramidWeight).toEqual([55,55])
   })
-  test('activity presence blocks apply until expiry and clears on session end',async()=> {
+  test('real S05 activity presence blocks apply until expiry and clears on session end',async()=> {
     const h=dataServer(['u1'],{}, {today:()=> '2026-01-05'});h.plant(fixture());const before=h.stored()
     expect((await h.call('POST','/api/activity',{active:true,name:'Synthetic training'})).status).toBe(200)
     expect((await h.call('POST',path+'apply',applyBody)).body.code).toBe('TRAINING_NOW');expect(h.stored()).toBe(before)
@@ -188,7 +188,7 @@ describe('progression HTTP transcripts',()=> {
     expect((await h.call('POST',path+'apply',{...applyBody,dryRun:true})).status).toBe(200)
     expect(h.stored()).toBe(before)
   })
-  test('assisted prescriptions reduce assistance, while undefined assisted rules cannot apply',async()=> {
+  test('P2 assisted prescriptions reduce assistance, while undefined assisted rules cannot apply',async()=> {
     const h=progressionServer(),s:any=fixture(),d=s.programmes.cycles[0].snapshot
     s.customEx=[{id:'assist',name:'Synthetic assisted pull-up',eq:'leverage machine',assisted:true}]
     d.progressionRules=[{id:'linear',kind:'linear',increment:5,unit:'lb',every:{sessions:1},success:'all-sets-all-reps',rounding:{increment:5,mode:'nearest',usePlates:false}}]
@@ -216,7 +216,7 @@ describe('progression HTTP transcripts',()=> {
     try {expect((await h.call('PUT','/api/data',{state:phone,baseRev:4,baseWid:'read1'})).status).toBe(200)} finally {finish()}
     expect(await pending).toMatchObject({status:409,body:{code:'REV_CONFLICT'}})
     const saved=JSON.parse(h.stored()!);expect(saved.workouts).toEqual(phone.workouts);expect(saved.routines).toEqual(phone.routines)
-    expect(saved._rev).toBe(6) // Unstamped phone PUT follows data API's legacy +2 revision rule.
+    expect(saved._rev).toBe(6) // Unstamped phone PUT follows S04's legacy +2 revision rule.
   })
   test('phone PUT after the read loses apply with 409 and preserves the phone write',async()=> {
     const h=progressionServer(),write=h.data.compareAndWrite.bind(h.data),phone=fixture();phone.workouts.push({id:'phone',d:'2026-01-05',start:2,entries:[]})

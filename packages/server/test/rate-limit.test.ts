@@ -230,7 +230,7 @@ test('backoff: a key marked keep is never evicted, even when everything else has
     60,
     'the first failure was kept through the flood',
   )
-  // At the hard cap, saturation with retained entries must refuse new rate-limit keys.
+  // S11 safety exception: all-kept saturation refuses new keys at the hard cap.
   const k = createBackoff({ maxKeys: 2, keep: () => true, now: c.now })
   for (const key of ['a', 'b']) k.fail(key)
   assert.ok(k.fail('c') > 0)

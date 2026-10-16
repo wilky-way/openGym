@@ -14,7 +14,7 @@ vi.mock('../src/authoring-fs', async original => {
   return { ...actual, openAt: vi.fn(actual.openAt), mkdirAt: vi.fn(actual.mkdirAt) }
 })
 let root: string
-beforeEach(() => { root = fs.realpathSync(fs.mkdtempSync(join(tmpdir(), 'draft-authoring-safe-'))) })
+beforeEach(() => { root = fs.realpathSync(fs.mkdtempSync(join(tmpdir(), 'm02-safe-'))) })
 afterEach(() => { vi.restoreAllMocks(); fs.rmSync(root, { recursive: true, force: true }) })
 test('neutral platform data defaults and explicit override keep authoring outside app config', () => {
   expect(authoringDirectory({}, 'darwin', root)).toBe(join(root, 'Library', 'Application Support', 'opengym-authoring'))

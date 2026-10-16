@@ -17,7 +17,7 @@ for (const stamped of [false,true]) test(`effort scale memory survives an older 
 })
 
 const cfg = () => ({ id:'0025',slotId:'pick',open:true,label:'Synthetic pick',instructions:'Synthetic rule',generatedRules:[{until_rpe:8}],authoredInstructions:'Synthetic rule',noteKind:'planner',sets:3,reps:10,pyramid:[5,10,10],setTargets:[{rpe:8,pct:75},{rir:2,pct:65},{rir:2,pct:65}],setRepsMin:[4,8,8],tm:{key:'0025',percentages:[75,65,65]} })
-for (const sets of [2,3,4]) test(`stamped old Settings writer keeps authored fields when changing row count to ${sets}`,()=>{
+for (const sets of [2,3,4]) test(`F1 stamped old Settings writer keeps authored fields when changing row count to ${sets}`,()=>{
   const cur: SyncRecord={routines:[{id:'r',ex:[cfg()]}],workouts:[],programmes:{cycles:[{id:'c',status:'active',occurrences:[],snapshot:{weeks:[{index:1,days:[{key:'d1',sessions:[{routineSnapshot:{ex:[cfg()]}}]}]}]}}]}},next=structuredClone(cur)
   next.routines[0].ex=[{id:'0025',sets,reps:10}]
   next.programmes.cycles[0].snapshot.weeks[0].days[0].sessions[0].routineSnapshot.ex=structuredClone(next.routines[0].ex)
@@ -31,7 +31,7 @@ for (const sets of [2,3,4]) test(`stamped old Settings writer keeps authored fie
   assert.deepEqual(next.programmes.cycles[0].snapshot.weeks[0].days[0].sessions[0].routineSnapshot.ex[0],e)
 })
 
-for (const status of ['archived','finished']) for (const reverse of [false,true]) test(`API ${status} rejects a late queue in direction ${reverse}`,()=>{
+for (const status of ['archived','finished']) for (const reverse of [false,true]) test(`F3 API ${status} rejects a late queue in direction ${reverse}`,()=>{
   const terminal: SyncRecord={routines:[],workouts:[],queue:null,programmes:{cycles:[{id:'old',status,occurrences:[],_f:{status:100}}]}}
   const stale=structuredClone(terminal); stale.programmes.cycles[0].status='active';stale.programmes.cycles[0]._f.status=50
   stale.queue={programmeCycleId:'old',ids:['r']};stale.edited={queue:200}
@@ -40,7 +40,7 @@ for (const status of ['archived','finished']) for (const reverse of [false,true]
   assert.equal(next.queue,null);assert.equal(next.programmes.cycles[0].status,status)
 })
 
-test('Switch restores a successor queue and adopted routine ownership from a later old writer',()=>{
+test('F3 Switch restores a successor queue and adopted routine ownership from a later old writer',()=>{
   const old: SyncRecord={id:'old',status:'archived',occurrences:[],_f:{status:100}}
   const successor: SyncRecord={id:'new',status:'active',weekIndex:1,lengthWeeks:2,since:100,startsOn:'2026-10-19',snapshot:{name:'Synthetic'},occurrences:[{instanceId:'new:w1d1',routineId:'personal',dayKey:'d1',weekIndex:1,ordinal:1,status:'pending'}]}
   const cur: SyncRecord={routines:[{id:'personal',programme:{cycleId:'new',series:'new:d1'},ex:[]}],workouts:[],queue:{programmeCycleId:'new',ids:['personal']},programmes:{cycles:[old,successor]}}
@@ -53,7 +53,7 @@ test('Switch restores a successor queue and adopted routine ownership from a lat
 
 // The retired server twin's source-identity assertion becomes a behavioural assertion
 // through the shared core dependency (the original test title remains for traceability).
-test('prescription normalization stays identical in frontend and API',()=>{
+test('F1 prescription normalization stays identical in frontend and API',()=>{
   const cur: SyncRecord = {routines:[{id:'r',ex:[cfg()]}],workouts:[]};
   const next: SyncRecord = {routines:[{id:'r',ex:[{id:'0025',sets:3,reps:10}]}],workouts:[]};
   stampPut(cur,next,{stamped:true,now:100});

@@ -10,7 +10,7 @@ const env = { OPENGYM_URL: 'http://127.0.0.1:1234', OPENGYM_TOKEN: 'synthetic-re
 const definition = { id: 'synthetic', name: 'Synthetic', unit: 'kg', weeks: [{ index: 1, days: [{ key: 'd1', sessions: [{ routineSnapshot: { ex: [{ id: '0025', sets: 3, reps: 8, weight: 100 }] } }] }] }] }
 const state = () => ({ _rev: 7, _wid: 'epoch', unit: 'kg', routines: [], workouts: [], programmes: { definitions: [definition], cycles: [] } })
 
-test('cached absence is revalidated when data API still reports zero revision but data becomes corrupt', async () => {
+test('cached absence is revalidated when S04 still reports zero revision but data becomes corrupt', async () => {
   let corrupt = false, pulls = 0
   const fetcher: Fetcher = async url => {
     if (url.endsWith('/me')) return { ok: true, status: 200, json: async () => ({ user: { id: 'test-uid' } }) }

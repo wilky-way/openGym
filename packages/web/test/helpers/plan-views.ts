@@ -12,7 +12,7 @@ beforeEach(() => {
     return { set onfinish(fn: () => void) { timer = setTimeout(fn, 180) }, cancel() { clearTimeout(timer) } } as unknown as Animation
   })
   configureUx(createBrowserUx()); const platform = createBrowserPlatform(); configureClientIO(platform)
-  // Isolated view fixtures use a small updater; sync-store adversarial tests live separately.
+  // Twins retain their small W06 updater; real W07 adversarial tests live separately.
   if (useStore.setState) {
     initializeStore(platform)
     useStore.setState({ update: mut => {

@@ -111,11 +111,11 @@ test('v2 device minting, listing, renaming, ownership and individual revocation 
     (
       await h.post('/api/account/devices/rename', bearer(a), {
         id,
-        name: '  local host  ',
+        name: '  Demo  ',
       })
     ).status,
   ).toBe(200)
-  expect(getDevice(h.db, id)?.name).toBe('local host')
+  expect(getDevice(h.db, id)?.name).toBe('Demo')
   expect(
     (await h.post('/api/account/devices/revoke', bearer(c), { id })).status,
   ).toBe(404)

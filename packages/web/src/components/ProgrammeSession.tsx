@@ -1,3 +1,5 @@
+import { buildNativeEntry } from '@opengym/core/native-session'
+import { nativeTargetLabel } from '@opengym/core/native-prescription'
 // Persisted programme records retain legacy unknown fields; core validates mutations.
 import { createExerciseIndex } from '@opengym/core/exercises'
 import { ProgrammeSheet, programmeOwner, programmeTarget, updateProgramme, type ProgrammeTarget } from '../lib/programme-ui-services'
@@ -49,6 +51,10 @@ function Session({ occurrence: o, close, valid }: {valid:ProgrammeTarget;occurre
     <h3>{r?.name || o.routineName}</h3>
     <p style={{color:"var(--label)"}}> {o.date && fmtDate(o.date, true)} · {o.status === 'skipped' ? t('Skipped') : o.status === 'done' ? t('Done') : t('Projected session')}</p>
     <div className="list">{r?.ex.map((e: any, i: any) => {
+      if(e.nativePrescription) {
+        const rows=buildNativeEntry(S,e,r,createExerciseIndex(S.customEx)).sets
+        return <div className="item" key={i}><div className="grow"><div className="tt">{e.label || exerciseNameFor(exOr(e.id,createExerciseIndex(S.customEx)))}</div>{rows.map((row,n)=><p key={n}>Set {n+1} · {nativeTargetLabel(row.nativeTarget!)} · {row.w==null?row.nativeLoadReason:`${row.w} ${S.unit}`}</p>)}</div></div>
+      }
       const cfg=programmeTMConfig(S,e,r,createExerciseIndex(S.customEx))
       const tmSet=e.tm && Number(S.programmes?.cycles?.find((c: any) =>c.id===r.programme?.cycleId)?.tm?.[e.tm.key || e.id])>0
       return <div className="item" key={i}><div className="grow">

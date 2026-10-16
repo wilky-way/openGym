@@ -30,7 +30,7 @@ for(const [kind,stage] of [
  ...['permission','ready','key','subscribe','share'].map(s=>['enable',s]),
  ...['ready','subscription','unsubscribe'].map(s=>['disable',s]),
  ...['ready','subscription','key','unsubscribe','subscribe','share','status'].map(s=>['sync',s]),
-] as [string,string][]) it(`push ${kind}: A → B during ${stage} preserves real sync store bytes and drops later writes`,async()=>{
+] as [string,string][]) it(`push ${kind}: A → B during ${stage} preserves real W07 bytes and drops later writes`,async()=>{
  pause=stage
  // The status branch requires a matching application key; the replacement branch differs.
  if(stage==='status')sub.options.applicationServerKey=new Uint8Array([1]).buffer

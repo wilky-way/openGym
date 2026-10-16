@@ -12,7 +12,7 @@ const slots=(d: ReturnType<typeof volumeProgramme>,week=1)=>d.weeks[week-1].days
 const run=(x=volumeInput())=>evaluate(x,{},volumeIndex)
 const projected=(x=volumeInput())=>preview(x,{},volumeIndex)
 
-describe('hand-computed volume-ramp volume goldens',()=>{
+describe('P4 hand-computed RP-style volume goldens',()=>{
   it('MEV 6 ->9 ->12 ->15 ->MRV16 over five weeks, round-robin then explicit deload',()=>{
     const x=volumeInput(), out=run(x)
     expect(out.error).toBeUndefined();expect(out.warnings).toEqual([])
@@ -82,7 +82,7 @@ describe('hand-computed volume-ramp volume goldens',()=>{
   })
 })
 
-describe('hold-if-missed replay',()=>{
+describe('P4 hold-if-missed replay',()=>{
   it('a missed rep floor in week1 holds week2; another miss holds again cumulatively',()=>{
     const x=volumeInput(undefined,[2,3,4,5]);x.logs=[volumeLog(1,[8,8,7]),volumeLog(2,[8,7,8])]
     expect(counts(run(x))).toEqual([[3,3,3],[3,3,3],[5,4,3],[6,6,3]])
@@ -178,7 +178,7 @@ describe('hold-if-missed replay',()=>{
   })
 })
 
-describe('explicit scheduled deload',()=>{
+describe('P4 explicit scheduled deload',()=>{
   it('ceil sets once, factor load once, then round once and convert effort scale',()=>{
     const x=volumeInput(undefined,[6]);x.profile.effortScale='rpe'
     slots(x.definition as ReturnType<typeof volumeProgramme>,6)[0].weight=103
@@ -199,7 +199,7 @@ describe('explicit scheduled deload',()=>{
     const x=volumeInput(undefined,[6])
     const index=createExerciseIndex([{id:'synthetic-chest-a',n:'Synthetic assisted press',eq:'leverage machine',assisted:true}])
     const out=evaluate(x,{},index)
-    // Deload returns 100*.6=60; assisted replay reflects the -40 delta to 100+40=140.
+    // P4 returns100*.6=60; P2 reflects the -40 delta to100+40=140.
     expect(out.error).toBeUndefined();expect(counts(out)).toEqual([[1,2,2]])
     expect(out.weeks[0]!.slots[0]!.sets[0]!.load).toBe(140)
     expect(out.weeks[0]!.slots[0]!.sets[0]!.why.some(w=>w.text.includes('more assistance'))).toBe(true)
@@ -234,7 +234,7 @@ describe('explicit scheduled deload',()=>{
   })
 })
 
-describe('multi-week hypothetical preview',()=>{
+describe('P4 multi-week hypothetical preview',()=>{
   it('appends hypotheses and cuts every week at its start without backward leakage',()=>{
     const x={...volumeInput(undefined,[1,2,3]),hypotheticalLogs:[volumeLog(1,[8,8,8]),volumeLog(2,[8,8,8,8,8])]}
     const out=preview(x,{},volumeIndex)
@@ -282,7 +282,7 @@ describe('multi-week hypothetical preview',()=>{
   })
 })
 
-describe('goldens against corrected shared prescription semantics',()=>{
+describe('P4 goldens against corrected P2 shared prescription semantics',()=>{
   it('proportional pyramid count and deload use the actual authored pyramid length',()=>{
     const d=volumeProgramme('proportional')
     for (let week=1;week<=6;week++) slots(d,week)[0].pyramid=[8,8,8,8,8,8] // scalar sets2 is stale.
@@ -315,7 +315,7 @@ describe('goldens against corrected shared prescription semantics',()=>{
   })
 })
 
-describe('TM extension custom-index seam',()=>{
+describe('P4 TM extension custom-index seam',()=>{
   it('passes the custom single-arm exercise to TM replay: total50 means each50',()=>{
     const d=volumeProgramme(),x=volumeInput(d,[2])
     d.progressionRules=[{id:'pct',kind:'percentage',ref:{lift:'press',basis:'tm'},weeks:{2:[{pct:1,reps:8}]},rounding:{increment:5,mode:'nearest',usePlates:false}}]

@@ -27,7 +27,7 @@ function agreement(a: SyncDoc, b: SyncDoc) {
   expect([a, b]).toEqual(before)
 }
 
-describe('client and server offload agreement', () => {
+describe('K10 client / K17 server offload agreement', () => {
   it('both keep a post-Reset definition when equal Resets retire an old offload', () => {
     const a = doc({ definitions: [definition('a', 30)], offloaded: { a: marker(10) } }, 20)
     const b = doc({ definitions: [], offloaded: { a: marker(10) } }, 20)

@@ -1,3 +1,4 @@
+import { Thumb } from '../components/Media'
 import { authoredPrescriptionFields } from '@opengym/core/programme-prescription'
 import { capturePlanTarget, updatePlanTarget, validatePlanTarget, occurrenceKeys } from './plan-target'
 import { ux } from '../platform/ux'
@@ -562,6 +563,7 @@ export default function RoutineEdit() {
           <span className="routine-grip" data-drag-handle aria-hidden="true" title={t('Reorder exercises')}><Icon name="grip" /></span>
           {ssPos.has(i) && <span className="ss-pos" aria-label={t('Superset position {0}', ssPos.get(i))}>{ssPos.get(i)}</span>}
           
+          <Thumb ex={ex} />
           <button type="button" className="grow item-open" data-row-open><span className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</span><span className="ss">{exLine(e, S.unit, speedUnitOf(S), index)}</span>
             {e.note && <span className="small dim" style={{ marginTop: 2 }}>{programmeNote(S,e,r)}</span>}</button>
           {noEquip && <span className="tag" style={{ color: 'var(--orange)', borderColor: 'var(--orange)' }} title={t('Needs {0}, which isn’t in your active profile', t(ex.eq))}><Icon name="warning" /></span>}

@@ -1,5 +1,6 @@
 import type { ExerciseIndex } from '../../contract/core-api/exercises'
 import { EXIDX } from '@opengym/core/exercises'
+import { hasLoadContinuity } from './progression-engine/continuity'
 import type { ProgrammeState, ProgrammeWeek, ProgrammeCycle, ProgrammeProjection } from './programme-engine-types'
 import { shiftNotToday, activate, materializeWeek, advanceProgramme } from './programme'
 import { projectCycle, addProgrammeDays, occurrenceOrder } from '@opengym/core/programme-calendar'
@@ -48,7 +49,8 @@ export function repeatProgrammeWeek(S: ProgrammeState, cycleId: string, today: s
   next.weekIndex = stage.index
   if (stage.weekId) next.weekId = stage.weekId
   advanceProgramme(draft, today)
-  old.restartedAs = next.id
+  // activate normalizes cycles into fresh objects; stamp the retained parent.
+  if (hasLoadContinuity(definition)) draft.programmes!.cycles.find(cycle => cycle.id === old.id)!.restartedAs = next.id
   Object.assign(S, draft)
   return next
 }

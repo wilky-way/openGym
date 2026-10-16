@@ -75,21 +75,21 @@ function reorder(view: 'routines' | 'loop' | 'exercises') {
   }))
 }
 for (const view of ['routines', 'loop'] as const) {
-  it(`real sync store cancels ${view} drag after A → B`, () => {
+  it(`real W07 cancels ${view} drag after A → B`, () => {
     const drop = beginDrag(view); replace('B'); const before = snapshot(); drop()
     expect(snapshot()).toEqual(before)
   })
-  it(`real sync store cancels ${view} drag after a same-account reorder`, () => {
+  it(`real W07 cancels ${view} drag after a same-account reorder`, () => {
     const drop = beginDrag(view); reorder(view); const before = snapshot(); drop()
     expect(snapshot()).toEqual(before)
   })
-  it(`real sync store guards ${view} drag against an account switch inside the producer`, () => {
+  it(`real W07 guards ${view} drag against an account switch inside the producer`, () => {
     const drop = beginDrag(view), original = useStore.getState().update
     let before!: ReturnType<typeof snapshot>
     useStore.setState({ update: (mut, push) => { replace('B'); before = snapshot(); original(mut, push) } })
     drop(); expect(before).toBeDefined(); expect(snapshot()).toEqual(before)
   })
-  it(`real sync store guards ${view} drag against a same-account reorder inside the producer`, () => {
+  it(`real W07 guards ${view} drag against a same-account reorder inside the producer`, () => {
     const drop = beginDrag(view), original = useStore.getState().update
     let before!: ReturnType<typeof snapshot>
     useStore.setState({ update: (mut, push) => {
@@ -97,7 +97,7 @@ for (const view of ['routines', 'loop'] as const) {
     } })
     drop(); expect(before).toBeDefined(); expect(snapshot()).toEqual(before)
   })
-  it(`real sync store allows ${view} drag without an identity change`, () => {
+  it(`real W07 allows ${view} drag without an identity change`, () => {
     const drop = beginDrag(view), before = snapshot(); drop()
     const s = useStore.getState().S
     expect(view === 'routines' ? s.routines.map((r: any) => r.id) : s.queue.ids).toEqual(['s', 'r', 't'])
@@ -121,7 +121,7 @@ function beginSwipe(kind: Swipe) {
   return () => act(() => vi.advanceTimersByTime(800))
 }
 for (const kind of swipes) {
-  it.each(['account', 'same-account reorder'])(`real sync store cancels ${kind} before release after %s change`, change => {
+  it.each(['account', 'same-account reorder'])(`real W07 cancels ${kind} before release after %s change`, change => {
     mount(viewOf(kind)); const row = host.querySelector('.swrow')!, copy = kind === 'routine-copy'
     pointer(row, 'pointerdown', copy ? 60 : 330); pointer(row, 'pointermove', copy ? 330 : 60)
     if (change === 'account') replace('B')
@@ -130,21 +130,21 @@ for (const kind of swipes) {
     pointer(row, 'pointerup', copy ? 330 : 60); act(() => vi.advanceTimersByTime(800))
     expect(snapshot()).toEqual(before)
   })
-  it(`real sync store cancels pending ${kind} after A → B`, () => {
+  it(`real W07 cancels pending ${kind} after A → B`, () => {
     const finish = beginSwipe(kind); replace('B'); const before = snapshot(); finish()
     expect(snapshot()).toEqual(before)
   })
-  it(`real sync store cancels pending ${kind} after a same-account reorder`, () => {
+  it(`real W07 cancels pending ${kind} after a same-account reorder`, () => {
     const finish = beginSwipe(kind); reorder(viewOf(kind)); const before = snapshot(); finish()
     expect(snapshot()).toEqual(before)
   })
-  it(`real sync store guards pending ${kind} against an account switch inside the producer`, () => {
+  it(`real W07 guards pending ${kind} against an account switch inside the producer`, () => {
     const finish = beginSwipe(kind), original = useStore.getState().update
     let before!: ReturnType<typeof snapshot>
     useStore.setState({ update: (mut, push) => { replace('B'); before = snapshot(); original(mut, push) } })
     finish(); expect(before).toBeDefined(); expect(snapshot()).toEqual(before)
   })
-  it(`real sync store guards pending ${kind} against a same-account reorder inside the producer`, () => {
+  it(`real W07 guards pending ${kind} against a same-account reorder inside the producer`, () => {
     const finish = beginSwipe(kind), original = useStore.getState().update
     let before!: ReturnType<typeof snapshot>
     useStore.setState({ update: (mut, push) => {
@@ -152,7 +152,7 @@ for (const kind of swipes) {
     } })
     finish(); expect(before).toBeDefined(); expect(snapshot()).toEqual(before)
   })
-  it(`real sync store allows ${kind} without an identity change`, () => {
+  it(`real W07 allows ${kind} without an identity change`, () => {
     const finish = beginSwipe(kind), before = snapshot(); finish()
     const s = useStore.getState().S
     if (kind === 'routine-delete') expect(s.routines.map((r: any) => r.id)).toEqual(['s', 't'])
@@ -193,7 +193,7 @@ function quickReplace(next: { id: string }) {
   act(() => sheets.exConfigSheet.mock.calls.at(-1)![6]())
   return () => act(() => sheets.exercisePicker.mock.calls.at(-1)![0](next, true))
 }
-it.each(['to-cardio', 'to-lifting'])('real sync store quick Replace %s preserves unknown fields and canonical clears', direction => {
+it.each(['to-cardio', 'to-lifting'])('real W07 quick Replace %s preserves unknown fields and canonical clears', direction => {
   if (direction === 'to-lifting') act(() => useStore.getState().update(s => { s.routines[0].ex[0] = { id: cardio.id, sets: 1, min: 20, speed: 8, opaque: slot('first').opaque } }))
   mount('exercises'); quickReplace(direction === 'to-cardio' ? cardio : { id: '0025' })()
   const saved = JSON.parse(snapshot().bytes!).routines[0].ex[0]
@@ -201,7 +201,7 @@ it.each(['to-cardio', 'to-lifting'])('real sync store quick Replace %s preserves
   if (direction === 'to-cardio') { expect(saved).toMatchObject({ id: cardio.id, min: 20, speed: 8 }); expect(saved.reps).toBeUndefined(); expect(saved.weight).toBeUndefined() }
   else { expect(saved.id).toBe('0025'); expect(saved.reps).toBeDefined(); expect(saved.min).toBeUndefined(); expect(saved.speed).toBeUndefined() }
 })
-it('real sync store refuses a quick Replace after account switch, retaining B bytes', () => {
+it('real W07 refuses a quick Replace after account switch, retaining B bytes', () => {
   mount('exercises'); const run = quickReplace(cardio); replace('B'); const before = snapshot(); run()
   expect(snapshot()).toEqual(before)
 })
