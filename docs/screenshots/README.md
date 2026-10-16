@@ -2,9 +2,26 @@
 
 Captured from the compiled application with **agent-browser 0.8.5**, using the invented state from `scripts/screenshot-fixture.ts`. No user export, personal account, private programme library, commercial programme template, or personal browser profile is read. Names, logs, measurements, membership values, device labels, and the demo invite are invented. Exercise text and any catalogue media retain the notices in [NOTICE.md](../../NOTICE.md).
 
-All phone PNGs are **390 × 844**. Desktop PNGs are **1440 × 900**. These are viewport captures, with additional scrolled views for long pages. PNGs are losslessly optimized with Pillow (`optimize=True, compress_level=9`); neither pngquant nor oxipng was installed. No screenshot pixels or UI elements were retouched.
+Seven images were refreshed on 2026-10-16 from runtime build **a6c1ddccbc**: Library, exercise detail, Focus workout, programme session preview, native prescription preview, native relative loads, and training max adjustment. The other **42 images** retain their historical build attribution, including the base-build stamp visible in About. The refresh changes only the synthetic fixture, documentation, and screenshots; it uses the compiled runtime at that build.
+
+All phone PNGs are **390 × 844**. Desktop PNGs are **1440 × 900**. These are viewport captures, with additional scrolled views for long pages. The 42 historical PNGs retain their lossless Pillow optimization (`optimize=True, compress_level=9`); neither pngquant nor oxipng was installed. The seven refreshed PNGs are exact browser outputs. No screenshot pixels or UI elements were retouched.
 
 ## Reproduction
+
+### Current prescription and illustration examples
+
+The bounded refresh uses the same invented state generator, with two optional modes:
+
+```sh
+bun scripts/screenshot-fixture.ts --native > .gate/screenshot-native.json
+bun scripts/screenshot-fixture.ts --max > .gate/screenshot-max.json
+```
+
+Both modes create original examples through the public programme importer and activation functions. The native example authors three sets of five, with the last two rows ten percent below the first completed set's actual load. Start the session through the UI, enter and complete 100 kg on the anchor, and inspect the planned 90 kg back-off without replacing the blank actual-load field. The max example starts with a 100 kg training max and two five-rep targets at 80% and 90%, with 2 RIR. Open the active programme card → **Adjust max**, enter 110 kg, and inspect the future **87.5 / 100 kg** preview after 2.5 kg rounding. The captured example cancels without saving.
+
+Load each fixture into a fresh guest state as described below. These views require no signed-in account. Serve the licensed catalogue stills and clips used by the visible exercises, preserving [NOTICE.md](../../NOTICE.md). Confirm thumbnails have decoded, the workout animation has advanced, and **tap to pause** and **Minimize** work before capture. Use real UI controls; do not replace images, labels, or prescriptions in the DOM. The native preview and workout rows show the complete targets; the legacy Home shorthand can still show `3 × 0` in the blurred background. The refresh verifies the row prescriptions and records that summary limitation. The strict media allowlist returns 404 for `exercise-media/NOTICE.txt`; preserve the file alongside prepared media and use the repository notice links for attribution.
+
+### Original full tour
 
 1. Install with `bun install --frozen-lockfile`, then run `bun run build` and `bun scripts/prepare-static.ts`.
 2. Make ignored scratch storage and generate only invented state:
@@ -70,7 +87,7 @@ The browser reports **“Not supported in this browser”** on Reminders, so tha
 
 ## Inventory
 
-46 PNGs, **2,835,685 bytes** total (2.70 MiB).
+49 PNGs, **3,152,448 bytes** total (3.01 MiB).
 
 | Image | Size | View / action |
 | --- | ---: | --- |
@@ -79,18 +96,20 @@ The browser reports **“Not supported in this browser”** on Reminders, so tha
 | [bodyweight.png](bodyweight.png) | 58,153 B · 390 × 844 | Stats; scroll Body weight into view. |
 | [check-in.png](check-in.png) | 27,669 B · 390 × 844 | Check in; invented, unusable demo membership QR. |
 | [e1rm.png](e1rm.png) | 70,137 B · 390 × 844 | Stats → Exercise progress → Est. 1RM; scroll to the card. |
-| [exercise-detail.png](exercise-detail.png) | 83,722 B · 390 × 844 | Search results → Barbell Bench Press. |
+| [exercise-detail.png](exercise-detail.png) | 96,159 B · 390 × 844 | Current build: Exercises → search barbell bench press → first result; pause to the decoded still drawing. |
 | [history.png](history.png) | 76,495 B · 390 × 844 | History; 18 invented completed workouts. |
 | [home-dark.png](home-dark.png) | 70,591 B · 390 × 844 | Home after Look & Home → Dark. |
 | [home.png](home.png) | 69,122 B · 390 × 844 | Home; top of Today with the next prescription. |
-| [library.png](library.png) | 82,773 B · 390 × 844 | Exercises → search “barbell bench press”. |
+| [library.png](library.png) | 79,332 B · 390 × 844 | Current build: Exercises; default rows with decoded licensed thumbnails. |
 | [measurements.png](measurements.png) | 58,075 B · 390 × 844 | Body measurements; waist history. |
 | [muscle-balance.png](muscle-balance.png) | 85,985 B · 390 × 844 | Stats; scroll Muscle balance into view. |
 | [muscles.png](muscles.png) | 84,219 B · 390 × 844 | Explore muscles → Chest; exercise discovery by muscle. |
+| [native-prescription.png](native-prescription.png) | 111,058 B · 390 × 844 | Current build: --native fixture → Home → Preview; three five-rep rows, authored 10% back-off relation, pending anchor. |
+| [native-relative.png](native-relative.png) | 67,553 B · 390 × 844 | Current build: --native fixture → Start → enter and complete 100 kg anchor → Minimize media; planned 90 kg back-offs keep blank actual loads. |
 | [planner-desktop.png](planner-desktop.png) | 63,933 B · 1440 × 900 | Plan → Schedule at desktop size; scroll to top. |
 | [planner.png](planner.png) | 39,835 B · 390 × 844 | Plan → Schedule; month calendar. |
 | [programme-week.png](programme-week.png) | 55,168 B · 390 × 844 | Programs → Upper/Lower Strength; scroll Week 1 into view. |
-| [programme.png](programme.png) | 63,770 B · 390 × 844 | Programme week → D1 Upper Strength; read-only session preview. |
+| [programme.png](programme.png) | 77,205 B · 390 × 844 | Current build: original fixture → Home → Preview; read-only projected Upper Strength session. |
 | [programmes.png](programmes.png) | 60,617 B · 390 × 844 | Plan → Programs; active cycle and two synthetic definitions. |
 | [progression-why.png](progression-why.png) | 70,712 B · 390 × 844 | Home → first Why disclosure; scroll to the expanded prescription. |
 | [routine-editor.png](routine-editor.png) | 86,174 B · 390 × 844 | Plan → Routines → first Edit. |
@@ -117,6 +136,7 @@ The browser reports **“Not supported in this browser”** on Reminders, so tha
 | [stats-desktop.png](stats-desktop.png) | 101,180 B · 1440 × 900 | Stats at desktop size; scroll to top. |
 | [stats.png](stats.png) | 51,412 B · 390 × 844 | Stats; activity and summary at the top. |
 | [structural-balance.png](structural-balance.png) | 62,053 B · 390 × 844 | Structural balance; select the powerlifting ratio table, with synthetic squat/bench/deadlift history. |
+| [training-max.png](training-max.png) | 78,838 B · 390 × 844 | Current build: --max fixture → Plan → Programs → active card → Adjust max → 110 kg; future 87.5 / 100 kg preview, cancelled after capture. |
 | [workout-detail.png](workout-detail.png) | 68,292 B · 390 × 844 | History → newest Full Body workout. |
 | [workout-effort.png](workout-effort.png) | 75,060 B · 390 × 844 | Active Focus workout → RIR; capture the effort picker. |
-| [workout-focus.png](workout-focus.png) | 50,326 B · 390 × 844 | Home → Start → Start without weighing in; complete one set to start the rest timer. |
+| [workout-focus.png](workout-focus.png) | 87,209 B · 390 × 844 | Current build: original fixture → Start without weighing in → complete one set; exercise animation, tap-to-pause, Minimize, and rest timer; scroll to top. |

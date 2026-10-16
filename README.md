@@ -20,6 +20,16 @@ The browser app uses React and an offline-capable Platform adapter. The server r
 
 All images use invented routines, programmes, workouts, measurements, devices, and membership codes. Phone captures are 390 × 844; desktop captures are 1440 × 900. Open an image for its full size. The [capture guide and complete inventory](docs/screenshots/README.md) include reproduction steps and browser limitations.
 
+Built-in exercise illustrations and animations appear in the Library, exercise details, and workout views; catalogue credits and licence notices are preserved in [NOTICE.md](NOTICE.md).
+
+<table>
+  <tr>
+    <td align="center"><a href="docs/screenshots/native-prescription.png"><img src="docs/screenshots/native-prescription.png" width="240" alt="Native session targets"></a><br><sub>Native session targets</sub></td>
+    <td align="center"><a href="docs/screenshots/native-relative.png"><img src="docs/screenshots/native-relative.png" width="240" alt="Relative back-off loads"></a><br><sub>Relative back-off loads</sub></td>
+    <td align="center"><a href="docs/screenshots/training-max.png"><img src="docs/screenshots/training-max.png" width="240" alt="Training max adjustment"></a><br><sub>Training max adjustment</sub></td>
+  </tr>
+</table>
+
 <table>
   <tr>
     <td align="center"><a href="docs/screenshots/home.png"><img src="docs/screenshots/home.png" width="240" alt="Today & next session"></a><br><sub>Today & next session</sub></td>
